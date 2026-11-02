@@ -4,3 +4,4 @@
 #
 # Example (written in words so this file passes its own scan):
 #   data/cases/hgns-007/documents/pt-note.md  <the five-digit step count>  # daily steps in a PT note, not a code
+generator/people.py  *  # only the NPI check-digit prefix (eight-zero-eight-four-zero, the health industry number), not a procedure code
