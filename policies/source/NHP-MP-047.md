@@ -89,8 +89,7 @@ Coverage criteria are not met if any of the following is documented.
 
 - **5.1.1** The **requested knee** has a total or partial knee replacement.
 - **5.1.2** Active infection in the **requested knee**, or in the skin over it.
-- **5.1.3** Varus or valgus malalignment of the **requested knee** of more than 10 degrees, measured on a **weight-bearing radiograph**.
-- **5.1.4** The treating surgeon or an anesthesia clinician states that elective knee surgery is currently unsafe for the member.
+- **5.1.3** The treating surgeon or an anesthesia clinician states that elective knee surgery is currently unsafe for the member.
 
 ### 5.2 Exclusions
 
@@ -107,12 +106,12 @@ The request must include the following. Each item names the criteria it supports
 | # | Document or data element | Must show | Supports |
 | --- | --- | --- | --- |
 | 6.1 | Prior authorization request | The **requested knee** (right or left), the primary ICD-10-CM diagnosis and the planned procedure | 3.1, 3.2, 5.2.1, 5.2.3 |
-| 6.2 | Treating clinician office note, dated within 3 months before the request date | The member's own description of each knee symptom, the knee it affects, how often it happens, and an examination of the **requested knee** | 3.2, 3.3, 4.1(a) |
-| 6.3 | Examination note documenting a **locked knee**, dated within 1 month before the request date (only if 4.1(b) is used) | Inability to straighten the knee fully, that the block is new, and the knee examined | 3.2, 4.1(b) |
-| 6.4 | **Weight-bearing radiograph** report, taken within 12 months before the request date | Date, knee imaged, that the views were standing, Kellgren–Lawrence grade or joint-space description for each compartment, alignment, and any loose body | 3.2, 3.4, 3.5, 4.2(b), 5.1.3 |
-| 6.5 | MRI report of the **requested knee**, scan done within 6 months before the request date (only if 4.2(a) is used) | Date, knee imaged, and the lesion found, described in the radiologist's words | 3.2, 4.2(a) |
-| 6.6 | Conservative care records (only if 4.1(a) is used) | Physical therapy notes or a dated home exercise prescription; medication list or notes with drug names and dates; injection procedure notes; start and end dates of each measure | 4.1(a) |
-| 6.7 | Surgical and medical history | Prior surgery on either knee with dates, and any current condition affecting surgical safety | 5.1.1, 5.1.4, 5.2.2 |
+| 6.2 | Treating clinician office note, dated within 3 months before the request date | The member's own description of each knee symptom, the knee it affects, how often it happens, and an examination of the **requested knee** | 3.2, 3.3, 4.1 |
+| 6.3 | Examination note documenting a **locked knee**, dated within 1 month before the request date (only if 4.1(b) is used) | Inability to straighten the knee fully, that the block is new, and the knee examined | 3.2, 4.1 |
+| 6.4 | **Weight-bearing radiograph** report, taken within 12 months before the request date | Date, knee imaged, that the views were standing, Kellgren–Lawrence grade or joint-space description for each compartment, and any loose body | 3.2, 3.4, 3.5, 4.2 |
+| 6.5 | MRI report of the **requested knee**, scan done within 6 months before the request date (only if 4.2(a) is used) | Date, knee imaged, and the lesion found, described in the radiologist's words | 3.2, 4.2 |
+| 6.6 | Conservative care records (only if 4.1(a) is used) | Physical therapy notes or a dated home exercise prescription; medication list or notes with drug names and dates; injection procedure notes; start and end dates of each measure | 4.1 |
+| 6.7 | Surgical and medical history | Prior surgery on either knee with dates, and any current condition affecting surgical safety | 5.1.1, 5.1.3, 5.2.2 |
 
 ## 7. Definitions
 
@@ -192,7 +191,7 @@ Sources considered:
 | 3.5 / 7.5 | KL grade no more than 3 (grade 4 = severe) | Medium | Directionally right: outcomes are worst in end-stage knees. A stricter plan could cap at KL 2, since KL 3 already means definite narrowing. Real-world rules often grade severity at surgery (cartilage grade seen through the scope), which a prospective reviewer cannot know, so a radiograph grade is the practical proxy. |
 | 4.1(b) | Locked knee documented within 1 month | Medium-high | A truly locked knee is usually treated within days to weeks; 1 month keeps the finding current. No degree-of-extension threshold, on purpose (see A.2). |
 | 4.2(a) | MRI within 6 months | Medium-high | Reasonable for a lesion that can change; some plans accept 12 months. |
-| 5.1.3 | Malalignment more than 10 degrees | **Low** | I'm not confident in this number. Alignment matters (a badly bowed knee is a candidate for osteotomy or replacement, not cleanup), but I don't know a widely used cutoff, and radiologists don't always report an angle. Recommend: keep it as a low-frequency test of the "buried contraindication" archetype, or drop 5.1.3 if you'd rather not carry an unsupported number. |
+| (removed) | Malalignment more than 10 degrees | **Low** | Dropped before v1.0 (Nick, 2026-11-02): no widely used cutoff, and radiologists don't always report an angle. Former 5.1.4 is now 5.1.3. Revisit if a supported threshold turns up. |
 | 5.2.2 | No arthroscopy on the same knee within 12 months | Medium | A coverage choice more than a clinical fact: a repeat scope this soon suggests the first did not help. |
 | 7.3(b) | Catching counts as a mechanical symptom | Medium | Evidence (Sihvonen 2016) suggests catching alone doesn't predict benefit in degenerative knees. Kept because the kickoff wants this nuance, but only with an imaging lesion and conservative care first. |
 | 7.7(c) | Conservative care at least 12 weeks | Medium-high | A 3-month trial is a common standard for non-surgical knee care. |
@@ -213,7 +212,7 @@ Sources considered:
 | 4.2(a) | MRI reports both a degenerative tear and a flap component | Degenerative tear excludes it; flap qualifies | The flap qualifies; 7.4 lists what does count, and a degenerative tear alongside it doesn't cancel it. |
 | 2.2, 3.1 | Unspecified-side code (M17.10, M17.9) with side clear in notes | Outside policy; in scope with side from request | In scope; 3.1 checks the request names the side. Unspecified codes produce a request-info gap, not an out-of-scope escalation. |
 | 3.2 | Bilateral diagnosis code (M17.0) on a one-knee request | Conflict with 3.2; consistent | Consistent: a bilateral code covers either knee. |
-| 5.1.4 | Clinician says surgery is "high risk" but proceeds | Contraindication met; not met | Not met unless the note says surgery is unsafe now. "High risk" alone goes in the brief, not the contraindication. |
+| 5.1.3 | Clinician says surgery is "high risk" but proceeds | Contraindication met; not met | Not met unless the note says surgery is unsafe now. "High risk" alone goes in the brief, not the contraindication. |
 
 ### A.3 Planned test complexity
 

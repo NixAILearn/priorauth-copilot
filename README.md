@@ -46,7 +46,7 @@ make check   # lint, tests, code scan
 
 All data is synthetic (Synthea FHIR R4 plus generated clinical notes) or invented (Northwind policies and `NHP-P-####` procedure codes). Diagnosis codes are ICD-10-CM, which is public domain.
 
-This is a portfolio demonstration using a fictional health plan, its invented medical policies and synthetic patients. It is not a medical device, makes no coverage decisions, and must not be used with real patient data.
+This is a portfolio demonstration using a fictional health plan, its invented medical policies and synthetic patients. It is not a medical device, makes no coverage decisions, and must not be used with real patient data. In the real world, a Medicare Advantage plan must follow Medicare's national coverage determinations where they exist, and one exists for arthroscopic debridement of the osteoarthritic knee; Northwind's fictional world assumes none apply to its four services, and its policies are written independently (D-011, D-016).
 
 ## Repo map
 
