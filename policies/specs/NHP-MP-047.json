@@ -1,0 +1,980 @@
+{
+  "spec_schema_version": "1.0",
+  "policy_id": "NHP-MP-047",
+  "policy_version": "1.0",
+  "effective_date": "2026-01-01",
+  "source_file": "policies/source/NHP-MP-047.md",
+  "source_sha256": "75fb792fa401e226b23217b95d3e015cdc8a512aa5a8730826f4a2f4a3bf5b4f",
+  "review_status": "draft",
+  "reviewed_by": null,
+  "reviewed_date": null,
+  "scope": {
+    "service_code": "NHP-P-3005",
+    "primary_diagnoses": [
+      "M17.0",
+      "M17.10",
+      "M17.11",
+      "M17.12",
+      "M17.2",
+      "M17.30",
+      "M17.31",
+      "M17.32",
+      "M17.4",
+      "M17.5",
+      "M17.9"
+    ],
+    "out_of_scope_route": "clinician_review"
+  },
+  "rules": {
+    "window_counting": "calendar_months",
+    "window_boundary_inclusive": true,
+    "missing_calendar_day": "last_day_of_month",
+    "value_selection": "most_recent",
+    "conflict_route": "clinician_review",
+    "contraindication_found_route": "clinician_review",
+    "exclusion_found_route": "clinician_review"
+  },
+  "fields": [
+    {
+      "name": "requested_knee_side",
+      "type": "enum",
+      "values": [
+        "right",
+        "left",
+        "not_stated"
+      ],
+      "evaluator": "model",
+      "description": "Knee named on the request as the site of NHP-P-3005 (7.9). Taken from the request, not from notes."
+    },
+    {
+      "name": "primary_diagnosis_code",
+      "type": "text",
+      "evaluator": "model",
+      "description": "Primary ICD-10-CM code on the request."
+    },
+    {
+      "name": "evidence_knee_side",
+      "type": "enum",
+      "values": [
+        "right",
+        "left",
+        "both",
+        "not_stated"
+      ],
+      "evaluator": "model",
+      "description": "For each note or report used for 3.3, 3.4, 3.5, 4.1 or 4.2: the knee it describes, with document ID and quote."
+    },
+    {
+      "name": "mechanical_symptom",
+      "type": "enum",
+      "values": [
+        "locking",
+        "catching",
+        "word_only",
+        "non_qualifying",
+        "none_documented"
+      ],
+      "evaluator": "model",
+      "description": "Each knee symptom description in a clinician note, classified against 7.3. 'word_only' = the note says locking or catching but no note describes what happens. Returns every dated mention."
+    },
+    {
+      "name": "symptom_note_date",
+      "type": "date",
+      "evaluator": "model",
+      "description": "Date of each clinician note that describes a knee symptom."
+    },
+    {
+      "name": "xray_date",
+      "type": "date",
+      "evaluator": "model",
+      "description": "Date each knee radiograph was taken."
+    },
+    {
+      "name": "xray_weight_bearing",
+      "type": "enum",
+      "values": [
+        "stated",
+        "supine_or_non_weight_bearing",
+        "not_stated"
+      ],
+      "evaluator": "model",
+      "description": "Whether the report says the views were standing or weight-bearing (7.11)."
+    },
+    {
+      "name": "kl_grade_reported",
+      "type": "number",
+      "unit": "grade 0-4",
+      "evaluator": "model",
+      "description": "Kellgren-Lawrence grade the report gives, per compartment or overall, as written."
+    },
+    {
+      "name": "joint_space_description",
+      "type": "enum",
+      "values": [
+        "complete_loss_or_bone_on_bone",
+        "other_description",
+        "none"
+      ],
+      "evaluator": "model",
+      "description": "Whether the report states complete loss of joint space or bone-on-bone contact in any compartment (7.6)."
+    },
+    {
+      "name": "kl_grade_highest",
+      "type": "number",
+      "unit": "grade 0-4",
+      "evaluator": "code",
+      "derived_from": [
+        "kl_grade_reported",
+        "joint_space_description"
+      ],
+      "description": "Highest compartment grade per 7.6: the highest reported grade; if none, 4 when complete loss or bone-on-bone is stated; otherwise unknown (3.5 insufficient)."
+    },
+    {
+      "name": "xray_loose_body",
+      "type": "boolean",
+      "evaluator": "model",
+      "description": "Whether the radiograph report describes a loose body, without a hedge (7.4)."
+    },
+    {
+      "name": "mri_date",
+      "type": "date",
+      "evaluator": "model",
+      "description": "Date of each knee MRI scan."
+    },
+    {
+      "name": "mri_lesion",
+      "type": "enum",
+      "values": [
+        "loose_body",
+        "displaced_or_unstable_meniscal_tear",
+        "unstable_cartilage_flap",
+        "hedged",
+        "non_qualifying",
+        "none"
+      ],
+      "evaluator": "model",
+      "description": "Lesion the MRI report describes, classified against 7.4. 'hedged' = described only as possible, probable, suspected or not excluded."
+    },
+    {
+      "name": "exercise_therapy",
+      "type": "enum",
+      "values": [
+        "supervised_pt",
+        "home_program_followed",
+        "home_program_not_confirmed",
+        "none"
+      ],
+      "evaluator": "model",
+      "description": "Structured exercise therapy for the requested knee (7.7(a)) with start and end dates. A home program counts only if a later visit documents it was followed."
+    },
+    {
+      "name": "pharmacologic_measure",
+      "type": "enum",
+      "values": [
+        "nsaid",
+        "acetaminophen_nsaid_unsafe",
+        "acetaminophen_other",
+        "knee_steroid_injection",
+        "none"
+      ],
+      "evaluator": "model",
+      "description": "Qualifying measure for 7.7(b), with dates. Acetaminophen counts only if an NSAID is documented as unsafe."
+    },
+    {
+      "name": "conservative_care_start_date",
+      "type": "date",
+      "evaluator": "model",
+      "description": "Start date of the first 7.7(a) or 7.7(b) measure."
+    },
+    {
+      "name": "conservative_care_end_date",
+      "type": "date",
+      "evaluator": "model",
+      "description": "End date of the last 7.7(a) or 7.7(b) measure; the request date when care is documented as ongoing."
+    },
+    {
+      "name": "conservative_care_days",
+      "type": "number",
+      "unit": "days",
+      "evaluator": "code",
+      "derived_from": [
+        "conservative_care_start_date",
+        "conservative_care_end_date"
+      ],
+      "description": "Days from conservative_care_start_date to conservative_care_end_date (7.10: durations are day counts)."
+    },
+    {
+      "name": "locked_knee_exam",
+      "type": "enum",
+      "values": [
+        "locked_new_block",
+        "flexion_contracture_or_not_new",
+        "not_documented"
+      ],
+      "evaluator": "model",
+      "description": "Clinician exam finding against 7.8: cannot straighten fully, actively or passively, from a block, stated as new."
+    },
+    {
+      "name": "locked_knee_exam_date",
+      "type": "date",
+      "evaluator": "model",
+      "description": "Date of the exam that documents the locked knee."
+    },
+    {
+      "name": "knee_replacement",
+      "type": "boolean",
+      "evaluator": "model",
+      "description": "Any total or partial replacement of the requested knee, current or historical, anywhere in the chart."
+    },
+    {
+      "name": "prior_arthroscopy_date",
+      "type": "date",
+      "evaluator": "model",
+      "description": "Date of any prior arthroscopic procedure on the requested knee."
+    }
+  ],
+  "criteria": [
+    {
+      "id": "047-C1",
+      "section": "3.1",
+      "type": "fact",
+      "policy_text": "The request names the requested knee as the right knee or the left knee.",
+      "summary": "Request names the right or left knee",
+      "field": "requested_knee_side",
+      "evidence": "The request's knee field reads right or left. Blank, 'both' or 'unspecified' is insufficient evidence.",
+      "definitions": [
+        "7.9"
+      ],
+      "documentation": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "047-C2",
+      "section": "3.2",
+      "type": "fact",
+      "policy_text": "No document included with the request places the diagnosis, the mechanical symptom or the imaging findings used to meet sections 3 and 4 in the knee opposite the requested knee.",
+      "summary": "Diagnosis, symptom and imaging all refer to the requested knee",
+      "field": "evidence_knee_side",
+      "evidence": "Every document used for 3.3 to 4.2, and the diagnosis code where it names a side, refers to the requested knee or to both knees. A bilateral code (M17.0, M17.2, M17.4) is consistent with either knee. A document naming no side is not a conflict.",
+      "definitions": [
+        "7.9"
+      ],
+      "documentation": [
+        "6.1",
+        "6.2",
+        "6.3",
+        "6.4",
+        "6.5"
+      ],
+      "flag_rules": [
+        {
+          "id": "047-C2-F1",
+          "when": "Any document used for sections 3 or 4, or a sided diagnosis code, refers to the knee opposite the requested knee",
+          "route": "clinician_review"
+        }
+      ]
+    },
+    {
+      "id": "047-C3",
+      "section": "3.3",
+      "type": "all_of",
+      "policy_text": "At least one mechanical symptom of the requested knee is documented in a clinician note dated within 3 months before the request date.",
+      "summary": "A locking or catching symptom is documented in the last 3 months",
+      "select": "most_recent",
+      "definitions": [
+        "7.2",
+        "7.3",
+        "7.10"
+      ],
+      "documentation": [
+        "6.2"
+      ],
+      "flag_rules": [
+        {
+          "id": "047-C3-F1",
+          "when": "The most recent symptom note in the window states there are no mechanical symptoms while an earlier note in the window describes one",
+          "route": "clinician_review"
+        }
+      ],
+      "children": [
+        {
+          "id": "047-C3a",
+          "section": "3.3",
+          "type": "fact",
+          "policy_text": "At least one mechanical symptom of the requested knee is documented",
+          "summary": "Locking or catching described in terms that fit 7.3",
+          "field": "mechanical_symptom",
+          "evidence": "A sentence in a clinician note describing locking (stuck, cannot straighten until manoeuvred or it releases) or catching (sudden brief block felt as catching). The bare word 'locks' or 'catches' with no description anywhere is insufficient evidence. Pain, stiffness, swelling, crepitus, clicking, giving way or pseudo-locking is not met.",
+          "definitions": [
+            "7.3"
+          ],
+          "documentation": [
+            "6.2"
+          ]
+        },
+        {
+          "id": "047-C3b",
+          "section": "3.3",
+          "type": "date_window",
+          "policy_text": "in a clinician note dated within 3 months before the request date",
+          "summary": "That note is dated within 3 months",
+          "field": "symptom_note_date",
+          "window": {
+            "months": 3
+          },
+          "definitions": [
+            "7.1",
+            "7.10"
+          ],
+          "documentation": [
+            "6.2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "047-C4",
+      "section": "3.4",
+      "type": "all_of",
+      "policy_text": "A report of weight-bearing radiographs of the requested knee, taken within 12 months before the request date, is included with the request.",
+      "summary": "Standing x-ray report of the requested knee from the last 12 months",
+      "select": "most_recent",
+      "definitions": [
+        "7.11"
+      ],
+      "documentation": [
+        "6.4"
+      ],
+      "children": [
+        {
+          "id": "047-C4a",
+          "section": "3.4",
+          "type": "fact",
+          "policy_text": "A report of weight-bearing radiographs of the requested knee",
+          "summary": "Report says the views were standing or weight-bearing",
+          "field": "xray_weight_bearing",
+          "evidence": "A sentence in the radiograph report stating standing or weight-bearing views. A report that does not say is insufficient evidence; supine views are not met.",
+          "definitions": [
+            "7.11"
+          ],
+          "documentation": [
+            "6.4"
+          ]
+        },
+        {
+          "id": "047-C4b",
+          "section": "3.4",
+          "type": "date_window",
+          "policy_text": "taken within 12 months before the request date",
+          "summary": "Radiographs taken within 12 months",
+          "field": "xray_date",
+          "window": {
+            "months": 12
+          },
+          "definitions": [
+            "7.1",
+            "7.10"
+          ],
+          "documentation": [
+            "6.4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "047-C5",
+      "section": "3.5",
+      "type": "numeric",
+      "policy_text": "The most recent weight-bearing radiograph report that meets 3.4 grades the requested knee at no more than Kellgren–Lawrence grade 3, using the highest compartment grade (section 7.6).",
+      "summary": "Highest compartment KL grade on the latest standing x-ray is 3 or lower",
+      "field": "kl_grade_highest",
+      "op": "<=",
+      "value": 3,
+      "unit": "grade 0-4",
+      "select": "most_recent",
+      "definitions": [
+        "7.5",
+        "7.6"
+      ],
+      "documentation": [
+        "6.4"
+      ],
+      "flag_rules": [
+        {
+          "id": "047-C5-F1",
+          "when": "Two radiograph reports in the 3.4 window give the requested knee different KL grades on opposite sides of 3",
+          "route": "clinician_review"
+        }
+      ]
+    },
+    {
+      "id": "047-C6",
+      "section": "4.1",
+      "type": "any_of",
+      "policy_text": "Any one of the following:",
+      "summary": "Conservative care was completed, or the knee is locked",
+      "documentation": [
+        "6.2",
+        "6.3",
+        "6.6"
+      ],
+      "children": [
+        {
+          "id": "047-C6a",
+          "section": "4.1(a)",
+          "type": "all_of",
+          "policy_text": "completion of adequate conservative care (section 7.7), with a mechanical symptom still documented after it ended",
+          "summary": "12+ weeks of exercise plus a drug or injection in the last 12 months, symptom persisting",
+          "definitions": [
+            "7.7"
+          ],
+          "documentation": [
+            "6.6",
+            "6.2"
+          ],
+          "children": [
+            {
+              "id": "047-C6a.1",
+              "section": "7.7(a)",
+              "type": "fact",
+              "policy_text": "structured exercise therapy: supervised physical therapy, or a home exercise program prescribed by a clinician and documented as followed at a later visit",
+              "summary": "Supervised PT or a home program confirmed at a later visit",
+              "field": "exercise_therapy",
+              "evidence": "PT notes, or a dated home exercise prescription plus a later note saying the member followed it.",
+              "documentation": [
+                "6.6"
+              ]
+            },
+            {
+              "id": "047-C6a.2",
+              "section": "7.7(b)",
+              "type": "fact",
+              "policy_text": "at least one of: an oral or topical anti-inflammatory drug (NSAID); acetaminophen, when an NSAID is documented as unsafe for the member; or an injection of corticosteroid into the requested knee",
+              "summary": "NSAID, acetaminophen when NSAID unsafe, or knee steroid injection",
+              "field": "pharmacologic_measure",
+              "evidence": "A dated medication entry or injection note. Acetaminophen alone is met only with a documented reason an NSAID is unsafe.",
+              "documentation": [
+                "6.6"
+              ]
+            },
+            {
+              "id": "047-C6a.3",
+              "section": "7.7(c)",
+              "type": "numeric",
+              "policy_text": "items (a) and (b) together spanned at least 12 weeks, from the start of the first measure to the end of the last",
+              "summary": "Conservative care spanned at least 84 days",
+              "field": "conservative_care_days",
+              "op": ">=",
+              "value": 84,
+              "unit": "days",
+              "definitions": [
+                "7.10"
+              ],
+              "documentation": [
+                "6.6"
+              ]
+            },
+            {
+              "id": "047-C6a.4",
+              "section": "7.7(d)",
+              "type": "date_window",
+              "policy_text": "the care ended, or was still ongoing, within 12 months before the request date",
+              "summary": "Care ended or was ongoing within 12 months",
+              "field": "conservative_care_end_date",
+              "window": {
+                "months": 12
+              },
+              "definitions": [
+                "7.1",
+                "7.10"
+              ],
+              "documentation": [
+                "6.6"
+              ]
+            },
+            {
+              "id": "047-C6a.5",
+              "section": "4.1(a)",
+              "type": "fact",
+              "policy_text": "with a mechanical symptom still documented after it ended",
+              "summary": "Symptom documented after care ended",
+              "field": "mechanical_symptom",
+              "evidence": "A clinician note dated after conservative_care_end_date, or, when care is ongoing, at least 84 days after it started, that describes a symptom meeting 7.3.",
+              "definitions": [
+                "7.3"
+              ],
+              "documentation": [
+                "6.2"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "047-C6b",
+          "section": "4.1(b)",
+          "type": "all_of",
+          "policy_text": "a locked knee (section 7.8), documented within 1 month before the request date",
+          "summary": "Exam documents a newly locked knee in the last month",
+          "definitions": [
+            "7.8"
+          ],
+          "documentation": [
+            "6.3"
+          ],
+          "flag_rules": [
+            {
+              "id": "047-C6b-F1",
+              "when": "Notes call the knee locked but the exam also records a long-standing flexion contracture",
+              "route": "clinician_review"
+            }
+          ],
+          "children": [
+            {
+              "id": "047-C6b.1",
+              "section": "7.8",
+              "type": "fact",
+              "policy_text": "On a clinician's examination, the requested knee cannot be straightened fully, actively or passively, because of a block inside the joint, and the note states that the block is new for this member.",
+              "summary": "Exam: new block to full straightening",
+              "field": "locked_knee_exam",
+              "evidence": "An exam sentence that the knee cannot be fully straightened from a block, and a statement that it is new. Patient history of locking alone is not met here (it counts only for 3.3).",
+              "documentation": [
+                "6.3"
+              ]
+            },
+            {
+              "id": "047-C6b.2",
+              "section": "4.1(b)",
+              "type": "date_window",
+              "policy_text": "documented within 1 month before the request date",
+              "summary": "Exam within 1 month",
+              "field": "locked_knee_exam_date",
+              "window": {
+                "months": 1
+              },
+              "definitions": [
+                "7.1",
+                "7.10"
+              ],
+              "documentation": [
+                "6.3"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "047-C7",
+      "section": "4.2",
+      "type": "any_of",
+      "policy_text": "Any one of the following:",
+      "summary": "Imaging shows a lesion that can block the joint",
+      "definitions": [
+        "7.4"
+      ],
+      "documentation": [
+        "6.4",
+        "6.5"
+      ],
+      "flag_rules": [
+        {
+          "id": "047-C7-F1",
+          "when": "The MRI or radiograph describes a qualifying lesion only with a hedge (possible, probable, suspected, cannot exclude)",
+          "route": "clinician_review"
+        }
+      ],
+      "children": [
+        {
+          "id": "047-C7a",
+          "section": "4.2(a)",
+          "type": "all_of",
+          "policy_text": "an MRI report of the requested knee, with the scan done within 6 months before the request date, that describes a mechanical lesion",
+          "summary": "MRI in the last 6 months shows a mechanical lesion",
+          "select": "most_recent",
+          "definitions": [
+            "7.4"
+          ],
+          "documentation": [
+            "6.5"
+          ],
+          "children": [
+            {
+              "id": "047-C7a.1",
+              "section": "4.2(a)",
+              "type": "date_window",
+              "policy_text": "with the scan done within 6 months before the request date",
+              "summary": "MRI within 6 months",
+              "field": "mri_date",
+              "window": {
+                "months": 6
+              },
+              "definitions": [
+                "7.1",
+                "7.10"
+              ],
+              "documentation": [
+                "6.5"
+              ]
+            },
+            {
+              "id": "047-C7a.2",
+              "section": "4.2(a)",
+              "type": "fact",
+              "policy_text": "that describes a mechanical lesion",
+              "summary": "MRI describes a loose body, displaced or unstable meniscal tear, or unstable cartilage flap",
+              "field": "mri_lesion",
+              "evidence": "A sentence in the MRI report describing a lesion listed in 7.4. A degenerative tear alongside a flap does not cancel the flap. Hedged findings are not met and raise 047-C7-F1.",
+              "definitions": [
+                "7.4"
+              ],
+              "documentation": [
+                "6.5"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "047-C7b",
+          "section": "4.2(b)",
+          "type": "fact",
+          "policy_text": "a weight-bearing radiograph report of the requested knee that meets 3.4 and describes a loose body (section 7.4(a))",
+          "summary": "Standing x-ray from the 3.4 window shows a loose body",
+          "field": "xray_loose_body",
+          "evidence": "A sentence in a radiograph report that meets 3.4 describing a loose body without a hedge.",
+          "definitions": [
+            "7.4",
+            "7.11"
+          ],
+          "documentation": [
+            "6.4"
+          ]
+        }
+      ]
+    }
+  ],
+  "contraindications": [
+    {
+      "id": "047-CI01",
+      "section": "5.1.1",
+      "type": "fact",
+      "policy_text": "The requested knee has a total or partial knee replacement.",
+      "summary": "Requested knee has a knee replacement",
+      "field": "knee_replacement",
+      "evidence": "Any mention of a total, partial or unicompartmental replacement of the requested knee, including in past surgical history or imaging.",
+      "documentation": [
+        "6.7"
+      ]
+    },
+    {
+      "id": "047-CI02",
+      "section": "5.1.2",
+      "type": "fact",
+      "policy_text": "Active infection in the requested knee, or in the skin over it.",
+      "summary": "Active infection of the knee or overlying skin",
+      "evidence": "A current infection of the requested knee joint or the skin over it. A resolved infection is not found.",
+      "documentation": [
+        "6.7"
+      ]
+    },
+    {
+      "id": "047-CI03",
+      "section": "5.1.3",
+      "type": "fact",
+      "policy_text": "The treating surgeon or an anesthesia clinician states that elective knee surgery is currently unsafe for the member.",
+      "summary": "Surgeon or anesthesia says surgery is unsafe now",
+      "evidence": "An explicit statement that elective surgery is unsafe now. 'High risk' alone is not found; it goes in the case brief.",
+      "documentation": [
+        "6.7"
+      ]
+    }
+  ],
+  "exclusions": [
+    {
+      "id": "047-EX01",
+      "section": "5.2.1",
+      "type": "fact",
+      "policy_text": "The planned procedure is washing out the joint (lavage) without removing any tissue.",
+      "summary": "Planned procedure is lavage only",
+      "evidence": "The request or operative plan describes washout or lavage with no debridement or removal of tissue.",
+      "documentation": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "047-EX02",
+      "section": "5.2.2",
+      "type": "date_window",
+      "policy_text": "An arthroscopic procedure was performed on the requested knee within 12 months before the request date.",
+      "summary": "Arthroscopy on the same knee in the last 12 months",
+      "field": "prior_arthroscopy_date",
+      "window": {
+        "months": 12
+      },
+      "definitions": [
+        "7.1",
+        "7.10"
+      ],
+      "documentation": [
+        "6.7"
+      ]
+    },
+    {
+      "id": "047-EX03",
+      "section": "5.2.3",
+      "type": "fact",
+      "policy_text": "The procedure is planned in the same operation as a knee replacement of the requested knee.",
+      "summary": "Planned with a knee replacement of the same knee",
+      "evidence": "The request or plan schedules debridement in the same operation as a replacement of the requested knee.",
+      "documentation": [
+        "6.1"
+      ]
+    }
+  ],
+  "documentation": [
+    {
+      "id": "6.1",
+      "name": "Prior authorization request",
+      "must_show": "The requested knee (right or left), the primary ICD-10-CM diagnosis and the planned procedure",
+      "supports": [
+        "3.1",
+        "3.2",
+        "5.2.1",
+        "5.2.3"
+      ]
+    },
+    {
+      "id": "6.2",
+      "name": "Treating clinician office note",
+      "must_show": "Dated within 3 months; the member's own description of each knee symptom, the knee it affects, how often it happens, and an exam of the requested knee",
+      "supports": [
+        "3.2",
+        "3.3",
+        "4.1"
+      ]
+    },
+    {
+      "id": "6.3",
+      "name": "Locked-knee examination note (only if 4.1(b) is used)",
+      "must_show": "Dated within 1 month; inability to straighten the knee fully, that the block is new, and the knee examined",
+      "supports": [
+        "3.2",
+        "4.1"
+      ]
+    },
+    {
+      "id": "6.4",
+      "name": "Weight-bearing radiograph report",
+      "must_show": "Taken within 12 months; date, knee imaged, that the views were standing, KL grade or joint-space description for each compartment, and any loose body",
+      "supports": [
+        "3.2",
+        "3.4",
+        "3.5",
+        "4.2"
+      ]
+    },
+    {
+      "id": "6.5",
+      "name": "MRI report (only if 4.2(a) is used)",
+      "must_show": "Scan within 6 months; date, knee imaged, and the lesion found in the radiologist's words",
+      "supports": [
+        "3.2",
+        "4.2"
+      ]
+    },
+    {
+      "id": "6.6",
+      "name": "Conservative care records (only if 4.1(a) is used)",
+      "must_show": "PT notes or a dated home exercise prescription; medication list or notes with drug names and dates; injection notes; start and end dates of each measure",
+      "supports": [
+        "4.1"
+      ]
+    },
+    {
+      "id": "6.7",
+      "name": "Surgical and medical history",
+      "must_show": "Prior surgery on either knee with dates, and any current condition affecting surgical safety",
+      "supports": [
+        "5.1.1",
+        "5.1.3",
+        "5.2.2"
+      ]
+    }
+  ],
+  "ambiguities": [
+    {
+      "id": "047-A01",
+      "sections": [
+        "1",
+        "7.3"
+      ],
+      "issue": "What \"symptoms other than pain alone\" covers",
+      "readings": [
+        "Any non-pain symptom (stiffness, swelling, giving way)",
+        "Only a true mechanical block"
+      ],
+      "recommended": "Only a mechanical block; 7.3 is a closed list (D-015).",
+      "encoded_as": "Field mechanical_symptom enum; 047-C3a evidence text."
+    },
+    {
+      "id": "047-A02",
+      "sections": [
+        "7.3"
+      ],
+      "issue": "Note says \"knee locks up\" with no description",
+      "readings": [
+        "Counts as locking",
+        "Pseudo-locking or undescribed"
+      ],
+      "recommended": "Insufficient evidence, so request info for a symptom description (D-015).",
+      "encoded_as": "mechanical_symptom value word_only maps to insufficient in 047-C3a."
+    },
+    {
+      "id": "047-A03",
+      "sections": [
+        "7.3"
+      ],
+      "issue": "Giving way or buckling",
+      "readings": [
+        "Mechanical symptom",
+        "Weakness or pain"
+      ],
+      "recommended": "Not a mechanical symptom unless a block is also described.",
+      "encoded_as": "mechanical_symptom value non_qualifying."
+    },
+    {
+      "id": "047-A04",
+      "sections": [
+        "3.3",
+        "4.1(b)"
+      ],
+      "issue": "Symptom reported by the member vs. seen on exam",
+      "readings": [
+        "History is enough",
+        "Must be observed"
+      ],
+      "recommended": "History in a clinician note meets 3.3; only 4.1(b) needs an exam finding.",
+      "encoded_as": "047-C3a vs. 047-C6b.1 evidence text."
+    },
+    {
+      "id": "047-A05",
+      "sections": [
+        "4.1(a)"
+      ],
+      "issue": "\"Still documented after it ended\" when care is ongoing",
+      "readings": [
+        "Needs an end date",
+        "Ongoing care counts"
+      ],
+      "recommended": "Ongoing care counts once 84 days have passed and a later note documents the symptom.",
+      "encoded_as": "Field conservative_care_end_date (request date when ongoing); 047-C6a.5 evidence text."
+    },
+    {
+      "id": "047-A06",
+      "sections": [
+        "7.7(c)"
+      ],
+      "issue": "12 weeks vs. 3 months",
+      "readings": [
+        "Calendar months",
+        "84 days"
+      ],
+      "recommended": "84 days; durations are day counts, windows are calendar months (7.10, D-019).",
+      "encoded_as": "047-C6a.3 numeric on conservative_care_days."
+    },
+    {
+      "id": "047-A07",
+      "sections": [
+        "7.6"
+      ],
+      "issue": "No KL grade, report says \"severe narrowing\"",
+      "readings": [
+        "Treat as grade 4",
+        "Not shown"
+      ],
+      "recommended": "Not shown, so insufficient. Only complete loss or bone-on-bone maps to grade 4.",
+      "encoded_as": "Field kl_grade_highest derivation."
+    },
+    {
+      "id": "047-A08",
+      "sections": [
+        "3.5"
+      ],
+      "issue": "Two reports in the window disagree on grade",
+      "readings": [
+        "Use the worst",
+        "Use the most recent"
+      ],
+      "recommended": "Most recent, and flag the conflict.",
+      "encoded_as": "047-C5 select=most_recent; flag rule 047-C5-F1."
+    },
+    {
+      "id": "047-A09",
+      "sections": [
+        "4.2(a)",
+        "7.4"
+      ],
+      "issue": "MRI hedges (\"cannot exclude a displaced fragment\")",
+      "readings": [
+        "Lesion shown",
+        "Lesion not shown"
+      ],
+      "recommended": "Not shown; mark insufficient and flag for clinician review.",
+      "encoded_as": "mri_lesion value hedged; flag rule 047-C7-F1."
+    },
+    {
+      "id": "047-A10",
+      "sections": [
+        "4.2(a)"
+      ],
+      "issue": "MRI shows a degenerative tear and a flap component",
+      "readings": [
+        "Degenerative tear excludes it",
+        "Flap qualifies"
+      ],
+      "recommended": "The flap qualifies.",
+      "encoded_as": "047-C7a.2 evidence text."
+    },
+    {
+      "id": "047-A11",
+      "sections": [
+        "2.2",
+        "3.1"
+      ],
+      "issue": "Unspecified-side diagnosis code (M17.10, M17.9)",
+      "readings": [
+        "Outside policy",
+        "In scope, side from the request"
+      ],
+      "recommended": "In scope; a missing side is a request-info gap under 3.1.",
+      "encoded_as": "scope.primary_diagnoses includes unspecified codes; 047-C1."
+    },
+    {
+      "id": "047-A12",
+      "sections": [
+        "3.2"
+      ],
+      "issue": "Bilateral diagnosis code on a one-knee request",
+      "readings": [
+        "Conflict",
+        "Consistent"
+      ],
+      "recommended": "Consistent with either knee.",
+      "encoded_as": "047-C2 evidence text."
+    },
+    {
+      "id": "047-A13",
+      "sections": [
+        "5.1.3"
+      ],
+      "issue": "Clinician calls surgery \"high risk\" but proceeds",
+      "readings": [
+        "Contraindication found",
+        "Not found"
+      ],
+      "recommended": "Not found unless the note says surgery is unsafe now; 'high risk' goes in the brief.",
+      "encoded_as": "047-CI03 evidence text."
+    }
+  ],
+  "source_quote_required": true
+}
