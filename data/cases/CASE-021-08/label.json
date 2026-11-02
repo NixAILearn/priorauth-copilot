@@ -1,0 +1,527 @@
+{
+  "label_schema_version": "1.0",
+  "case_id": "CASE-021-08",
+  "policy_id": "NHP-MP-021",
+  "policy_version": "1.0",
+  "archetype": "missing_documentation",
+  "split": "dev",
+  "expected_route": "request_info",
+  "findings": [
+    {
+      "node_id": "021-C1",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "REQUEST",
+          "quote": "date_of_birth: 1964-12-05"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C2",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D05",
+          "quote": "Wt 183.9 lb, Ht 5'5\", BMI 30.6 kg/m2."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C3a",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Study date: 01/01/2026"
+        },
+        {
+          "doc_id": "D01",
+          "quote": "This was an attended in-laboratory diagnostic polysomnogram."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C3b",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Overall AHI 33.0 events/hour of sleep."
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Scoring followed current AASM scoring rules; hypopneas scored using the 4% oxygen desaturation rule (a 30% or greater drop in airflow for at least 10 seconds with a desaturation of at least 4%)."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C3c",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Overall AHI 33.0 events/hour of sleep."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C3d",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Central apneas: 6"
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Mixed apneas: 2"
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Total apneas + hypopneas: 240"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C3",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Study date: 01/01/2026"
+        },
+        {
+          "doc_id": "D01",
+          "quote": "This was an attended in-laboratory diagnostic polysomnogram."
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Overall AHI 33.0 events/hour of sleep."
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Scoring followed current AASM scoring rules; hypopneas scored using the 4% oxygen desaturation rule (a 30% or greater drop in airflow for at least 10 seconds with a desaturation of at least 4%)."
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Central apneas: 6"
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Mixed apneas: 2"
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Total apneas + hypopneas: 240"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C5a",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Date of service: 07/18/2026"
+        },
+        {
+          "doc_id": "D03",
+          "quote": "Pt seen in person in clinic today for follow-up of OSA."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C5b",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "I recommend hypoglossal nerve stimulation."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C5",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Date of service: 07/18/2026"
+        },
+        {
+          "doc_id": "D03",
+          "quote": "I recommend hypoglossal nerve stimulation."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C4a",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Procedure date: 05/01/2026"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C4b",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Velum: complete anteroposterior collapse; there is no complete concentric collapse at the level of the velum."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C4",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Procedure date: 05/01/2026"
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Velum: complete anteroposterior collapse; there is no complete concentric collapse at the level of the velum."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6b.1",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "CPAP was started on 01/31/2026 with a full face mask."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6b.2",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "She stopped using CPAP in mid-April."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6b.3",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Within weeks she had claustrophobia with the full-face mask, describing a smothering feeling and waking in a panic."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6b.4",
+      "unit_id": null,
+      "status": "insufficient",
+      "citations": [],
+      "missing": [
+        {
+          "doc_item": "6.6",
+          "what": "Record of at least one attempt to fix the PAP problem before the member stopped (mask change or refit, pressure change, humidification or desensitization), with its date.",
+          "forbidden_phrases": [
+            "refit",
+            "mask change",
+            "changed mask",
+            "humidif",
+            "desensitiz",
+            "pressure was lowered",
+            "pressure was reduced",
+            "nasal pillow"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "021-C6b.5-i",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "Days with usage >= 4 hours: 18%"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6b.5",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "Days with usage >= 4 hours: 18%"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6b",
+      "unit_id": null,
+      "status": "insufficient",
+      "citations": [],
+      "missing": [
+        {
+          "doc_item": "6.6",
+          "what": "The missing part of the PAP intolerance record (see 7.15).",
+          "forbidden_phrases": []
+        }
+      ]
+    },
+    {
+      "node_id": "021-C6",
+      "unit_id": null,
+      "status": "insufficient",
+      "citations": [],
+      "missing": [
+        {
+          "doc_item": "6.6",
+          "what": "The missing part of the PAP intolerance record.",
+          "forbidden_phrases": []
+        }
+      ]
+    },
+    {
+      "node_id": "021-C6a.2-i",
+      "unit_id": null,
+      "status": "not_met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "No titration study was performed; she was started on auto-CPAP."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6a.2-ii.1",
+      "unit_id": null,
+      "status": "not_met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "Days with usage >= 4 hours: 18%"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6a.2-ii",
+      "unit_id": null,
+      "status": "not_met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "Days with usage >= 4 hours: 18%"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6a.2",
+      "unit_id": null,
+      "status": "not_met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "No titration study was performed; she was started on auto-CPAP."
+        },
+        {
+          "doc_id": "D02",
+          "quote": "Days with usage >= 4 hours: 18%"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6a",
+      "unit_id": null,
+      "status": "not_met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "No titration study was performed; she was started on auto-CPAP."
+        },
+        {
+          "doc_id": "D02",
+          "quote": "Days with usage >= 4 hours: 18%"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6a.1",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "CPAP was started on 01/31/2026 with a full face mask."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI01",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI02",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI03",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI04",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI05",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI06",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI07",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI08",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI09",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI10",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI11",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI12",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI13",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI14",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-EX01",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-EX02",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-EX03",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    }
+  ],
+  "flags": []
+}

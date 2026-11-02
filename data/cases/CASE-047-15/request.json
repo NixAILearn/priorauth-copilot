@@ -1,0 +1,39 @@
+{
+  "request_schema_version": "1.0",
+  "request_id": "NHP-PA-04715",
+  "received_at": "2026-10-08T09:00:00",
+  "review_type": "standard",
+  "sla_due_at": "2026-10-15T09:00:00",
+  "member": {
+    "synthetic_id": "SYN-0055",
+    "birth_date": "1956-04-19",
+    "sex": "female"
+  },
+  "requesting_provider": {
+    "name": "Dr. Lucan Ardent",
+    "npi": "9448585858",
+    "specialty": "Orthopedic surgery",
+    "organization": "Riverbend Orthopedics"
+  },
+  "service": {
+    "code": "NHP-P-3005",
+    "description": "Arthroscopic debridement of the left knee.",
+    "side": "left",
+    "target_ulcers": [],
+    "units": 1
+  },
+  "diagnoses": [
+    {
+      "code": "M17.12",
+      "role": "primary"
+    }
+  ],
+  "attachments": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05",
+    "D06"
+  ]
+}

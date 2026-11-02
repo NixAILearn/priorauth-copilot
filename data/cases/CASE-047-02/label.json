@@ -1,0 +1,302 @@
+{
+  "label_schema_version": "1.0",
+  "case_id": "CASE-047-02",
+  "policy_id": "NHP-MP-047",
+  "policy_version": "1.0",
+  "archetype": "clean",
+  "split": "dev",
+  "expected_route": "approve_ready",
+  "findings": [
+    {
+      "node_id": "047-C1",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "REQUEST",
+          "quote": "requested_knee_side: left"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C3a",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Since then the knee gets stuck bent and cannot be straightened until it is twisted free, and lately it will not straighten at all."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C3b",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Date of visit: 08/06/2026"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C3",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Since then the knee gets stuck bent and cannot be straightened until it is twisted free, and lately it will not straighten at all."
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Date of visit: 08/06/2026"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C4b",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "Exam date: 07/23/2026"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C4a",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "TECHNIQUE: Standing AP, lateral and sunrise views of the left knee."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C4",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "TECHNIQUE: Standing AP, lateral and sunrise views of the left knee."
+        },
+        {
+          "doc_id": "D02",
+          "quote": "Exam date: 07/23/2026"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C5",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "Osteoarthritis of the left knee, Kellgren-Lawrence grade 2."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C7b",
+      "unit_id": null,
+      "status": "not_met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "No loose body."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C7a.1",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Scan date: 07/11/2026"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C7a.2",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Menisci: There is a displaced bucket-handle tear of the medial meniscus, with the inner fragment flipped into the intercondylar notch (double PCL sign)."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C7a",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Scan date: 07/11/2026"
+        },
+        {
+          "doc_id": "D03",
+          "quote": "Menisci: There is a displaced bucket-handle tear of the medial meniscus, with the inner fragment flipped into the intercondylar notch (double PCL sign)."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C7",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Scan date: 07/11/2026"
+        },
+        {
+          "doc_id": "D03",
+          "quote": "Menisci: There is a displaced bucket-handle tear of the medial meniscus, with the inner fragment flipped into the intercondylar notch (double PCL sign)."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C6b.1",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "On exam the knee lacks the last 20 degrees of extension, actively and passively, a new mechanical block, with a springy end feel."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C6b.2",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Exam date: 08/06/2026."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C6b",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "On exam the knee lacks the last 20 degrees of extension, actively and passively, a new mechanical block, with a springy end feel."
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Exam date: 08/06/2026."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C6",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "On exam the knee lacks the last 20 degrees of extension, actively and passively, a new mechanical block, with a springy end feel."
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Exam date: 08/06/2026."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C2",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Ms. Northcote is a 67 y/o F with left knee pain for about two years, gradually worse."
+        },
+        {
+          "doc_id": "D02",
+          "quote": "Exam: LEFT KNEE, 3 views"
+        },
+        {
+          "doc_id": "D03",
+          "quote": "Exam: MRI LEFT KNEE without contrast"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-CI01",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "047-CI02",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "047-CI03",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "047-EX01",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "047-EX02",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "047-EX03",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    }
+  ],
+  "flags": []
+}

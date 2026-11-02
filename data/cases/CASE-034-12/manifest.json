@@ -1,0 +1,54 @@
+{
+  "case_id": "CASE-034-12",
+  "generator_version": "0.1.0",
+  "writer": "claude-code-session",
+  "case_spec_sha256": "81e2d8c931242c58107bd21dca213d7506a7c7f2756698e48a8c9b466b12bb87",
+  "brief_sha256": "57e9ddc9f287cc9faa8f4086cab309c3828280f75583efa667df0c308fad51f9",
+  "documents": {
+    "D01": {
+      "prompt_sha256": "c070e8899bd59cb3689815daa212cc7bb5e3b5e21b8f4d6a7f67cfa25b178952",
+      "text_sha256": "277526b48a5562d4c2781ce3ccac256c7d690f8e2914dfd7405a37057aaad639"
+    },
+    "D02": {
+      "prompt_sha256": "d4788fced19d319f0fb5996928a0c98ba984ebb96eed748ee5d4a2b4b7235bea",
+      "text_sha256": "e657f16e916bc98f44487cb2e19d835a4a326d43433d74f0a6dd69059e0ebf0f"
+    },
+    "D03": {
+      "prompt_sha256": "66d5d8c81ab2751e6ca4c24cb15e22c8e42078f2db0c54b90c73b4d2a93012e4",
+      "text_sha256": "0f93639b3335956f04b5fb5f85eae0aabcefb4d11837a5f67d8c4d46765b2ff3"
+    },
+    "D04": {
+      "prompt_sha256": "4fad7cbcee992d86ed24bbaf18b721f6113bcdcd59a618a296f85cbe07929754",
+      "text_sha256": "e26559f0ff63f127984fbc37b53af714467c17dcab3f87851b11b096adcec1c1"
+    },
+    "D05": {
+      "prompt_sha256": "4a8b77ccbc48d5ee3e0dc2358d92de1503411b611589fafd9c1fbe1df2149740",
+      "text_sha256": "cd3044f91c5fa1888db0020255413ffaa0c09a89a5372b6a8fd9a817ebd0ba26"
+    },
+    "D06": {
+      "prompt_sha256": "4615bc47a546639785c35fab370092cbd1ff6e8f64adebdfe91d28122d3e47df",
+      "text_sha256": "dc76f47f7d9773ebdc5c29149ecd3b6611ed491bd8c2e03d9146cf25c33e2afd"
+    },
+    "D07": {
+      "prompt_sha256": "478706b00a6da489f97413354f285af2a336261c6ba0051883e3d9e7627422ef",
+      "text_sha256": "951ec63a7f7b13c1d78c7cf219821c0ceb4e6e30c9f536e76e84cba2c726b9c6"
+    },
+    "D08": {
+      "prompt_sha256": "e9df0e078a0f3f94cd574cd8eeac90fe6e921dc7006edf764e74a6852b7a3f0f",
+      "text_sha256": "87ce771ab50e9be3f64705f96e72adb789c197b3e563b90a6e4cc3ac7c5d42e5"
+    },
+    "D09": {
+      "prompt_sha256": "2138ba8d6d1a61b796346344a57d4cf3d8ebbbaf558068fddd339a811519c935",
+      "text_sha256": "97242a8759750ea5448e9791443f4058c3ddda31801d0d6705a6817f29d85ebf"
+    },
+    "D10": {
+      "prompt_sha256": "5f63f73d0f932b0417bd66ef1ba6146ee50f6ca6865692e8a3e49c4df351bc33",
+      "text_sha256": "176bda7667b2bc6ac9425babf3f317ea721041f8397c5d22cb4a292773c84531"
+    },
+    "D11": {
+      "prompt_sha256": "27353863589c00b71acd461e053fbeefc0bc6f7a2e57a4cc05e1d918c020ef32",
+      "text_sha256": "f10d05ef3761a7ef3fe30a3bf94c181da287db498cecb17d3f4796452c4a6063"
+    }
+  },
+  "synthea_seed": null
+}

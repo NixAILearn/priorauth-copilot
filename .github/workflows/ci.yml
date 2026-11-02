@@ -33,4 +33,7 @@ jobs:
       - name: Scan for licensed code sets (CPT, CDT, UB-04)
         run: python scripts/scan_codes.py
 
+      - name: Generated cases still match their specs (D-036, D-039)
+        run: python -m generator check
+
       # Week 4: add `make eval` on the 10-case smoke set (safety gate only, D-006).

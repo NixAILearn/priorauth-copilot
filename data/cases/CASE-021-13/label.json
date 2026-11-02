@@ -1,0 +1,467 @@
+{
+  "label_schema_version": "1.0",
+  "case_id": "CASE-021-13",
+  "policy_id": "NHP-MP-021",
+  "policy_version": "1.0",
+  "archetype": "clearly_not_met",
+  "split": "test",
+  "expected_route": "clinician_review",
+  "findings": [
+    {
+      "node_id": "021-C1",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "REQUEST",
+          "quote": "date_of_birth: 1958-01-12"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C2",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D05",
+          "quote": "Wt 207.7 lb, Ht 5'10\", BMI 29.8 kg/m2."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C3a",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Study date: 12/05/2025"
+        },
+        {
+          "doc_id": "D01",
+          "quote": "This was an attended in-laboratory diagnostic polysomnogram."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C3b",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Overall AHI 33.0 events/hour of sleep."
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Scoring followed current AASM scoring rules; hypopneas scored using the 4% oxygen desaturation rule (a 30% or greater drop in airflow for at least 10 seconds with a desaturation of at least 4%)."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C3c",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Overall AHI 33.0 events/hour of sleep."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C3d",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Central apneas: 6"
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Mixed apneas: 2"
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Total apneas + hypopneas: 240"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C3",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Study date: 12/05/2025"
+        },
+        {
+          "doc_id": "D01",
+          "quote": "This was an attended in-laboratory diagnostic polysomnogram."
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Overall AHI 33.0 events/hour of sleep."
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Scoring followed current AASM scoring rules; hypopneas scored using the 4% oxygen desaturation rule (a 30% or greater drop in airflow for at least 10 seconds with a desaturation of at least 4%)."
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Central apneas: 6"
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Mixed apneas: 2"
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Total apneas + hypopneas: 240"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C5a",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Date of service: 06/21/2026"
+        },
+        {
+          "doc_id": "D03",
+          "quote": "Pt seen in person in clinic today for follow-up of OSA and CPAP intolerance."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C5b",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "I recommend hypoglossal nerve stimulation if ENT believes it can still help, and refer back to ENT."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C5",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Date of service: 06/21/2026"
+        },
+        {
+          "doc_id": "D03",
+          "quote": "I recommend hypoglossal nerve stimulation if ENT believes it can still help, and refer back to ENT."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C4a",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Procedure date: 04/05/2026"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C4b",
+      "unit_id": null,
+      "status": "not_met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Velum: the soft palate showed complete concentric collapse at the level of the velum on every observed cycle, with lateral wall involvement."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C4",
+      "unit_id": null,
+      "status": "not_met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Procedure date: 04/05/2026"
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Velum: the soft palate showed complete concentric collapse at the level of the velum on every observed cycle, with lateral wall involvement."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6b.1",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "CPAP was started on 01/04/2026 with a full face mask."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6b.2",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "The change helped briefly, but he stopped using CPAP in March and has not restarted."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6b.3",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "From the first weeks he had mask discomfort and persistent air leak, waking with a dry mouth and sore nose."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6b.4",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "He was refit with a nasal pillow mask on 02/01/2026, and the supplier adjusted settings remotely."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6b.5-i",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "Days with usage >= 4 hours: 21%"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6b.5",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "Days with usage >= 4 hours: 21%"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6b",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "CPAP was started on 01/04/2026 with a full face mask."
+        },
+        {
+          "doc_id": "D03",
+          "quote": "The change helped briefly, but he stopped using CPAP in March and has not restarted."
+        },
+        {
+          "doc_id": "D03",
+          "quote": "From the first weeks he had mask discomfort and persistent air leak, waking with a dry mouth and sore nose."
+        },
+        {
+          "doc_id": "D03",
+          "quote": "He was refit with a nasal pillow mask on 02/01/2026, and the supplier adjusted settings remotely."
+        },
+        {
+          "doc_id": "D02",
+          "quote": "Days with usage >= 4 hours: 21%"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-C6",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "CPAP was started on 01/04/2026 with a full face mask."
+        },
+        {
+          "doc_id": "D03",
+          "quote": "The change helped briefly, but he stopped using CPAP in March and has not restarted."
+        },
+        {
+          "doc_id": "D03",
+          "quote": "From the first weeks he had mask discomfort and persistent air leak, waking with a dry mouth and sore nose."
+        },
+        {
+          "doc_id": "D03",
+          "quote": "He was refit with a nasal pillow mask on 02/01/2026, and the supplier adjusted settings remotely."
+        },
+        {
+          "doc_id": "D02",
+          "quote": "Days with usage >= 4 hours: 21%"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI01",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI02",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI03",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI04",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI05",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI06",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI07",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI08",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI09",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI10",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI11",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI12",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI13",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-CI14",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-EX01",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-EX02",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "021-EX03",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    }
+  ],
+  "flags": []
+}

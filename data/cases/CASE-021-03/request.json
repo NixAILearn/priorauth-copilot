@@ -1,0 +1,38 @@
+{
+  "request_schema_version": "1.0",
+  "request_id": "NHP-PA-02103",
+  "received_at": "2026-08-26T09:00:00",
+  "review_type": "standard",
+  "sla_due_at": "2026-09-02T09:00:00",
+  "member": {
+    "synthetic_id": "SYN-0005",
+    "birth_date": "1968-11-30",
+    "sex": "male"
+  },
+  "requesting_provider": {
+    "name": "Dr. Lucan Kittredge",
+    "npi": "9684823534",
+    "specialty": "Otolaryngology",
+    "organization": "Lakemont ENT Associates"
+  },
+  "service": {
+    "code": "NHP-P-1042",
+    "description": "First implant of a complete hypoglossal nerve stimulator system for obstructive sleep apnea.",
+    "side": null,
+    "target_ulcers": [],
+    "units": 1
+  },
+  "diagnoses": [
+    {
+      "code": "G47.33",
+      "role": "primary"
+    }
+  ],
+  "attachments": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05"
+  ]
+}

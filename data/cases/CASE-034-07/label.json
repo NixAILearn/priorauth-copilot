@@ -1,0 +1,555 @@
+{
+  "label_schema_version": "1.0",
+  "case_id": "CASE-034-07",
+  "policy_id": "NHP-MP-034",
+  "policy_version": "1.0",
+  "archetype": "missing_documentation",
+  "split": "dev",
+  "expected_route": "request_info",
+  "findings": [
+    {
+      "node_id": "034-C1",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Type 2 diabetes mellitus with diabetic foot ulcer (E11.621), right plantar first metatarsal head (L97.512)."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C2",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "Collected: 08/25/2026 10:42"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C3",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "RESULT: Hemoglobin A1c 8.4 % (H)"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C4",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "REQUEST",
+          "quote": "ulcer_laterality: right"
+        },
+        {
+          "doc_id": "REQUEST",
+          "quote": "ulcer_site: plantar first metatarsal head"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C5",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D09",
+          "quote": "Location | right plantar first metatarsal head"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Tissue depth | Full thickness; subcutaneous fat visible in the wound bed"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Bone | The wound has no exposed bone and does not probe to bone"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.6 cm x 1.9 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C5a",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D09",
+          "quote": "Location | right plantar first metatarsal head"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C5b",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D09",
+          "quote": "Tissue depth | Full thickness; subcutaneous fat visible in the wound bed"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C5c",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D09",
+          "quote": "Bone | The wound has no exposed bone and does not probe to bone"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C5d",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.6 cm x 1.9 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C6",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Baseline measurement for standard care: today's measurement is the starting point for the standard wound care course."
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Size (L x W) | 3.0 cm x 2.0 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C7",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Baseline measurement for standard care: today's measurement is the starting point for the standard wound care course."
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Size (L x W) | 3.0 cm x 2.0 cm"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.6 cm x 1.9 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C8",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Size (L x W) | 3.0 cm x 2.0 cm"
+        },
+        {
+          "doc_id": "D05",
+          "quote": "Size (L x W) | 3.0 cm x 1.9 cm"
+        },
+        {
+          "doc_id": "D06",
+          "quote": "Size (L x W) | 2.9 cm x 2.0 cm"
+        },
+        {
+          "doc_id": "D07",
+          "quote": "Size (L x W) | 2.8 cm x 1.9 cm"
+        },
+        {
+          "doc_id": "D08",
+          "quote": "Size (L x W) | 2.7 cm x 1.9 cm"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.6 cm x 1.9 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C9",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Size (L x W) | 3.0 cm x 2.0 cm"
+        },
+        {
+          "doc_id": "D05",
+          "quote": "Size (L x W) | 3.0 cm x 1.9 cm"
+        },
+        {
+          "doc_id": "D06",
+          "quote": "Size (L x W) | 2.9 cm x 2.0 cm"
+        },
+        {
+          "doc_id": "D07",
+          "quote": "Size (L x W) | 2.8 cm x 1.9 cm"
+        },
+        {
+          "doc_id": "D08",
+          "quote": "Size (L x W) | 2.7 cm x 1.9 cm"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.6 cm x 1.9 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C10",
+      "unit_id": "U1",
+      "status": "insufficient",
+      "citations": [],
+      "missing": [
+        {
+          "doc_item": "6.6",
+          "what": "Offloading record for the right plantar ulcer: device or method, date started, and whether it was in use at each visit from 2026-09-08 to 2026-10-13.",
+          "forbidden_phrases": [
+            "offload",
+            "off-load",
+            "boot",
+            "total contact cast",
+            "walker",
+            "felted foam",
+            "post-op shoe",
+            "surgical shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "034-C10a",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D10",
+          "quote": "09/08/2026 | 3.0 x 2.0 | Foam dressing applied | Sharp debridement | J. Galbrecht NP"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C10b",
+      "unit_id": "U1",
+      "status": "insufficient",
+      "citations": [],
+      "missing": [
+        {
+          "doc_item": "6.6",
+          "what": "Offloading record: device or method, start date and use at each visit.",
+          "forbidden_phrases": [
+            "offload",
+            "off-load",
+            "boot",
+            "total contact cast",
+            "walker",
+            "felted foam",
+            "post-op shoe",
+            "surgical shoe"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "034-C11",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D09",
+          "quote": "Infection | No signs of infection: no erythema, warmth, induration, purulence or odor"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C12",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Right ABI: 0.96"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C12a",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Right ABI: 0.96"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C13",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Right ABI: 0.96"
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Baseline measurement for standard care: today's measurement is the starting point for the standard wound care course."
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Size (L x W) | 3.0 cm x 2.0 cm"
+        },
+        {
+          "doc_id": "D05",
+          "quote": "Size (L x W) | 3.0 cm x 1.9 cm"
+        },
+        {
+          "doc_id": "D06",
+          "quote": "Size (L x W) | 2.9 cm x 2.0 cm"
+        },
+        {
+          "doc_id": "D07",
+          "quote": "Size (L x W) | 2.8 cm x 1.9 cm"
+        },
+        {
+          "doc_id": "D08",
+          "quote": "Size (L x W) | 2.7 cm x 1.9 cm"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.6 cm x 1.9 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C13a",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Right ABI: 0.96"
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Baseline measurement for standard care: today's measurement is the starting point for the standard wound care course."
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Size (L x W) | 3.0 cm x 2.0 cm"
+        },
+        {
+          "doc_id": "D05",
+          "quote": "Size (L x W) | 3.0 cm x 1.9 cm"
+        },
+        {
+          "doc_id": "D06",
+          "quote": "Size (L x W) | 2.9 cm x 2.0 cm"
+        },
+        {
+          "doc_id": "D07",
+          "quote": "Size (L x W) | 2.8 cm x 1.9 cm"
+        },
+        {
+          "doc_id": "D08",
+          "quote": "Size (L x W) | 2.7 cm x 1.9 cm"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.6 cm x 1.9 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C13a.1",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Right ABI: 0.96"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C13a.2",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Baseline measurement for standard care: today's measurement is the starting point for the standard wound care course."
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Size (L x W) | 3.0 cm x 2.0 cm"
+        },
+        {
+          "doc_id": "D05",
+          "quote": "Size (L x W) | 3.0 cm x 1.9 cm"
+        },
+        {
+          "doc_id": "D06",
+          "quote": "Size (L x W) | 2.9 cm x 2.0 cm"
+        },
+        {
+          "doc_id": "D07",
+          "quote": "Size (L x W) | 2.8 cm x 1.9 cm"
+        },
+        {
+          "doc_id": "D08",
+          "quote": "Size (L x W) | 2.7 cm x 1.9 cm"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.6 cm x 1.9 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C14",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D10",
+          "quote": "09/08/2026 | 3.0 x 2.0 | Foam dressing applied | Sharp debridement | J. Galbrecht NP"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C14a",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D10",
+          "quote": "09/08/2026 | 3.0 x 2.0 | Foam dressing applied | Sharp debridement | J. Galbrecht NP"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-EX01",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [
+        {
+          "doc_id": "REQUEST",
+          "quote": "applications_planned: 4"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-CI01",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-CI02",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-CI03",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-CI04",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-CI05",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-EX02",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-EX03",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-EX04",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-EX05",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    }
+  ],
+  "flags": []
+}

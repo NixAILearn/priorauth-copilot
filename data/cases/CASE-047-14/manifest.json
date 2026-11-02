@@ -1,0 +1,34 @@
+{
+  "case_id": "CASE-047-14",
+  "generator_version": "0.1.0",
+  "writer": "claude-code-session",
+  "case_spec_sha256": "a53c963ab521ce5ae44ad6081ecb47d4f5177b957039b25d204f830c4bdd76a8",
+  "brief_sha256": "008f79933c790bc6c7338f691008bff29e382659a5bc2c549e8a1cdfa244159f",
+  "documents": {
+    "D01": {
+      "prompt_sha256": "ec2ad15ec264b76c09488a021fefecf20935e7cdec978112c2a97df90730a9a1",
+      "text_sha256": "e9aee7c42ea1f7cbb6475e5999532e00ba0d594e1c7fb127d96edde1a0ad13b3"
+    },
+    "D02": {
+      "prompt_sha256": "f407e1950e394fdad82a3a1ff984029d01495514e5bb8cb5fb8f3c3622cdb407",
+      "text_sha256": "f7be9ed6194956a303dd20e93b4a7a3da8d78e49998e532bd94fe13deacf2cbd"
+    },
+    "D03": {
+      "prompt_sha256": "0c4d8a321b5425ff925a68ad40b214f0e701b629977428b7becf6e98bff345c0",
+      "text_sha256": "93be2d4b9975096f17ed1ba77b9349dc42ba7178336ae9e2072fdb7c50686ad1"
+    },
+    "D04": {
+      "prompt_sha256": "47c580a804cbb0c537215c9040d0f367c01f2c19b8f13adcb68b7ec156d5f4e3",
+      "text_sha256": "c9ad2b701eb2830ecb662fabdb9cf41706d319a2cd875264c738cab8dd25c5d9"
+    },
+    "D05": {
+      "prompt_sha256": "066f3f70003e3ec6c1ed4f643a567fc9860db2a57902312ace0b29129385ed1d",
+      "text_sha256": "e45b7e700bee11edca67b456f8e52b80bc2f89526c33fe664137d0d91b3f28b2"
+    },
+    "D06": {
+      "prompt_sha256": "886f5ed2f2ce11dc99fd3502a1b115ddc33fc2c3e2121c18ca53ecd9619a71be",
+      "text_sha256": "bd724796d1007142de1caf38e0f994419ea3674dab2c5ec26d615ee8bb98fcb7"
+    }
+  },
+  "synthea_seed": null
+}
