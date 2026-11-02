@@ -1,0 +1,451 @@
+{
+  "case_schema_version": "1.0",
+  "case_id": "CASE-047-12",
+  "policy_id": "NHP-MP-047",
+  "policy_version": "1.0",
+  "archetype": "clearly_not_met",
+  "variant": "demo_pain_alone",
+  "split": "dev",
+  "smoke": true,
+  "purpose": "Demo case 3: a knee arthroscopy request for pain alone. The copilot must not deny; it routes to clinician review with a brief that names 3.3, 4.1 and 4.2 and what the provider would need to show.",
+  "review_status": "draft",
+  "patient": {
+    "synthetic_id": "SYN-0003",
+    "sex": "female",
+    "date_of_birth": "1961-05-03",
+    "race": "asian",
+    "ethnicity": "nonhispanic",
+    "background_conditions": [
+      "M17.11",
+      "I10",
+      "E78.5"
+    ],
+    "summary": "65-year-old woman with right knee osteoarthritis and two years of pain despite 12 weeks of PT and naproxen; no locking or catching."
+  },
+  "request": {
+    "request_date": "2026-10-28",
+    "review_type": "standard",
+    "service_code": "NHP-P-3005",
+    "primary_diagnosis": "M17.11",
+    "secondary_diagnoses": [],
+    "requested_side": "right",
+    "requesting_specialty": "Orthopedic surgery",
+    "service_details": "Arthroscopic debridement of the right knee."
+  },
+  "documents": [
+    {
+      "id": "D01",
+      "type": "orthopedic_note",
+      "title": "Orthopedic surgery office visit",
+      "date": "2026-10-14",
+      "author_role": "Orthopedic surgeon",
+      "satisfies": [
+        "6.2",
+        "6.7"
+      ],
+      "length": "long",
+      "noise": [
+        "templated_text",
+        "irrelevant_history",
+        "abbreviations"
+      ],
+      "guidance": "Right knee pain for two years, worse on stairs, morning stiffness under 30 minutes, crepitus; explicitly denies locking or catching; finished PT and stopped naproxen in August; exam with small effusion, medial joint line tenderness, full extension; reviews standing radiographs; past surgical history (cholecystectomy only); no MRI obtained; plan requests arthroscopic debridement because pain persists."
+    },
+    {
+      "id": "D02",
+      "type": "radiograph_report",
+      "title": "Right knee radiographs, standing",
+      "date": "2026-09-30",
+      "author_role": "Radiologist",
+      "satisfies": [
+        "6.4"
+      ],
+      "length": "short",
+      "noise": [
+        "templated_text"
+      ],
+      "guidance": "Standing AP, lateral and sunrise views of the right knee: moderate medial joint space narrowing with osteophytes, Kellgren-Lawrence grade 2, no loose body, no fracture."
+    },
+    {
+      "id": "D03",
+      "type": "physical_therapy_note",
+      "title": "Physical therapy discharge summary",
+      "date": "2026-08-19",
+      "author_role": "Physical therapist",
+      "satisfies": [
+        "6.6"
+      ],
+      "length": "medium",
+      "noise": [
+        "templated_text"
+      ],
+      "guidance": "12 supervised visits from 05/20/2026 to 08/19/2026: quadriceps strengthening, gait training; modest gains; pain persists; no mechanical symptoms reported."
+    },
+    {
+      "id": "D04",
+      "type": "medication_list",
+      "title": "Current medication list",
+      "date": "2026-10-14",
+      "author_role": "Orthopedic clinic",
+      "satisfies": [
+        "6.6"
+      ],
+      "length": "short",
+      "noise": [
+        "old_values"
+      ],
+      "guidance": "Lisinopril, atorvastatin, acetaminophen as needed; naproxen listed as discontinued 08/19/2026 for stomach upset."
+    },
+    {
+      "id": "D05",
+      "type": "office_visit_note",
+      "title": "Primary care visit for knee pain",
+      "date": "2026-05-20",
+      "author_role": "Primary care physician",
+      "satisfies": [
+        "6.2",
+        "6.6"
+      ],
+      "length": "medium",
+      "noise": [
+        "copy_forward"
+      ],
+      "guidance": "Right knee osteoarthritis pain; starts naproxen 500 mg twice daily and refers to physical therapy; no locking or catching asked about or described."
+    }
+  ],
+  "facts": [
+    {
+      "id": "F01",
+      "field": "requested_knee_side",
+      "date": "2026-10-28",
+      "value": "right",
+      "doc_id": "REQUEST",
+      "statement": "Request names the right knee."
+    },
+    {
+      "id": "F02",
+      "field": "evidence_knee_side",
+      "date": "2026-10-14",
+      "value": "right",
+      "doc_id": "D01",
+      "anchor": "right knee",
+      "statement": "Office note describes the right knee."
+    },
+    {
+      "id": "F03",
+      "field": "evidence_knee_side",
+      "date": "2026-09-30",
+      "value": "right",
+      "doc_id": "D02",
+      "anchor": "RIGHT KNEE",
+      "statement": "Radiograph report describes the right knee."
+    },
+    {
+      "id": "F04",
+      "field": "mechanical_symptom",
+      "date": "2026-10-14",
+      "value": "non_qualifying",
+      "doc_id": "D01",
+      "anchor": "pain, morning stiffness and crepitus",
+      "statement": "Symptoms are pain, stiffness and crepitus only."
+    },
+    {
+      "id": "F05",
+      "date": "2026-10-14",
+      "doc_id": "D01",
+      "anchor": "She denies locking or catching.",
+      "statement": "Explicitly no mechanical symptom."
+    },
+    {
+      "id": "F06",
+      "field": "symptom_note_date",
+      "date": "2026-10-14",
+      "doc_id": "D01",
+      "anchor": "Date of visit: 10/14/2026",
+      "statement": "Date of the symptom note."
+    },
+    {
+      "id": "F07",
+      "field": "xray_weight_bearing",
+      "date": "2026-09-30",
+      "value": "stated",
+      "doc_id": "D02",
+      "anchor": "Standing AP, lateral and sunrise views",
+      "statement": "Views were weight-bearing."
+    },
+    {
+      "id": "F08",
+      "field": "xray_date",
+      "date": "2026-09-30",
+      "doc_id": "D02",
+      "anchor": "Exam date: 09/30/2026",
+      "statement": "Radiograph date."
+    },
+    {
+      "id": "F09",
+      "field": "kl_grade_reported",
+      "date": "2026-09-30",
+      "value": 2,
+      "unit": "grade 0-4",
+      "doc_id": "D02",
+      "anchor": "Kellgren-Lawrence grade 2",
+      "statement": "Reported KL grade."
+    },
+    {
+      "id": "F10",
+      "field": "kl_grade_highest",
+      "date": "2026-09-30",
+      "value": 2,
+      "unit": "grade 0-4",
+      "doc_id": "DERIVED",
+      "statement": "Highest compartment grade is 2.",
+      "derived_from": [
+        "F09"
+      ]
+    },
+    {
+      "id": "F11",
+      "field": "xray_loose_body",
+      "date": "2026-09-30",
+      "value": false,
+      "doc_id": "D02",
+      "anchor": "No loose body",
+      "statement": "No loose body on the radiograph."
+    },
+    {
+      "id": "F12",
+      "field": "exercise_therapy",
+      "date": "2026-08-19",
+      "value": "supervised_pt",
+      "doc_id": "D03",
+      "anchor": "12 supervised physical therapy visits",
+      "statement": "Supervised physical therapy completed."
+    },
+    {
+      "id": "F13",
+      "field": "pharmacologic_measure",
+      "date": "2026-05-20",
+      "value": "nsaid",
+      "doc_id": "D05",
+      "anchor": "naproxen 500 mg twice daily",
+      "statement": "NSAID started."
+    },
+    {
+      "id": "F14",
+      "field": "conservative_care_start_date",
+      "date": "2026-05-20",
+      "doc_id": "D03",
+      "anchor": "Start of care: 05/20/2026",
+      "statement": "Conservative care started with PT and naproxen."
+    },
+    {
+      "id": "F15",
+      "field": "conservative_care_end_date",
+      "date": "2026-08-19",
+      "doc_id": "D04",
+      "anchor": "discontinued 08/19/2026",
+      "statement": "Last measure ended: naproxen stopped and PT discharged."
+    },
+    {
+      "id": "F16",
+      "field": "conservative_care_days",
+      "date": "2026-08-19",
+      "value": 91,
+      "unit": "days",
+      "doc_id": "DERIVED",
+      "statement": "2026-05-20 to 2026-08-19 is 91 days.",
+      "derived_from": [
+        "F14",
+        "F15"
+      ]
+    },
+    {
+      "id": "F17",
+      "date": "2026-10-14",
+      "doc_id": "D01",
+      "anchor": "full extension",
+      "statement": "Exam shows the knee straightens fully: not locked."
+    },
+    {
+      "id": "F18",
+      "date": "2026-10-14",
+      "doc_id": "D01",
+      "anchor": "No MRI has been obtained",
+      "statement": "No MRI has been done."
+    }
+  ],
+  "findings": [
+    {
+      "node_id": "047-C1",
+      "status": "met",
+      "facts": [
+        "F01"
+      ],
+      "rationale": "Right knee on the request."
+    },
+    {
+      "node_id": "047-C2",
+      "status": "met",
+      "facts": [
+        "F02",
+        "F03"
+      ],
+      "rationale": "Every document used is of the right knee."
+    },
+    {
+      "node_id": "047-C3",
+      "status": "not_met",
+      "facts": [
+        "F04",
+        "F05"
+      ],
+      "rationale": "Pain, stiffness and crepitus are not mechanical symptoms (7.3); locking and catching are explicitly denied."
+    },
+    {
+      "node_id": "047-C3a",
+      "status": "not_met",
+      "facts": [
+        "F04",
+        "F05"
+      ],
+      "rationale": "No qualifying symptom described."
+    },
+    {
+      "node_id": "047-C3b",
+      "status": "met",
+      "facts": [
+        "F06"
+      ],
+      "rationale": "The note is inside the 3-month window."
+    },
+    {
+      "node_id": "047-C4",
+      "status": "met",
+      "facts": [
+        "F07",
+        "F08"
+      ],
+      "rationale": "Standing radiographs 4 weeks before the request date."
+    },
+    {
+      "node_id": "047-C4a",
+      "status": "met",
+      "facts": [
+        "F07"
+      ],
+      "rationale": "Standing views stated."
+    },
+    {
+      "node_id": "047-C4b",
+      "status": "met",
+      "facts": [
+        "F08"
+      ],
+      "rationale": "Inside 12 months."
+    },
+    {
+      "node_id": "047-C5",
+      "status": "met",
+      "facts": [
+        "F09",
+        "F10"
+      ],
+      "rationale": "KL 2 is no more than 3."
+    },
+    {
+      "node_id": "047-C6",
+      "status": "not_met",
+      "facts": [
+        "F04",
+        "F05",
+        "F17"
+      ],
+      "rationale": "Care was completed but no mechanical symptom is documented after it; the knee is not locked."
+    },
+    {
+      "node_id": "047-C6a",
+      "status": "not_met",
+      "facts": [
+        "F12",
+        "F13",
+        "F16",
+        "F05"
+      ],
+      "rationale": "Fails only on 4.1(a)'s requirement that a mechanical symptom is still documented after care."
+    },
+    {
+      "node_id": "047-C6a.3",
+      "status": "met",
+      "facts": [
+        "F14",
+        "F15",
+        "F16"
+      ],
+      "rationale": "91 days is at least 84."
+    },
+    {
+      "node_id": "047-C6a.5",
+      "status": "not_met",
+      "facts": [
+        "F04",
+        "F05"
+      ],
+      "rationale": "The only note after care ended denies locking and catching."
+    },
+    {
+      "node_id": "047-C6b",
+      "status": "not_met",
+      "facts": [
+        "F17"
+      ],
+      "rationale": "Exam shows full extension."
+    },
+    {
+      "node_id": "047-C6b.1",
+      "status": "not_met",
+      "facts": [
+        "F17"
+      ],
+      "rationale": "No block to straightening on exam."
+    },
+    {
+      "node_id": "047-C7",
+      "status": "not_met",
+      "facts": [
+        "F11",
+        "F18"
+      ],
+      "rationale": "No imaging shows a lesion that can block the joint."
+    },
+    {
+      "node_id": "047-C7a",
+      "status": "not_met",
+      "facts": [
+        "F18"
+      ],
+      "rationale": "No MRI was obtained; the record says so, so this is not met rather than missing (D-029)."
+    },
+    {
+      "node_id": "047-C7a.2",
+      "status": "not_met",
+      "facts": [
+        "F18"
+      ],
+      "rationale": "No MRI report describes a mechanical lesion."
+    },
+    {
+      "node_id": "047-C7b",
+      "status": "not_met",
+      "facts": [
+        "F11"
+      ],
+      "rationale": "The standing radiograph reports no loose body."
+    }
+  ],
+  "flags": [],
+  "expected_route": "clinician_review",
+  "author_notes": [
+    "Matches the kickoff demo script: pain alone, no locking or catching.",
+    "Every non-mechanical symptom word from 7.3 that fits naturally (pain, stiffness, crepitus, swelling) should appear so the case tests the closed list (D-015)."
+  ]
+}
