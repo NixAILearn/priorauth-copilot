@@ -5,9 +5,9 @@
   "effective_date": "2026-01-01",
   "source_file": "policies/source/NHP-MP-047.md",
   "source_sha256": "75fb792fa401e226b23217b95d3e015cdc8a512aa5a8730826f4a2f4a3bf5b4f",
-  "review_status": "draft",
-  "reviewed_by": null,
-  "reviewed_date": null,
+  "review_status": "reviewed",
+  "reviewed_by": "Nick",
+  "reviewed_date": "2026-11-02",
   "scope": {
     "service_code": "NHP-P-3005",
     "primary_diagnoses": [
