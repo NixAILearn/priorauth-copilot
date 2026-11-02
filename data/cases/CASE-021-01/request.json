@@ -1,0 +1,42 @@
+{
+  "request_schema_version": "1.0",
+  "request_id": "NHP-PA-02101",
+  "received_at": "2026-10-15T09:00:00",
+  "review_type": "standard",
+  "sla_due_at": "2026-10-22T09:00:00",
+  "member": {
+    "synthetic_id": "SYN-0001",
+    "birth_date": "1958-07-22",
+    "sex": "male"
+  },
+  "requesting_provider": {
+    "name": "Dr. Kestrel Marchetti-Lowe",
+    "npi": "9114681346",
+    "specialty": "Otolaryngology",
+    "organization": "Lakemont ENT Associates"
+  },
+  "service": {
+    "code": "NHP-P-1042",
+    "description": "First implant of a complete hypoglossal nerve stimulator system for obstructive sleep apnea.",
+    "side": null,
+    "target_ulcers": [],
+    "units": 1
+  },
+  "diagnoses": [
+    {
+      "code": "G47.33",
+      "role": "primary"
+    },
+    {
+      "code": "I10",
+      "role": "secondary"
+    }
+  ],
+  "attachments": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05"
+  ]
+}

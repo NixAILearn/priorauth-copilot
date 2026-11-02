@@ -65,6 +65,7 @@ def test_request_json_valid(cid):
     PriorAuthRequest.model_validate_json(req.model_dump_json())
     assert people.npi_is_valid(req.requesting_provider.npi)
     assert req.requesting_provider.npi.startswith("9")
+    assert req.requesting_provider.name in core.roster(case).values()  # requester wrote a document
 
 
 def first_anchor_fact(case):
@@ -134,7 +135,8 @@ def test_injection_is_inserted_once():
 def test_sentence_for_picks_the_sentence_and_cell():
     text = "Seen today. Her BMI 31.2 was stable. Plan: follow up.\n| AHI | AHI 38.0 events/hour |\n"
     assert core.sentence_for(text, "BMI 31.2") == "Her BMI 31.2 was stable."
-    assert core.sentence_for(text, "AHI 38.0") == "AHI 38.0 events/hour"
+    assert core.sentence_for("Ms. Yardley is 65. Next.", "is 65") == "Ms. Yardley is 65."
+    assert core.sentence_for(text, "AHI 38.0") == "AHI | AHI 38.0 events/hour"
 
 
 def test_npi():

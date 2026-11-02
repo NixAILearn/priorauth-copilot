@@ -61,12 +61,13 @@ LAST = [
     "Whitlock-Abara",
     "Yardley",
 ]
-ORGS = {
-    "NHP-MP-021": ["Cedar Hollow Sleep Center", "Lakemont ENT Associates"],
-    "NHP-MP-034": ["Lakemont Wound Care Clinic", "Harborview Vascular Lab"],
-    "NHP-MP-047": ["Riverbend Orthopedics", "Fairhaven Physical Therapy"],
-}
 PRIMARY_CARE = "Willow Street Primary Care"
+# The requesting clinician is the case's author in this role, at this organization.
+REQUESTER = {
+    "Otolaryngology": ("Otolaryngologist", "Lakemont ENT Associates"),
+    "Orthopedic surgery": ("Orthopedic surgeon", "Riverbend Orthopedics"),
+    "Wound care": ("Wound care nurse practitioner", "Lakemont Wound Care Clinic"),
+}
 
 
 def _pick(seq: list[str], key: str) -> str:
@@ -112,7 +113,3 @@ def synthetic_npi(key: str) -> str:
 
 def npi_is_valid(npi: str) -> bool:
     return len(npi) == 10 and npi.isdigit() and luhn_check_digit("80840" + npi[:9]) == npi[9]
-
-
-def organization(policy_id: str, case_id: str) -> str:
-    return _pick(ORGS[policy_id], case_id)

@@ -93,6 +93,7 @@ def roster(case: CaseSpec) -> dict[str, str]:
 def build_request(case: CaseSpec, spec: CriteriaSpec) -> PriorAuthRequest:
     r = case.request
     received = datetime.combine(r.request_date, time(9, 0))
+    role, org = people.REQUESTER[r.requesting_specialty]
     data = {
         "request_schema_version": "1.0",
         "request_id": f"NHP-PA-{case.case_id[5:].replace('-', '')}",
@@ -105,10 +106,10 @@ def build_request(case: CaseSpec, spec: CriteriaSpec) -> PriorAuthRequest:
             "sex": case.patient.sex,
         },
         "requesting_provider": {
-            "name": people.clinician_name(case.case_id, f"requesting {r.requesting_specialty}"),
-            "npi": people.synthetic_npi(case.case_id),
+            "name": people.clinician_name(case.case_id, role),
+            "npi": people.synthetic_npi(f"{case.case_id}|{role}"),
             "specialty": r.requesting_specialty,
-            "organization": people.organization(case.policy_id, case.case_id),
+            "organization": org,
         },
         "service": {
             "code": r.service_code,
@@ -318,16 +319,27 @@ def find_line(text: str, anchor: str) -> str | None:
     return None
 
 
+ABBREVIATION_END = re.compile(r"(?:^|\s)(?:Dr|Mr|Mrs|Ms|St|vs|approx|e\.g|i\.e)\.$")
+
+
 def sentence_for(text: str, anchor: str) -> str | None:
     """The full sentence (or table cell, or list item) that holds the anchor."""
     line = find_line(text, anchor)
     if line is None:
         return None
-    cells = [c.strip() for c in line.split("|")] if line.strip().startswith("|") else [line]
+    # A table row: quote the whole row, so the value keeps its label.
+    if line.strip().startswith("|"):
+        return line.strip().strip("|").strip()
+    cells = [part.strip() for part in line.split(" · ")]
     for cell in cells:
         if anchor not in cell:
             continue
-        parts = re.split(r"(?<=[.!?])\s+(?=[A-Z0-9\"(])", cell)
+        parts: list[str] = []
+        for piece in re.split(r"(?<=[.!?])\s+(?=[A-Z0-9\"(])", cell):
+            if parts and ABBREVIATION_END.search(parts[-1]):
+                parts[-1] += " " + piece  # "Ms. Yardley ..." is one sentence
+            else:
+                parts.append(piece)
         for part in parts:
             if anchor in part:
                 q = re.sub(r"^\s*(?:[-*]\s+|#+\s+|\d+\.\s+)", "", part).replace("**", "").strip()
@@ -460,7 +472,10 @@ def citations(
             for src in f.derived_from:
                 walk(src)
         elif f.doc_id == REQUEST_DOC:
-            add(REQUEST_DOC, f"{f.field}: {f.value if f.value is not None else f.date.isoformat()}")
+            v = f.value if f.value is not None else f.date.isoformat()
+            if isinstance(v, float) and v.is_integer():
+                v = int(v)
+            add(REQUEST_DOC, f"{f.field}: {v}")
         else:
             q = sentence_for(docs[f.doc_id], f.anchor or "")
             if q:
