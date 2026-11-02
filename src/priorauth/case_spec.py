@@ -513,6 +513,13 @@ def check_case(case: CaseSpec, spec: CriteriaSpec) -> list[str]:
         if f.id not in cited and not f.distractor:
             err(f"{f.id}: not cited by any finding or flag; mark it a distractor or drop it")
 
+    # The generator must write every anchor and none of the forbidden phrases.
+    forbidden = {p.lower() for f in case.findings for m in f.missing for p in m.forbidden_phrases}
+    for f in case.facts:
+        hits = [p for p in forbidden if f.anchor and p in f.anchor.lower()]
+        if hits:
+            err(f"{f.id}: anchor contains forbidden phrase(s) {sorted(hits)}")
+
     # Routing and archetype contract.
     route = derive_route(case, spec)
     if route != case.expected_route:

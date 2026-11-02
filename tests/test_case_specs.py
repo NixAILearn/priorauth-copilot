@@ -256,3 +256,10 @@ def test_window_start(request_date: date, window: Window, start: date) -> None:
 def test_completed_years_turns_on_birthday() -> None:
     assert completed_years(date(2004, 10, 16), date(2026, 10, 15)) == 21
     assert completed_years(date(2004, 10, 15), date(2026, 10, 15)) == 22
+
+
+def test_catches_anchor_that_contains_a_forbidden_phrase() -> None:
+    _, errors = mutate(
+        "CASE-034-07", lambda d: fact(d, "F26").update(anchor="Foam dressing and boot")
+    )
+    assert any("F26" in e and "forbidden" in e for e in errors)
