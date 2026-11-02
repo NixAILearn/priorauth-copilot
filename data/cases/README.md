@@ -14,7 +14,7 @@ Each folder is one synthetic case built from its spec in [`../case_specs/`](../c
 
 ## Status
 
-All 60 planned cases are written and pass `generator check`. The three demo cases below were written freehand; the other 57 reuse shared layouts for each document type (D-042).
+All 60 planned cases are written and pass `generator check`. The three demo cases below were written freehand; the other 57 reuse shared layouts for each document type (D-042, accepted).
 
 ## Demo cases
 

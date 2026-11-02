@@ -19,7 +19,7 @@
       "M17.11",
       "I10"
     ],
-    "summary": "75-year-old woman whose right knee had a partial replacement years ago, mentioned only in the surgical history list."
+    "summary": "75-year-old woman whose right knee had a partial replacement years ago, listed in an old hospital surgical history and shown on the radiograph, but never mentioned in the surgeon's notes."
   },
   "request": {
     "request_date": "2026-10-29",
@@ -63,7 +63,7 @@
       "noise": [
         "templated_text"
       ],
-      "guidance": "Views, compartments, joint space, osteophytes, grade, loose bodies."
+      "guidance": "Views, compartments, joint space, osteophytes, grade, loose bodies; medial partial knee replacement components in place, grade given for the native lateral and patellofemoral compartments."
     },
     {
       "id": "D03",
@@ -78,7 +78,7 @@
       "noise": [
         "templated_text"
       ],
-      "guidance": "Menisci, ligaments, cartilage, bone, effusion; impression."
+      "guidance": "Menisci, ligaments, cartilage, bone, effusion; impression. Susceptibility artifact from the medial arthroplasty components; the unstable chondral flap is in the lateral compartment."
     },
     {
       "id": "D04",
@@ -318,6 +318,15 @@
       "field": "knee_replacement",
       "value": true,
       "placement": "buried"
+    },
+    {
+      "id": "F20",
+      "date": "2026-10-01",
+      "doc_id": "D02",
+      "statement": "Radiograph shows the partial knee replacement of the requested knee.",
+      "anchor": "medial unicompartmental knee arthroplasty components in place",
+      "field": "knee_replacement",
+      "value": true
     }
   ],
   "findings": [
@@ -508,9 +517,10 @@
       "node_id": "047-CI01",
       "status": "found",
       "facts": [
-        "F19"
+        "F19",
+        "F20"
       ],
-      "rationale": "The requested knee has a partial replacement."
+      "rationale": "The requested knee has a partial replacement, listed in the surgical history and visible on the radiograph."
     }
   ],
   "flags": [],

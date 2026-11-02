@@ -2,20 +2,20 @@
   "case_id": "CASE-047-19",
   "generator_version": "0.1.0",
   "writer": "claude-code-session",
-  "case_spec_sha256": "9ae1d78c9719918edfc0970e8dad658cb5860db7017430b096fca7de5592629b",
-  "brief_sha256": "3dfce9fee064c1060bb1cfce48575e96338940c0b846638124172a055f49c21f",
+  "case_spec_sha256": "aee6321258172d8a1541fda734ed21e4c99387476f525dfc1124fcf1fde40557",
+  "brief_sha256": "f58695c960ed111b78bbac8947f92859ba32ccf84c204423ae84c0aa83c8a104",
   "documents": {
     "D01": {
       "prompt_sha256": "d63c97563c9a678a0a724cf11d3646db29e694e9a5bde014ee46a4c257687d86",
-      "text_sha256": "9651ce011a533c0a90609ea70c06e885b0b71c6b121de2d82cebce245dbe3ce2"
+      "text_sha256": "1aa1e8d7ad3537ac697c218d666c976dc5c5d50d2a04840cb2018d9b21ff19d7"
     },
     "D02": {
-      "prompt_sha256": "e893bdf1b8aa812745587164cd54ddc758e74b2728d73693487095a342a4439a",
-      "text_sha256": "cde92fd382f32180d3eb0e086166a28f876196e997bd09c497ad7efc5dccdc78"
+      "prompt_sha256": "ba8e9269f635ea18358b59aff78b7363108f587e85b1439f7f496858dbf43e4c",
+      "text_sha256": "9c9e64f6d44cc9b4ed6b8855d22d12a8929f7158da0307df0700353f7613c8aa"
     },
     "D03": {
-      "prompt_sha256": "ca4376667244f0ba04d758be08f388509dcb622094bea102723733f8ac383f8a",
-      "text_sha256": "0c370d043cdb0d593632d098b465f1893668981aeee560e7df75034449971725"
+      "prompt_sha256": "81e4acedffd0522c2c82ac002da8d5507cf3b20e7ac24b860e95940c6feb4ed9",
+      "text_sha256": "878e783e2e8280143136c872933540c2b37799d9b32cd4a791562aecd149b5de"
     },
     "D04": {
       "prompt_sha256": "f041e3372442544d9f79f0f13a09371b2312b6e39bdf2e37445cdadb55b8e253",

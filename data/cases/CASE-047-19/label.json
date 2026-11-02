@@ -106,7 +106,7 @@
       "citations": [
         {
           "doc_id": "D02",
-          "quote": "Osteoarthritis of the right knee, Kellgren-Lawrence grade 2."
+          "quote": "Osteoarthritis of the native lateral and patellofemoral compartments of the right knee, Kellgren-Lawrence grade 2."
         }
       ],
       "missing": []
@@ -142,7 +142,7 @@
       "citations": [
         {
           "doc_id": "D03",
-          "quote": "Cartilage: Along the medial femoral condyle there is a full-thickness cartilage defect with an unstable chondral flap, fluid tracking beneath the flap."
+          "quote": "Cartilage: Along the lateral femoral condyle there is a full-thickness cartilage defect with an unstable chondral flap, fluid tracking beneath the flap."
         }
       ],
       "missing": []
@@ -158,7 +158,7 @@
         },
         {
           "doc_id": "D03",
-          "quote": "Cartilage: Along the medial femoral condyle there is a full-thickness cartilage defect with an unstable chondral flap, fluid tracking beneath the flap."
+          "quote": "Cartilage: Along the lateral femoral condyle there is a full-thickness cartilage defect with an unstable chondral flap, fluid tracking beneath the flap."
         }
       ],
       "missing": []
@@ -174,7 +174,7 @@
         },
         {
           "doc_id": "D03",
-          "quote": "Cartilage: Along the medial femoral condyle there is a full-thickness cartilage defect with an unstable chondral flap, fluid tracking beneath the flap."
+          "quote": "Cartilage: Along the lateral femoral condyle there is a full-thickness cartilage defect with an unstable chondral flap, fluid tracking beneath the flap."
         }
       ],
       "missing": []
@@ -327,6 +327,10 @@
         {
           "doc_id": "D07",
           "quote": "right unicompartmental knee arthroplasty (2015)"
+        },
+        {
+          "doc_id": "D02",
+          "quote": "Right medial unicompartmental knee arthroplasty components in place, without complication."
         }
       ],
       "missing": []

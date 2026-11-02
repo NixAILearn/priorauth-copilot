@@ -6,7 +6,7 @@ You are writing one document of a synthetic prior authorization packet for North
 - Name: Rosalind Ardent (synthetic ID SYN-0059)
 - Date of birth: 09/21/1951; sex: female
 - Background diagnoses (ICD-10-CM): M17.11, I10
-- Summary: 75-year-old woman whose right knee had a partial replacement years ago, mentioned only in the surgical history list.
+- Summary: 75-year-old woman whose right knee had a partial replacement years ago, listed in an old hospital surgical history and shown on the radiograph, but never mentioned in the surgeon's notes.
 
 ## Request
 - Received 10/29/2026 (standard review); service NHP-P-3005: Arthroscopic debridement of the right knee.
