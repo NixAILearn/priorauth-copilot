@@ -1,0 +1,38 @@
+{
+  "request_schema_version": "1.0",
+  "request_id": "NHP-PA-04710",
+  "received_at": "2026-07-09T09:00:00",
+  "review_type": "standard",
+  "sla_due_at": "2026-07-16T09:00:00",
+  "member": {
+    "synthetic_id": "SYN-0051",
+    "birth_date": "1954-12-22",
+    "sex": "female"
+  },
+  "requesting_provider": {
+    "name": "Dr. Rosalind Strathmore",
+    "npi": "9551825299",
+    "specialty": "Orthopedic surgery",
+    "organization": "Riverbend Orthopedics"
+  },
+  "service": {
+    "code": "NHP-P-3005",
+    "description": "Arthroscopic debridement of the right knee.",
+    "side": "right",
+    "target_ulcers": [],
+    "units": 1
+  },
+  "diagnoses": [
+    {
+      "code": "M17.11",
+      "role": "primary"
+    }
+  ],
+  "attachments": [
+    "D01",
+    "D02",
+    "D03",
+    "D05",
+    "D06"
+  ]
+}

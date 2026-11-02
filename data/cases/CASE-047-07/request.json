@@ -1,0 +1,38 @@
+{
+  "request_schema_version": "1.0",
+  "request_id": "NHP-PA-04707",
+  "received_at": "2026-10-15T09:00:00",
+  "review_type": "standard",
+  "sla_due_at": "2026-10-22T09:00:00",
+  "member": {
+    "synthetic_id": "SYN-0048",
+    "birth_date": "1961-07-27",
+    "sex": "male"
+  },
+  "requesting_provider": {
+    "name": "Dr. Ines Fenwick-Osei",
+    "npi": "9495290931",
+    "specialty": "Orthopedic surgery",
+    "organization": "Riverbend Orthopedics"
+  },
+  "service": {
+    "code": "NHP-P-3005",
+    "description": "Arthroscopic debridement of the right knee.",
+    "side": "right",
+    "target_ulcers": [],
+    "units": 1
+  },
+  "diagnoses": [
+    {
+      "code": "M17.11",
+      "role": "primary"
+    }
+  ],
+  "attachments": [
+    "D01",
+    "D03",
+    "D04",
+    "D05",
+    "D06"
+  ]
+}

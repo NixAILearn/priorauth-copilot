@@ -1,0 +1,40 @@
+{
+  "request_schema_version": "1.0",
+  "request_id": "NHP-PA-04718",
+  "received_at": "2026-08-31T09:00:00",
+  "review_type": "standard",
+  "sla_due_at": "2026-09-07T09:00:00",
+  "member": {
+    "synthetic_id": "SYN-0058",
+    "birth_date": "1957-11-03",
+    "sex": "male"
+  },
+  "requesting_provider": {
+    "name": "Dr. Corinne Northcote",
+    "npi": "9832187998",
+    "specialty": "Orthopedic surgery",
+    "organization": "Riverbend Orthopedics"
+  },
+  "service": {
+    "code": "NHP-P-3005",
+    "description": "Arthroscopic debridement of the left knee.",
+    "side": "left",
+    "target_ulcers": [],
+    "units": 1
+  },
+  "diagnoses": [
+    {
+      "code": "M17.12",
+      "role": "primary"
+    }
+  ],
+  "attachments": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05",
+    "D06",
+    "D07"
+  ]
+}

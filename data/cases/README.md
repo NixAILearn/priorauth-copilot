@@ -12,6 +12,10 @@ Each folder is one synthetic case built from its spec in [`../case_specs/`](../c
 
 `python -m generator check` (also in CI) re-runs every check on every case here.
 
+## Status
+
+All 60 planned cases are written and pass `generator check`. The three demo cases below were written freehand; the other 57 reuse shared layouts for each document type (D-042).
+
 ## Demo cases
 
 | Case | Service | Archetype | Expected route | What to look for |

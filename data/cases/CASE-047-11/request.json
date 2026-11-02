@@ -1,0 +1,39 @@
+{
+  "request_schema_version": "1.0",
+  "request_id": "NHP-PA-04711",
+  "received_at": "2026-10-22T09:00:00",
+  "review_type": "standard",
+  "sla_due_at": "2026-10-29T09:00:00",
+  "member": {
+    "synthetic_id": "SYN-0052",
+    "birth_date": "1963-05-06",
+    "sex": "male"
+  },
+  "requesting_provider": {
+    "name": "Dr. Talia Yardley",
+    "npi": "9729283843",
+    "specialty": "Orthopedic surgery",
+    "organization": "Riverbend Orthopedics"
+  },
+  "service": {
+    "code": "NHP-P-3005",
+    "description": "Arthroscopic debridement of the left knee.",
+    "side": "left",
+    "target_ulcers": [],
+    "units": 1
+  },
+  "diagnoses": [
+    {
+      "code": "M17.12",
+      "role": "primary"
+    }
+  ],
+  "attachments": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05",
+    "D06"
+  ]
+}

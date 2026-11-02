@@ -1,0 +1,39 @@
+{
+  "request_schema_version": "1.0",
+  "request_id": "NHP-PA-04704",
+  "received_at": "2026-07-23T09:00:00",
+  "review_type": "standard",
+  "sla_due_at": "2026-07-30T09:00:00",
+  "member": {
+    "synthetic_id": "SYN-0045",
+    "birth_date": "1957-09-09",
+    "sex": "female"
+  },
+  "requesting_provider": {
+    "name": "Dr. Odile Brightwater",
+    "npi": "9857521568",
+    "specialty": "Orthopedic surgery",
+    "organization": "Riverbend Orthopedics"
+  },
+  "service": {
+    "code": "NHP-P-3005",
+    "description": "Arthroscopic debridement of the right knee.",
+    "side": "right",
+    "target_ulcers": [],
+    "units": 1
+  },
+  "diagnoses": [
+    {
+      "code": "M17.10",
+      "role": "primary"
+    }
+  ],
+  "attachments": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05",
+    "D06"
+  ]
+}

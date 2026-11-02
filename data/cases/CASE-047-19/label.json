@@ -1,0 +1,371 @@
+{
+  "label_schema_version": "1.0",
+  "case_id": "CASE-047-19",
+  "policy_id": "NHP-MP-047",
+  "policy_version": "1.0",
+  "archetype": "buried_contraindication",
+  "split": "dev",
+  "expected_route": "clinician_review",
+  "findings": [
+    {
+      "node_id": "047-C1",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "REQUEST",
+          "quote": "requested_knee_side: right"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C3a",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Over the past few months the right knee catches suddenly mid-stride, with a brief block before it moves again, several times a week, most recently this week."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C3b",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Date of visit: 10/15/2026"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C3",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Over the past few months the right knee catches suddenly mid-stride, with a brief block before it moves again, several times a week, most recently this week."
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Date of visit: 10/15/2026"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C4b",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "Exam date: 10/01/2026"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C4a",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "TECHNIQUE: Standing AP, lateral and sunrise views of the right knee."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C4",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "TECHNIQUE: Standing AP, lateral and sunrise views of the right knee."
+        },
+        {
+          "doc_id": "D02",
+          "quote": "Exam date: 10/01/2026"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C5",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "Osteoarthritis of the right knee, Kellgren-Lawrence grade 2."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C7b",
+      "unit_id": null,
+      "status": "not_met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "No loose body."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C7a.1",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Scan date: 09/19/2026"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C7a.2",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Cartilage: Along the medial femoral condyle there is a full-thickness cartilage defect with an unstable chondral flap, fluid tracking beneath the flap."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C7a",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Scan date: 09/19/2026"
+        },
+        {
+          "doc_id": "D03",
+          "quote": "Cartilage: Along the medial femoral condyle there is a full-thickness cartilage defect with an unstable chondral flap, fluid tracking beneath the flap."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C7",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D03",
+          "quote": "Scan date: 09/19/2026"
+        },
+        {
+          "doc_id": "D03",
+          "quote": "Cartilage: Along the medial femoral condyle there is a full-thickness cartilage defect with an unstable chondral flap, fluid tracking beneath the flap."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C6a.1",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "The patient completed 13 supervised physical therapy visits over 14 weeks, plus daily home exercises."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C6a.2",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D05",
+          "quote": "Start naproxen 500 mg twice daily with food; reviewed stomach and kidney risks."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C6a.3",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D05",
+          "quote": "Start of care: 06/29/2026."
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Last day of care: 10/05/2026."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C6a.4",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Last day of care: 10/05/2026."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C6a.5",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Over the past few months the right knee catches suddenly mid-stride, with a brief block before it moves again, several times a week, most recently this week."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C6a",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "The patient completed 13 supervised physical therapy visits over 14 weeks, plus daily home exercises."
+        },
+        {
+          "doc_id": "D05",
+          "quote": "Start naproxen 500 mg twice daily with food; reviewed stomach and kidney risks."
+        },
+        {
+          "doc_id": "D05",
+          "quote": "Start of care: 06/29/2026."
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Last day of care: 10/05/2026."
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Over the past few months the right knee catches suddenly mid-stride, with a brief block before it moves again, several times a week, most recently this week."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C6",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "The patient completed 13 supervised physical therapy visits over 14 weeks, plus daily home exercises."
+        },
+        {
+          "doc_id": "D05",
+          "quote": "Start naproxen 500 mg twice daily with food; reviewed stomach and kidney risks."
+        },
+        {
+          "doc_id": "D05",
+          "quote": "Start of care: 06/29/2026."
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Last day of care: 10/05/2026."
+        },
+        {
+          "doc_id": "D01",
+          "quote": "Over the past few months the right knee catches suddenly mid-stride, with a brief block before it moves again, several times a week, most recently this week."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-C2",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Ms. Ardent is a 75 y/o F with right knee pain for about two years, gradually worse."
+        },
+        {
+          "doc_id": "D02",
+          "quote": "Exam: RIGHT KNEE, 3 views"
+        },
+        {
+          "doc_id": "D03",
+          "quote": "Exam: MRI RIGHT KNEE without contrast"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-CI01",
+      "unit_id": null,
+      "status": "found",
+      "citations": [
+        {
+          "doc_id": "D07",
+          "quote": "right unicompartmental knee arthroplasty (2015)"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "047-CI02",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "047-CI03",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "047-EX01",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "047-EX02",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "047-EX03",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    }
+  ],
+  "flags": []
+}
