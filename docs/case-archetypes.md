@@ -1,6 +1,6 @@
 # PriorAuth Copilot: Case Archetypes and the 60-Case Plan (v0.1)
 
-**Owner:** Nick · **Status:** Draft for review · **Updated:** 2026-11-02 · Schema: [`src/priorauth/case_spec.py`](../src/priorauth/case_spec.py) · Plan: [`data/case_specs/case_plan.csv`](../data/case_specs/case_plan.csv)
+**Owner:** Nick · **Status:** Accepted 2026-11-02 · **Updated:** 2026-11-02 · Schema: [`src/priorauth/case_spec.py`](../src/priorauth/case_spec.py) · Plan: [`data/case_specs/case_plan.csv`](../data/case_specs/case_plan.csv)
 
 A **case spec** is the answer key for one synthetic prior authorization (PA) case, written before any clinical text exists. A **case archetype** is the pattern a case follows, such as "clean" or "missing documentation"; it decides what the case is built to test. The generator (next step) turns each spec into a request JSON, 4 to 12 clinical documents and a label file. Decisions behind this doc: D-026 to D-032 in [`decision-log.md`](decision-log.md).
 
