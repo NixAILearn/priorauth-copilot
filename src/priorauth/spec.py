@@ -8,6 +8,8 @@ Design rules this schema enforces:
 - Every node quotes its policy text verbatim (checked against the source in tests).
 - Numeric thresholds use only the four policy operators; code applies them.
 - Routes are only "request_info" or "clinician_review". There is no deny value.
+- A policy reviewed per unit (e.g. per target ulcer, D-020) marks its per-unit nodes
+  and fields; the case routes on its weakest unit.
 """
 
 from __future__ import annotations
@@ -20,7 +22,8 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 Op = Literal[">=", ">", "<=", "<"]
-NodeType = Literal["numeric", "date_window", "fact", "all_of", "any_of"]
+NodeType = Literal["numeric", "date_window", "fact", "enum", "all_of", "any_of"]
+Unit = Literal["request", "target_ulcer"]
 Route = Literal["request_info", "clinician_review"]
 
 
@@ -29,10 +32,20 @@ class Strict(BaseModel):
 
 
 class Window(Strict):
-    """A look-back window, counted per the policy's window rule (D-019)."""
+    """A look-back window, counted per the policy's window rule (D-019, D-022).
 
-    months: int = Field(gt=0)
+    Exactly one of months (calendar months) or days (calendar days) is set.
+    """
+
+    months: int | None = Field(default=None, gt=0)
+    days: int | None = Field(default=None, gt=0)
     anchor: Literal["request_date"] = "request_date"
+
+    @model_validator(mode="after")
+    def _one_unit(self) -> Window:
+        if (self.months is None) == (self.days is None):
+            raise ValueError("a window sets exactly one of months or days")
+        return self
 
 
 class FlagRule(Strict):
@@ -54,9 +67,11 @@ class Node(Strict):
     field: str | None = None
     op: Op | None = None
     value: float | None = None
+    equals: str | None = None
     unit: str | None = None
     window: Window | None = None
     select: Literal["most_recent"] | None = None
+    per: Unit = "request"
     evidence: str | None = None
     definitions: list[str] = []
     documentation: list[str] = []
@@ -78,6 +93,10 @@ class Node(Strict):
             raise ValueError(f"{self.id}: numeric needs field, op, value and unit")
         if t == "date_window" and (self.field is None or self.window is None):
             raise ValueError(f"{self.id}: date_window needs field and window")
+        if t == "enum" and (self.field is None or self.equals is None):
+            raise ValueError(f"{self.id}: enum needs field and equals")
+        if t != "enum" and self.equals is not None:
+            raise ValueError(f"{self.id}: only enum nodes have equals")
         if t == "fact" and not self.evidence:
             raise ValueError(f"{self.id}: fact needs an evidence description")
         return self
@@ -98,6 +117,7 @@ class FieldDef(Strict):
     unit: str | None = None
     values: list[str] | None = None
     evaluator: Literal["model", "code"]
+    per: Unit = "request"
     derived_from: list[str] = []
     description: str
 
@@ -122,10 +142,19 @@ class Scope(Strict):
     service_code: str
     primary_diagnoses: list[str] = Field(min_length=1)
     out_of_scope_route: Route = "clinician_review"
+    review_unit: Unit = "request"
+    unit_diagnoses: list[str] = []
+    unit_routing: Literal["weakest_unit"] = "weakest_unit"
+
+    @model_validator(mode="after")
+    def _unit_diagnoses_need_units(self) -> Scope:
+        if self.unit_diagnoses and self.review_unit == "request":
+            raise ValueError("unit_diagnoses need a review_unit other than request")
+        return self
 
 
 class Rules(Strict):
-    window_counting: Literal["calendar_months"]
+    window_counting: Literal["calendar_months", "calendar_months_or_days"]
     window_boundary_inclusive: bool
     missing_calendar_day: Literal["last_day_of_month"]
     value_selection: Literal["most_recent"]
@@ -159,6 +188,25 @@ class CriteriaSpec(Strict):
         reviewed = self.review_status == "reviewed"
         if reviewed != (self.reviewed_by is not None and self.reviewed_date is not None):
             raise ValueError("reviewed_by and reviewed_date are set exactly when reviewed")
+        return self
+
+    @model_validator(mode="after")
+    def _units_and_enums_consistent(self) -> CriteriaSpec:
+        fields = {f.name: f for f in self.fields}
+        unit = self.scope.review_unit
+        if unit == "request" and any(f.per != "request" for f in self.fields):
+            raise ValueError("per-unit fields need a scope.review_unit")
+        if self.rules.window_counting == "calendar_months" and any(
+            n.window and n.window.days for n in self.nodes()
+        ):
+            raise ValueError("day windows need window_counting calendar_months_or_days")
+        for n in self.nodes():
+            if n.per not in ("request", unit):
+                raise ValueError(f"{n.id}: per={n.per} but scope.review_unit={unit}")
+            if n.type == "enum":
+                f = fields.get(n.field or "")
+                if f is None or f.type != "enum" or n.equals not in (f.values or []):
+                    raise ValueError(f"{n.id}: equals must be a value of enum field {n.field}")
         return self
 
     def nodes(self) -> Iterator[Node]:

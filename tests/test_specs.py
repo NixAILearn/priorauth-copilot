@@ -66,7 +66,7 @@ def test_diagnoses_match_section_2_2(spec: CriteriaSpec) -> None:
     text = source_text(spec)
     block = text.split("### 2.2")[1].split("### 2.3")[0]
     listed = re.findall(r"^\| ([A-Z]\d{2}(?:\.\w+)?) \|", block, re.M)
-    assert sorted(listed) == sorted(spec.scope.primary_diagnoses)
+    assert sorted(listed) == sorted(spec.scope.primary_diagnoses + spec.scope.unit_diagnoses)
 
 
 def test_every_policy_text_is_verbatim(spec: CriteriaSpec) -> None:
@@ -105,9 +105,25 @@ def test_documentation_covers_every_criterion(spec: CriteriaSpec) -> None:
         assert set(node.documentation) <= doc_ids, node.id
     supported = {s for d in spec.documentation for s in d.supports}
     for top in spec.criteria:
-        assert top.section in supported, f"{top.section} has no documentation item"
+        # A doc item may support a lettered sub-item, e.g. "3.10(a)", which counts for 3.10.
+        covered = any(s == top.section or s.startswith(f"{top.section}(") for s in supported)
+        assert covered, f"{top.section} has no documentation item"
 
 
 def test_no_deny_outcome_anywhere(spec: CriteriaSpec) -> None:
     raw = json.dumps(spec.model_dump(mode="json")).lower()
     assert '"deny' not in raw and "denial" not in raw
+
+
+def test_per_unit_nodes_use_per_unit_fields(spec: CriteriaSpec) -> None:
+    """A request-level node must not read a per-unit field, or the unit would be lost."""
+    per = {f.name: f.per for f in spec.fields}
+    for node in spec.nodes():
+        if node.field and per[node.field] != "request":
+            assert node.per == per[node.field], f"{node.id} reads per-unit field {node.field}"
+
+
+def test_group_children_share_the_parent_unit(spec: CriteriaSpec) -> None:
+    for node in spec.nodes():
+        for child in node.children:
+            assert child.per == node.per, f"{child.id} unit differs from {node.id}"
