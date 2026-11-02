@@ -1,0 +1,39 @@
+{
+  "request_schema_version": "1.0",
+  "request_id": "NHP-PA-02119",
+  "received_at": "2026-10-28T09:00:00",
+  "review_type": "standard",
+  "sla_due_at": "2026-11-04T09:00:00",
+  "member": {
+    "synthetic_id": "SYN-0021",
+    "birth_date": "1949-06-06",
+    "sex": "male"
+  },
+  "requesting_provider": {
+    "name": "Dr. Wren Lindqvist-Amari",
+    "npi": "9726770743",
+    "specialty": "Otolaryngology",
+    "organization": "Lakemont ENT Associates"
+  },
+  "service": {
+    "code": "NHP-P-1042",
+    "description": "First implant of a complete hypoglossal nerve stimulator system for obstructive sleep apnea.",
+    "side": null,
+    "target_ulcers": [],
+    "units": 1
+  },
+  "diagnoses": [
+    {
+      "code": "G47.33",
+      "role": "primary"
+    }
+  ],
+  "attachments": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05",
+    "D06"
+  ]
+}

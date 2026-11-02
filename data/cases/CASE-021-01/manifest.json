@@ -15,7 +15,7 @@
     },
     "D03": {
       "prompt_sha256": "5b1267eec6efab00adc8548849b2dc95a50520a4a95325e985fb223f68447ed9",
-      "text_sha256": "9b975ffcd7aa8b8031bc0c36f68e949a33fe479ac78120f21a4ed4d030aef126"
+      "text_sha256": "01940b4b5351997a8b2a437f8610e38432ffcec9e8204824c2fee583b168b838"
     },
     "D04": {
       "prompt_sha256": "390b6d891aabd0f30ee7ea3dd24c9fbd2781b0bb07da8bc3b7ee1118ba8d4580",
@@ -23,7 +23,7 @@
     },
     "D05": {
       "prompt_sha256": "be9d7eee27f2a27019e3f266396876a643d6c17115d7b5c7cbcc9e1b807a0b36",
-      "text_sha256": "f44602b818a5e68a5046c286595df4ba6397bd7afb8790df5805a3e47eed7aa6"
+      "text_sha256": "266ae8815aa828c6e1de7b5b00c5d2308f38655d58bac54c2903b598b46c9ff7"
     }
   },
   "synthea_seed": null

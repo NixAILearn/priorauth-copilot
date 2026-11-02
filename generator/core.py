@@ -80,14 +80,14 @@ def case_dir(case_id: str) -> Path:
 
 
 def patient_name(case: CaseSpec) -> str:
-    sid = case.patient.synthetic_id
-    return f"{people._pick(people.FIRST, sid + '|p1')} {people._pick(people.LAST, sid + '|p2')}"
+    return people.patient_name(case.patient.synthetic_id)
 
 
 def roster(case: CaseSpec) -> dict[str, str]:
-    return {
-        d.author_role: people.clinician_name(case.case_id, d.author_role) for d in case.documents
-    }
+    roles = [d.author_role for d in case.documents]
+    if case.request.requesting_specialty in people.REQUESTER:
+        roles.append(people.REQUESTER[case.request.requesting_specialty][0])
+    return people.roster(case.case_id, patient_name(case), roles)
 
 
 def build_request(case: CaseSpec, spec: CriteriaSpec) -> PriorAuthRequest:
@@ -106,7 +106,7 @@ def build_request(case: CaseSpec, spec: CriteriaSpec) -> PriorAuthRequest:
             "sex": case.patient.sex,
         },
         "requesting_provider": {
-            "name": people.clinician_name(case.case_id, role),
+            "name": roster(case)[role],
             "npi": people.synthetic_npi(f"{case.case_id}|{role}"),
             "specialty": r.requesting_specialty,
             "organization": org,
@@ -379,6 +379,39 @@ def guarded_value(body: str, start: int) -> tuple[float | None, str]:
     return None, ""
 
 
+WT_LB = re.compile(r"\bWt (\d+(?:\.\d+)?) lb")
+WT_KG = re.compile(r"\bWt (\d+(?:\.\d+)?) kg")
+HT_FTIN = re.compile(r"\bHt (\d)'(\d{1,2})\"")
+HT_IN = re.compile(r"\bHt (\d+(?:\.\d+)?) in\b")
+HT_CM = re.compile(r"\bHt (\d+(?:\.\d+)?) cm\b")
+BMI_ON_LINE = re.compile(r"\bBMI (\d+(?:\.\d+)?)")
+
+
+def bmi_mismatch(line: str) -> str | None:
+    """A line that gives weight, height and BMI must agree with itself (within 0.15)."""
+    bmi = BMI_ON_LINE.search(line)
+    if not bmi:
+        return None
+    kg = WT_KG.search(line)
+    lb = WT_LB.search(line)
+    weight_kg = float(kg.group(1)) if kg else float(lb.group(1)) * 0.45359237 if lb else None
+    m = None
+    if (h := HT_FTIN.search(line)) is not None:
+        m = (int(h.group(1)) * 12 + int(h.group(2))) * 0.0254
+    elif (h := HT_IN.search(line)) is not None:
+        m = float(h.group(1)) * 0.0254
+    elif (h := HT_CM.search(line)) is not None:
+        m = float(h.group(1)) / 100
+    if weight_kg is None or m is None:
+        return None
+    calc = weight_kg / m**2
+    if abs(calc - float(bmi.group(1))) > 0.15:
+        return (
+            f"BMI {bmi.group(1)} does not match the weight and height on the same line ({calc:.1f})"
+        )
+    return None
+
+
 def check_documents(case: CaseSpec, spec: CriteriaSpec, docs: dict[str, str]) -> list[str]:
     """D-036 checks on the written packet. Returns every problem found."""
     errors: list[str] = []
@@ -419,6 +452,10 @@ def check_documents(case: CaseSpec, spec: CriteriaSpec, docs: dict[str, str]) ->
         for d in parse_dates(body):
             if d > plan.date:
                 err(f"{did}: mentions {d.isoformat()}, after the document date")
+        for line in body.splitlines():
+            problem = bmi_mismatch(line)
+            if problem:
+                err(f"{did}: {problem}")
         for lineno, token, rule in scan_text(body):
             err(f"{did}: line {lineno}: '{token}' looks like a {rule} code")
         for _field, (kw, group) in VALUE_GUARDS.items():

@@ -17,7 +17,7 @@ You are writing one document of a synthetic prior authorization packet for North
 - Primary care physician: Dr. Amara Duvane
 - Clinical laboratory: Corinne Calloway-Reyes
 - Vascular lab technologist and interpreting physician: Pell Brightwater
-- Wound care nurse practitioner: Pell Galbrecht
+- Wound care nurse practitioner: Jory Galbrecht
 - Wound clinic: Vesna Lindqvist-Amari
 
 ## Documents in this packet, by date
@@ -27,12 +27,12 @@ You are writing one document of a synthetic prior authorization packet for North
 | D01 | 08/25/2026 | office_visit_note | Primary care visit | Dr. Amara Duvane |
 | D02 | 08/25/2026 | lab_result | Hemoglobin A1c result | Corinne Calloway-Reyes |
 | D03 | 09/02/2026 | vascular_study_report | Ankle-brachial index study | Pell Brightwater |
-| D04 | 09/08/2026 | wound_care_note | Wound clinic visit (baseline) | Pell Galbrecht |
-| D05 | 09/15/2026 | wound_care_note | Wound clinic visit | Pell Galbrecht |
-| D06 | 09/22/2026 | wound_care_note | Wound clinic visit | Pell Galbrecht |
-| D07 | 09/29/2026 | wound_care_note | Wound clinic visit | Pell Galbrecht |
-| D08 | 10/06/2026 | wound_care_note | Wound clinic visit | Pell Galbrecht |
-| D09 | 10/13/2026 | wound_care_note | Wound clinic visit (current) | Pell Galbrecht |
+| D04 | 09/08/2026 | wound_care_note | Wound clinic visit (baseline) | Jory Galbrecht |
+| D05 | 09/15/2026 | wound_care_note | Wound clinic visit | Jory Galbrecht |
+| D06 | 09/22/2026 | wound_care_note | Wound clinic visit | Jory Galbrecht |
+| D07 | 09/29/2026 | wound_care_note | Wound clinic visit | Jory Galbrecht |
+| D08 | 10/06/2026 | wound_care_note | Wound clinic visit | Jory Galbrecht |
+| D09 | 10/13/2026 | wound_care_note | Wound clinic visit (current) | Jory Galbrecht |
 | D10 | 10/13/2026 | wound_treatment_record | Wound treatment and procedure log | Vesna Lindqvist-Amari |
 | D11 | 10/13/2026 | allergy_list | Allergy list | Vesna Lindqvist-Amari |
 
