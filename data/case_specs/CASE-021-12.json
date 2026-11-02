@@ -1,0 +1,517 @@
+{
+  "case_schema_version": "1.0",
+  "case_id": "CASE-021-12",
+  "policy_id": "NHP-MP-021",
+  "policy_version": "1.0",
+  "archetype": "clearly_not_met",
+  "variant": "bmi_37",
+  "split": "dev",
+  "smoke": false,
+  "purpose": "BMI 37.4 is well above Northwind's limit: clinician review with a brief, never a denial.",
+  "review_status": "draft",
+  "patient": {
+    "synthetic_id": "SYN-0014",
+    "sex": "female",
+    "date_of_birth": "1962-10-17",
+    "race": "black",
+    "ethnicity": "nonhispanic",
+    "background_conditions": [
+      "G47.33",
+      "E66.9",
+      "I10",
+      "E11.9"
+    ],
+    "summary": "63-year-old woman with obesity (BMI 37.4) and otherwise qualifying OSA."
+  },
+  "request": {
+    "request_date": "2026-07-15",
+    "review_type": "standard",
+    "service_code": "NHP-P-1042",
+    "primary_diagnosis": "G47.33",
+    "secondary_diagnoses": [],
+    "requesting_specialty": "Otolaryngology",
+    "service_details": "First implant of a complete hypoglossal nerve stimulator system for obstructive sleep apnea."
+  },
+  "documents": [
+    {
+      "id": "D01",
+      "type": "sleep_study_report",
+      "title": "Attended in-lab diagnostic polysomnogram",
+      "date": "2025-11-15",
+      "author_role": "Sleep medicine physician (interpreting)",
+      "satisfies": [
+        "6.3"
+      ],
+      "length": "long",
+      "noise": [
+        "templated_text",
+        "abbreviations"
+      ],
+      "guidance": "Full PSG report: sleep architecture, total sleep time, event table with counts and indices, oxygen nadir, methods naming the hypopnea rule, interpretation."
+    },
+    {
+      "id": "D02",
+      "type": "pap_usage_report",
+      "title": "CPAP device compliance download",
+      "date": "2026-02-27",
+      "author_role": "Durable medical equipment supplier",
+      "satisfies": [
+        "6.6"
+      ],
+      "length": "short",
+      "noise": [
+        "scanned_formatting"
+      ],
+      "guidance": "30-day download ending the day before the member stopped: average use, days used, percent of nights with 4 or more hours, leak, device-estimated AHI."
+    },
+    {
+      "id": "D03",
+      "type": "sleep_consult_note",
+      "title": "Sleep medicine follow-up visit",
+      "date": "2026-05-31",
+      "author_role": "Sleep medicine physician",
+      "satisfies": [
+        "6.5",
+        "6.6"
+      ],
+      "length": "medium",
+      "noise": [
+        "copy_forward",
+        "abbreviations"
+      ],
+      "guidance": "Visit note: history of OSA diagnosis, PAP course and why it ended, review of sleep study and DISE, no narcolepsy symptoms, plan."
+    },
+    {
+      "id": "D04",
+      "type": "dise_report",
+      "title": "Drug-induced sleep endoscopy report",
+      "date": "2026-03-15",
+      "author_role": "Otolaryngologist",
+      "satisfies": [
+        "6.4"
+      ],
+      "length": "medium",
+      "noise": [
+        "abbreviations"
+      ],
+      "guidance": "Description of velum, oropharynx, tongue base and epiglottis with degree and pattern of collapse at each level."
+    },
+    {
+      "id": "D05",
+      "type": "surgical_consult_note",
+      "title": "ENT surgical consultation for HGNS",
+      "date": "2026-06-24",
+      "author_role": "Otolaryngologist",
+      "satisfies": [
+        "6.2",
+        "6.7"
+      ],
+      "length": "long",
+      "noise": [
+        "templated_text",
+        "irrelevant_history"
+      ],
+      "guidance": "Pre-surgical history and physical with vitals and BMI, full past medical history, medications, airway exam with tonsil grade, normal tongue movement, no neuromuscular disease, no implanted devices unless stated below, assessment and plan to schedule implant."
+    }
+  ],
+  "facts": [
+    {
+      "id": "F01",
+      "date": "1962-10-17",
+      "doc_id": "REQUEST",
+      "statement": "Member date of birth from eligibility data.",
+      "field": "date_of_birth"
+    },
+    {
+      "id": "F02",
+      "date": "2026-07-15",
+      "doc_id": "DERIVED",
+      "statement": "Age in completed years on the request date.",
+      "field": "age_years",
+      "value": 63,
+      "unit": "years",
+      "derived_from": [
+        "F01"
+      ]
+    },
+    {
+      "id": "F03",
+      "date": "2026-06-24",
+      "doc_id": "D05",
+      "statement": "BMI recorded at the visit.",
+      "anchor": "BMI 37.4 kg/m2",
+      "field": "bmi_recorded",
+      "value": 37.4,
+      "unit": "kg/m2"
+    },
+    {
+      "id": "F04",
+      "date": "2026-06-24",
+      "doc_id": "DERIVED",
+      "statement": "Most recent BMI in the 6-month window, used as written.",
+      "field": "bmi",
+      "value": 37.4,
+      "unit": "kg/m2",
+      "derived_from": [
+        "F03"
+      ]
+    },
+    {
+      "id": "F05",
+      "date": "2025-11-15",
+      "doc_id": "D01",
+      "statement": "Date of the diagnostic sleep study.",
+      "anchor": "Study date: 11/15/2025",
+      "field": "sleep_study_date"
+    },
+    {
+      "id": "F06",
+      "date": "2025-11-15",
+      "doc_id": "D01",
+      "statement": "Study type.",
+      "anchor": "attended in-laboratory diagnostic polysomnogram",
+      "field": "sleep_study_type",
+      "value": "in_lab_psg"
+    },
+    {
+      "id": "F07",
+      "date": "2025-11-15",
+      "doc_id": "D01",
+      "statement": "AHI from the diagnostic study (REI counts as AHI for a home test).",
+      "anchor": "AHI 33.0 events/hour",
+      "field": "ahi",
+      "value": 33.0,
+      "unit": "events/hour"
+    },
+    {
+      "id": "F08",
+      "date": "2025-11-15",
+      "doc_id": "D01",
+      "statement": "Hypopnea rule named in the report.",
+      "anchor": "hypopneas scored using the 4% oxygen desaturation rule",
+      "field": "ahi_scoring_rule",
+      "value": "4_percent"
+    },
+    {
+      "id": "F09",
+      "date": "2025-11-15",
+      "doc_id": "D01",
+      "statement": "Central apnea count.",
+      "anchor": "Central apneas: 6",
+      "field": "central_apneas",
+      "value": 6,
+      "unit": "events"
+    },
+    {
+      "id": "F10",
+      "date": "2025-11-15",
+      "doc_id": "D01",
+      "statement": "Mixed apnea count.",
+      "anchor": "Mixed apneas: 2",
+      "field": "mixed_apneas",
+      "value": 2,
+      "unit": "events"
+    },
+    {
+      "id": "F11",
+      "date": "2025-11-15",
+      "doc_id": "D01",
+      "statement": "Total apneas plus hypopneas.",
+      "anchor": "Total apneas + hypopneas: 240",
+      "field": "total_apneas_hypopneas",
+      "value": 240,
+      "unit": "events"
+    },
+    {
+      "id": "F12",
+      "date": "2025-11-15",
+      "doc_id": "DERIVED",
+      "statement": "(6 + 2) / 240 x 100 = 3.3%.",
+      "field": "central_mixed_share_pct",
+      "value": 3.3,
+      "unit": "%",
+      "derived_from": [
+        "F09",
+        "F10",
+        "F11"
+      ]
+    },
+    {
+      "id": "F13",
+      "date": "2026-05-31",
+      "doc_id": "D03",
+      "statement": "Date of the sleep medicine visit.",
+      "anchor": "Date of service: 05/31/2026",
+      "field": "sleep_visit_date"
+    },
+    {
+      "id": "F14",
+      "date": "2026-05-31",
+      "doc_id": "D03",
+      "statement": "Visit mode.",
+      "anchor": "seen in person in clinic today",
+      "field": "sleep_visit_mode",
+      "value": "in_person"
+    },
+    {
+      "id": "F15",
+      "date": "2026-05-31",
+      "doc_id": "D03",
+      "statement": "Sleep physician recommends HGNS.",
+      "anchor": "I recommend hypoglossal nerve stimulation"
+    },
+    {
+      "id": "F16",
+      "date": "2026-03-15",
+      "doc_id": "D04",
+      "statement": "Date of the DISE.",
+      "anchor": "Procedure date: 03/15/2026",
+      "field": "dise_date"
+    },
+    {
+      "id": "F17",
+      "date": "2026-03-15",
+      "doc_id": "D04",
+      "statement": "Soft-palate pattern stated and not complete concentric.",
+      "anchor": "no complete concentric collapse at the level of the velum"
+    },
+    {
+      "id": "F18",
+      "date": "2025-12-15",
+      "doc_id": "D03",
+      "statement": "PAP was started.",
+      "anchor": "CPAP was started on 12/15/2025"
+    },
+    {
+      "id": "F19",
+      "date": "2026-02-28",
+      "doc_id": "D03",
+      "statement": "Member stopped using PAP.",
+      "anchor": "stopped using CPAP"
+    },
+    {
+      "id": "F20",
+      "date": "2026-02-28",
+      "doc_id": "D03",
+      "statement": "Specific reason named.",
+      "anchor": "mask discomfort and persistent air leak"
+    },
+    {
+      "id": "F21",
+      "date": "2026-01-12",
+      "doc_id": "D03",
+      "statement": "Fix attempted before stopping.",
+      "anchor": "refit with a nasal pillow mask on 01/12/2026"
+    },
+    {
+      "id": "F22",
+      "date": "2026-02-27",
+      "doc_id": "D02",
+      "statement": "Use below the benchmark in the last 30 days of use.",
+      "anchor": "Days with usage >= 4 hours: 30%",
+      "field": "pap_pct_nights_4h",
+      "value": 30,
+      "unit": "%"
+    }
+  ],
+  "findings": [
+    {
+      "node_id": "021-C1",
+      "status": "met",
+      "facts": [
+        "F01",
+        "F02"
+      ],
+      "rationale": "63 on the request date."
+    },
+    {
+      "node_id": "021-C2",
+      "status": "not_met",
+      "facts": [
+        "F03",
+        "F04"
+      ],
+      "rationale": "BMI 37.4 on 2026-06-24 is inside the 6-month window and not below 35.0."
+    },
+    {
+      "node_id": "021-C3a",
+      "status": "met",
+      "facts": [
+        "F05",
+        "F06"
+      ],
+      "rationale": "Diagnostic study inside the 24-month window."
+    },
+    {
+      "node_id": "021-C3b",
+      "status": "met",
+      "facts": [
+        "F07",
+        "F08"
+      ],
+      "rationale": "AHI 33.0 is at least 15."
+    },
+    {
+      "node_id": "021-C3c",
+      "status": "met",
+      "facts": [
+        "F07"
+      ],
+      "rationale": "AHI 33.0 is no more than 65."
+    },
+    {
+      "node_id": "021-C3d",
+      "status": "met",
+      "facts": [
+        "F09",
+        "F10",
+        "F11",
+        "F12"
+      ],
+      "rationale": "Central plus mixed share 3.3%."
+    },
+    {
+      "node_id": "021-C3",
+      "status": "met",
+      "facts": [
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F09",
+        "F10",
+        "F11",
+        "F12"
+      ],
+      "rationale": "Most recent diagnostic study, judged on every part of 3.3."
+    },
+    {
+      "node_id": "021-C5a",
+      "status": "met",
+      "facts": [
+        "F13",
+        "F14"
+      ],
+      "rationale": "In person sleep visit inside 12 months."
+    },
+    {
+      "node_id": "021-C5b",
+      "status": "met",
+      "facts": [
+        "F15"
+      ],
+      "rationale": "Explicit recommendation of HGNS."
+    },
+    {
+      "node_id": "021-C5",
+      "status": "met",
+      "facts": [
+        "F13",
+        "F15"
+      ],
+      "rationale": "Recent sleep visit with a recommendation."
+    },
+    {
+      "node_id": "021-C4a",
+      "status": "met",
+      "facts": [
+        "F16"
+      ],
+      "rationale": "DISE inside the 24-month window."
+    },
+    {
+      "node_id": "021-C4b",
+      "status": "met",
+      "facts": [
+        "F17"
+      ],
+      "rationale": "Report states the soft-palate pattern and that it was not complete concentric."
+    },
+    {
+      "node_id": "021-C4",
+      "status": "met",
+      "facts": [
+        "F16",
+        "F17"
+      ],
+      "rationale": "Recent DISE without complete concentric collapse."
+    },
+    {
+      "node_id": "021-C6b.1",
+      "status": "met",
+      "facts": [
+        "F18"
+      ],
+      "rationale": "PAP started."
+    },
+    {
+      "node_id": "021-C6b.2",
+      "status": "met",
+      "facts": [
+        "F19"
+      ],
+      "rationale": "Clinician documents the member stopped PAP."
+    },
+    {
+      "node_id": "021-C6b.3",
+      "status": "met",
+      "facts": [
+        "F20"
+      ],
+      "rationale": "Specific reason named."
+    },
+    {
+      "node_id": "021-C6b.4",
+      "status": "met",
+      "facts": [
+        "F21"
+      ],
+      "rationale": "Mask refit dated before stopping."
+    },
+    {
+      "node_id": "021-C6b.5-i",
+      "status": "met",
+      "facts": [
+        "F22"
+      ],
+      "rationale": "30% of nights with 4+ hours is less than 70%."
+    },
+    {
+      "node_id": "021-C6b.5",
+      "status": "met",
+      "facts": [
+        "F22"
+      ],
+      "rationale": "Device report shows low use."
+    },
+    {
+      "node_id": "021-C6b",
+      "status": "met",
+      "facts": [
+        "F18",
+        "F19",
+        "F20",
+        "F21",
+        "F22"
+      ],
+      "rationale": "Every part of 7.15 documented."
+    },
+    {
+      "node_id": "021-C6",
+      "status": "met",
+      "facts": [
+        "F18",
+        "F19",
+        "F20",
+        "F21",
+        "F22"
+      ],
+      "rationale": "Met through the intolerance pathway."
+    }
+  ],
+  "flags": [],
+  "expected_route": "clinician_review",
+  "author_notes": [
+    "Above Northwind's 35.0 but within current device labeling (D-017), so a clinician may still weigh it."
+  ]
+}

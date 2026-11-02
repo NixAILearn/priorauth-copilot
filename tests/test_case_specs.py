@@ -256,3 +256,30 @@ def test_window_start(request_date: date, window: Window, start: date) -> None:
 def test_completed_years_turns_on_birthday() -> None:
     assert completed_years(date(2004, 10, 16), date(2026, 10, 15)) == 21
     assert completed_years(date(2004, 10, 15), date(2026, 10, 15)) == 22
+
+
+def test_catches_anchor_that_contains_a_forbidden_phrase() -> None:
+    _, errors = mutate(
+        "CASE-034-07", lambda d: fact(d, "F26").update(anchor="Foam dressing and boot")
+    )
+    assert any("F26" in e and "forbidden" in e for e in errors)
+
+
+def test_every_planned_case_has_a_spec() -> None:
+    assert {p.stem for p in CASES} == {r["case_id"] for r in PLAN}
+
+
+@pytest.mark.parametrize("policy_id", ["NHP-MP-021", "NHP-MP-034", "NHP-MP-047"])
+def test_demographics_are_spread_for_slice_parity(policy_id: str) -> None:
+    cases = [load_case(p) for p in CASES if p.stem[5:8] == policy_id[-3:]]
+    for split in ("dev", "test"):
+        sexes = {c.patient.sex for c in cases if c.split == split}
+        assert sexes == {"female", "male"}, (policy_id, split)
+    assert len({c.patient.race for c in cases}) >= 4
+    ages = [completed_years(c.patient.date_of_birth, c.request.request_date) for c in cases]
+    assert min(ages) < 65 <= max(ages)
+
+
+def test_synthetic_patient_ids_are_unique() -> None:
+    ids = [load_case(p).patient.synthetic_id for p in CASES]
+    assert len(ids) == len(set(ids))

@@ -1,0 +1,399 @@
+{
+  "case_schema_version": "1.0",
+  "case_id": "CASE-047-02",
+  "policy_id": "NHP-MP-047",
+  "policy_version": "1.0",
+  "archetype": "clean",
+  "variant": "locked_knee_bucket_handle",
+  "split": "dev",
+  "smoke": false,
+  "purpose": "The locked-knee pathway (4.1(b)): a new block on exam lets the case skip conservative care.",
+  "review_status": "draft",
+  "patient": {
+    "synthetic_id": "SYN-0043",
+    "sex": "female",
+    "date_of_birth": "1959-01-18",
+    "race": "black",
+    "ethnicity": "nonhispanic",
+    "background_conditions": [
+      "M17.12"
+    ],
+    "summary": "67-year-old woman whose left knee locked two weeks ago; MRI shows a displaced bucket-handle tear."
+  },
+  "request": {
+    "request_date": "2026-08-20",
+    "review_type": "standard",
+    "service_code": "NHP-P-3005",
+    "primary_diagnosis": "M17.12",
+    "secondary_diagnoses": [],
+    "requested_side": "left",
+    "requesting_specialty": "Orthopedic surgery",
+    "service_details": "Arthroscopic debridement of the left knee."
+  },
+  "documents": [
+    {
+      "id": "D01",
+      "type": "orthopedic_note",
+      "title": "Orthopedic surgery office visit",
+      "date": "2026-08-06",
+      "author_role": "Orthopedic surgeon",
+      "satisfies": [
+        "6.2",
+        "6.7"
+      ],
+      "length": "long",
+      "noise": [
+        "templated_text",
+        "irrelevant_history",
+        "abbreviations"
+      ],
+      "guidance": "Left knee history, symptoms, treatment so far, exam, imaging review, surgical and medical history, plan for arthroscopic debridement."
+    },
+    {
+      "id": "D02",
+      "type": "radiograph_report",
+      "title": "Left knee radiographs",
+      "date": "2026-07-23",
+      "author_role": "Radiologist",
+      "satisfies": [
+        "6.4"
+      ],
+      "length": "short",
+      "noise": [
+        "templated_text"
+      ],
+      "guidance": "Views, compartments, joint space, osteophytes, grade, loose bodies."
+    },
+    {
+      "id": "D03",
+      "type": "mri_report",
+      "title": "MRI left knee without contrast",
+      "date": "2026-07-11",
+      "author_role": "Radiologist",
+      "satisfies": [
+        "6.5"
+      ],
+      "length": "medium",
+      "noise": [
+        "templated_text"
+      ],
+      "guidance": "Menisci, ligaments, cartilage, bone, effusion; impression."
+    },
+    {
+      "id": "D04",
+      "type": "office_visit_note",
+      "title": "Primary care visit",
+      "date": "2026-07-31",
+      "author_role": "Primary care physician",
+      "satisfies": [],
+      "length": "short",
+      "noise": [],
+      "guidance": "Acute knee episode two weeks ago; referral to orthopedics."
+    },
+    {
+      "id": "D06",
+      "type": "medication_list",
+      "title": "Current medication list",
+      "date": "2026-08-06",
+      "author_role": "Orthopedic clinic",
+      "satisfies": [],
+      "length": "short",
+      "noise": [],
+      "guidance": "Current medications."
+    }
+  ],
+  "facts": [
+    {
+      "id": "F01",
+      "date": "2026-08-20",
+      "doc_id": "REQUEST",
+      "statement": "Request names the left knee.",
+      "field": "requested_knee_side",
+      "value": "left"
+    },
+    {
+      "id": "F02",
+      "date": "2026-08-06",
+      "doc_id": "D01",
+      "statement": "Office note describes the requested knee.",
+      "anchor": "left knee",
+      "field": "evidence_knee_side",
+      "value": "left"
+    },
+    {
+      "id": "F03",
+      "date": "2026-08-06",
+      "doc_id": "D01",
+      "statement": "Symptom description: locking.",
+      "anchor": "knee gets stuck bent and cannot be straightened until it is twisted free",
+      "field": "mechanical_symptom",
+      "value": "locking"
+    },
+    {
+      "id": "F04",
+      "date": "2026-08-06",
+      "doc_id": "D01",
+      "statement": "Date of the symptom note.",
+      "anchor": "Date of visit: 08/06/2026",
+      "field": "symptom_note_date"
+    },
+    {
+      "id": "F05",
+      "date": "2026-07-23",
+      "doc_id": "D02",
+      "statement": "Radiograph report describes the requested knee.",
+      "anchor": "LEFT KNEE",
+      "field": "evidence_knee_side",
+      "value": "left"
+    },
+    {
+      "id": "F06",
+      "date": "2026-07-23",
+      "doc_id": "D02",
+      "statement": "Weight-bearing statement.",
+      "anchor": "Standing AP, lateral and sunrise views",
+      "field": "xray_weight_bearing",
+      "value": "stated"
+    },
+    {
+      "id": "F07",
+      "date": "2026-07-23",
+      "doc_id": "D02",
+      "statement": "Radiograph date.",
+      "anchor": "Exam date: 07/23/2026",
+      "field": "xray_date"
+    },
+    {
+      "id": "F08",
+      "date": "2026-07-23",
+      "doc_id": "D02",
+      "statement": "Reported KL grade.",
+      "anchor": "Kellgren-Lawrence grade 2",
+      "field": "kl_grade_reported",
+      "value": 2,
+      "unit": "grade 0-4"
+    },
+    {
+      "id": "F09",
+      "date": "2026-07-23",
+      "doc_id": "DERIVED",
+      "statement": "Highest compartment grade 2.",
+      "field": "kl_grade_highest",
+      "value": 2,
+      "unit": "grade 0-4",
+      "derived_from": [
+        "F08"
+      ]
+    },
+    {
+      "id": "F10",
+      "date": "2026-07-23",
+      "doc_id": "D02",
+      "statement": "Loose body statement.",
+      "anchor": "No loose body",
+      "field": "xray_loose_body",
+      "value": false
+    },
+    {
+      "id": "F11",
+      "date": "2026-07-11",
+      "doc_id": "D03",
+      "statement": "MRI side.",
+      "anchor": "MRI LEFT KNEE",
+      "field": "evidence_knee_side",
+      "value": "left"
+    },
+    {
+      "id": "F12",
+      "date": "2026-07-11",
+      "doc_id": "D03",
+      "statement": "MRI scan date.",
+      "anchor": "Scan date: 07/11/2026",
+      "field": "mri_date"
+    },
+    {
+      "id": "F13",
+      "date": "2026-07-11",
+      "doc_id": "D03",
+      "statement": "MRI lesion: bucket.",
+      "anchor": "displaced bucket-handle tear of the medial meniscus",
+      "field": "mri_lesion",
+      "value": "displaced_or_unstable_meniscal_tear"
+    },
+    {
+      "id": "F14",
+      "date": "2026-08-06",
+      "doc_id": "D01",
+      "statement": "Exam: new block to full extension.",
+      "anchor": "lacks the last 20 degrees of extension, actively and passively, a new mechanical block",
+      "field": "locked_knee_exam",
+      "value": "locked_new_block"
+    },
+    {
+      "id": "F15",
+      "date": "2026-08-06",
+      "doc_id": "D01",
+      "statement": "Date of the locked-knee exam.",
+      "anchor": "Exam date: 08/06/2026",
+      "field": "locked_knee_exam_date"
+    }
+  ],
+  "findings": [
+    {
+      "node_id": "047-C1",
+      "status": "met",
+      "facts": [
+        "F01"
+      ],
+      "rationale": "Left knee on the request."
+    },
+    {
+      "node_id": "047-C3a",
+      "status": "met",
+      "facts": [
+        "F03"
+      ],
+      "rationale": "Mechanical symptom described in terms that fit 7.3."
+    },
+    {
+      "node_id": "047-C3b",
+      "status": "met",
+      "facts": [
+        "F04"
+      ],
+      "rationale": "Note inside the 3-month window."
+    },
+    {
+      "node_id": "047-C3",
+      "status": "met",
+      "facts": [
+        "F03",
+        "F04"
+      ],
+      "rationale": "Mechanical symptom requirement (3.3)."
+    },
+    {
+      "node_id": "047-C4b",
+      "status": "met",
+      "facts": [
+        "F07"
+      ],
+      "rationale": "Inside 12 months."
+    },
+    {
+      "node_id": "047-C4a",
+      "status": "met",
+      "facts": [
+        "F06"
+      ],
+      "rationale": "Standing views stated."
+    },
+    {
+      "node_id": "047-C4",
+      "status": "met",
+      "facts": [
+        "F06",
+        "F07"
+      ],
+      "rationale": "Standing radiographs inside 12 months."
+    },
+    {
+      "node_id": "047-C5",
+      "status": "met",
+      "facts": [
+        "F08",
+        "F09"
+      ],
+      "rationale": "KL 2 is no more than 3."
+    },
+    {
+      "node_id": "047-C7b",
+      "status": "not_met",
+      "facts": [
+        "F10"
+      ],
+      "rationale": "No loose body on the radiograph."
+    },
+    {
+      "node_id": "047-C7a.1",
+      "status": "met",
+      "facts": [
+        "F12"
+      ],
+      "rationale": "MRI inside 6 months."
+    },
+    {
+      "node_id": "047-C7a.2",
+      "status": "met",
+      "facts": [
+        "F13"
+      ],
+      "rationale": "Qualifying lesion (7.4)."
+    },
+    {
+      "node_id": "047-C7a",
+      "status": "met",
+      "facts": [
+        "F12",
+        "F13"
+      ],
+      "rationale": "MRI pathway."
+    },
+    {
+      "node_id": "047-C7",
+      "status": "met",
+      "facts": [
+        "F12",
+        "F13"
+      ],
+      "rationale": "Imaging lesion (4.2)."
+    },
+    {
+      "node_id": "047-C6b.1",
+      "status": "met",
+      "facts": [
+        "F14"
+      ],
+      "rationale": "Exam documents a new block."
+    },
+    {
+      "node_id": "047-C6b.2",
+      "status": "met",
+      "facts": [
+        "F15"
+      ],
+      "rationale": "Exam within 1 month."
+    },
+    {
+      "node_id": "047-C6b",
+      "status": "met",
+      "facts": [
+        "F14",
+        "F15"
+      ],
+      "rationale": "Locked-knee pathway."
+    },
+    {
+      "node_id": "047-C6",
+      "status": "met",
+      "facts": [
+        "F14",
+        "F15"
+      ],
+      "rationale": "Conservative care or locked knee (4.1)."
+    },
+    {
+      "node_id": "047-C2",
+      "status": "met",
+      "facts": [
+        "F02",
+        "F05",
+        "F11"
+      ],
+      "rationale": "Every document used is of the left knee or names no side."
+    }
+  ],
+  "flags": [],
+  "expected_route": "approve_ready",
+  "author_notes": []
+}

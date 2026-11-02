@@ -1,0 +1,458 @@
+{
+  "case_schema_version": "1.0",
+  "case_id": "CASE-047-07",
+  "policy_id": "NHP-MP-047",
+  "policy_version": "1.0",
+  "archetype": "missing_documentation",
+  "variant": "no_radiograph_report",
+  "split": "dev",
+  "smoke": false,
+  "purpose": "No radiograph report: 3.4 and 3.5 are insufficient, request info for standing films.",
+  "review_status": "draft",
+  "patient": {
+    "synthetic_id": "SYN-0048",
+    "sex": "male",
+    "date_of_birth": "1961-07-27",
+    "race": "other",
+    "ethnicity": "nonhispanic",
+    "background_conditions": [
+      "M17.11"
+    ],
+    "summary": "65-year-old man; the request has an MRI and therapy records but no radiograph report."
+  },
+  "request": {
+    "request_date": "2026-10-15",
+    "review_type": "standard",
+    "service_code": "NHP-P-3005",
+    "primary_diagnosis": "M17.11",
+    "secondary_diagnoses": [],
+    "requested_side": "right",
+    "requesting_specialty": "Orthopedic surgery",
+    "service_details": "Arthroscopic debridement of the right knee."
+  },
+  "documents": [
+    {
+      "id": "D01",
+      "type": "orthopedic_note",
+      "title": "Orthopedic surgery office visit",
+      "date": "2026-10-01",
+      "author_role": "Orthopedic surgeon",
+      "satisfies": [
+        "6.2",
+        "6.7"
+      ],
+      "length": "long",
+      "noise": [
+        "templated_text",
+        "irrelevant_history",
+        "abbreviations"
+      ],
+      "guidance": "Right knee history, symptoms, treatment so far, exam, imaging review, surgical and medical history, plan for arthroscopic debridement."
+    },
+    {
+      "id": "D03",
+      "type": "mri_report",
+      "title": "MRI right knee without contrast",
+      "date": "2026-09-05",
+      "author_role": "Radiologist",
+      "satisfies": [
+        "6.5"
+      ],
+      "length": "medium",
+      "noise": [
+        "templated_text"
+      ],
+      "guidance": "Menisci, ligaments, cartilage, bone, effusion; impression."
+    },
+    {
+      "id": "D04",
+      "type": "physical_therapy_note",
+      "title": "Physical therapy discharge summary",
+      "date": "2026-09-21",
+      "author_role": "Physical therapist",
+      "satisfies": [
+        "6.6"
+      ],
+      "length": "medium",
+      "noise": [
+        "templated_text"
+      ],
+      "guidance": "Dates of care, what was done, response, symptoms at discharge."
+    },
+    {
+      "id": "D05",
+      "type": "office_visit_note",
+      "title": "Primary care visit for knee pain",
+      "date": "2026-06-15",
+      "author_role": "Primary care physician",
+      "satisfies": [
+        "6.2",
+        "6.6"
+      ],
+      "length": "medium",
+      "noise": [
+        "copy_forward"
+      ],
+      "guidance": "Right knee osteoarthritis pain; starts treatment below and refers to exercise therapy."
+    },
+    {
+      "id": "D06",
+      "type": "medication_list",
+      "title": "Current medication list",
+      "date": "2026-10-01",
+      "author_role": "Orthopedic clinic",
+      "satisfies": [
+        "6.6"
+      ],
+      "length": "short",
+      "noise": [
+        "old_values"
+      ],
+      "guidance": "Current and discontinued medications with dates."
+    }
+  ],
+  "facts": [
+    {
+      "id": "F01",
+      "date": "2026-10-15",
+      "doc_id": "REQUEST",
+      "statement": "Request names the right knee.",
+      "field": "requested_knee_side",
+      "value": "right"
+    },
+    {
+      "id": "F02",
+      "date": "2026-10-01",
+      "doc_id": "D01",
+      "statement": "Office note describes the requested knee.",
+      "anchor": "right knee",
+      "field": "evidence_knee_side",
+      "value": "right"
+    },
+    {
+      "id": "F03",
+      "date": "2026-10-01",
+      "doc_id": "D01",
+      "statement": "Symptom description: catching.",
+      "anchor": "knee catches suddenly mid-stride, with a brief block before it moves again",
+      "field": "mechanical_symptom",
+      "value": "catching"
+    },
+    {
+      "id": "F04",
+      "date": "2026-10-01",
+      "doc_id": "D01",
+      "statement": "Date of the symptom note.",
+      "anchor": "Date of visit: 10/01/2026",
+      "field": "symptom_note_date"
+    },
+    {
+      "id": "F05",
+      "date": "2026-09-05",
+      "doc_id": "D03",
+      "statement": "MRI side.",
+      "anchor": "MRI RIGHT KNEE",
+      "field": "evidence_knee_side",
+      "value": "right"
+    },
+    {
+      "id": "F06",
+      "date": "2026-09-05",
+      "doc_id": "D03",
+      "statement": "MRI scan date.",
+      "anchor": "Scan date: 09/05/2026",
+      "field": "mri_date"
+    },
+    {
+      "id": "F07",
+      "date": "2026-09-05",
+      "doc_id": "D03",
+      "statement": "MRI lesion: flap.",
+      "anchor": "unstable chondral flap",
+      "field": "mri_lesion",
+      "value": "unstable_cartilage_flap"
+    },
+    {
+      "id": "F08",
+      "date": "2026-06-15",
+      "doc_id": "D05",
+      "statement": "Conservative care started.",
+      "anchor": "Start of care: 06/15/2026",
+      "field": "conservative_care_start_date"
+    },
+    {
+      "id": "F09",
+      "date": "2026-06-15",
+      "doc_id": "D05",
+      "statement": "Pharmacologic measure.",
+      "anchor": "naproxen 500 mg twice daily",
+      "field": "pharmacologic_measure",
+      "value": "nsaid"
+    },
+    {
+      "id": "F10",
+      "date": "2026-09-21",
+      "doc_id": "D04",
+      "statement": "Exercise therapy.",
+      "anchor": "supervised physical therapy visits",
+      "field": "exercise_therapy",
+      "value": "supervised_pt"
+    },
+    {
+      "id": "F11",
+      "date": "2026-09-21",
+      "doc_id": "D04",
+      "statement": "Last measure ended.",
+      "anchor": "Last day of care: 09/21/2026",
+      "field": "conservative_care_end_date"
+    },
+    {
+      "id": "F12",
+      "date": "2026-09-21",
+      "doc_id": "DERIVED",
+      "statement": "2026-06-15 to 2026-09-21: 98 days.",
+      "field": "conservative_care_days",
+      "value": 98,
+      "unit": "days",
+      "derived_from": [
+        "F08",
+        "F11"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "node_id": "047-C1",
+      "status": "met",
+      "facts": [
+        "F01"
+      ],
+      "rationale": "Right knee on the request."
+    },
+    {
+      "node_id": "047-C3a",
+      "status": "met",
+      "facts": [
+        "F03"
+      ],
+      "rationale": "Mechanical symptom described in terms that fit 7.3."
+    },
+    {
+      "node_id": "047-C3b",
+      "status": "met",
+      "facts": [
+        "F04"
+      ],
+      "rationale": "Note inside the 3-month window."
+    },
+    {
+      "node_id": "047-C3",
+      "status": "met",
+      "facts": [
+        "F03",
+        "F04"
+      ],
+      "rationale": "Mechanical symptom requirement (3.3)."
+    },
+    {
+      "node_id": "047-C4a",
+      "status": "insufficient",
+      "facts": [],
+      "rationale": "No radiograph report in the packet.",
+      "missing": [
+        {
+          "doc_item": "6.4",
+          "what": "A weight-bearing radiograph report of the right knee from the last 12 months, with a Kellgren-Lawrence grade.",
+          "forbidden_phrases": [
+            "Kellgren",
+            "radiograph",
+            "x-ray",
+            "standing views"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "047-C4b",
+      "status": "insufficient",
+      "facts": [],
+      "rationale": "No radiograph report in the packet.",
+      "missing": [
+        {
+          "doc_item": "6.4",
+          "what": "A weight-bearing radiograph report of the right knee from the last 12 months, with a Kellgren-Lawrence grade.",
+          "forbidden_phrases": [
+            "Kellgren",
+            "radiograph",
+            "x-ray",
+            "standing views"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "047-C4",
+      "status": "insufficient",
+      "facts": [],
+      "rationale": "No radiograph report in the packet.",
+      "missing": [
+        {
+          "doc_item": "6.4",
+          "what": "A weight-bearing radiograph report of the right knee from the last 12 months, with a Kellgren-Lawrence grade.",
+          "forbidden_phrases": [
+            "Kellgren",
+            "radiograph",
+            "x-ray",
+            "standing views"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "047-C5",
+      "status": "insufficient",
+      "facts": [],
+      "rationale": "No radiograph grade.",
+      "missing": [
+        {
+          "doc_item": "6.4",
+          "what": "A weight-bearing radiograph report of the right knee from the last 12 months, with a Kellgren-Lawrence grade.",
+          "forbidden_phrases": [
+            "Kellgren",
+            "radiograph",
+            "x-ray",
+            "standing views"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "047-C7b",
+      "status": "insufficient",
+      "facts": [],
+      "rationale": "No radiograph report to show or exclude a loose body.",
+      "missing": [
+        {
+          "doc_item": "6.4",
+          "what": "A weight-bearing radiograph report of the right knee from the last 12 months, with a Kellgren-Lawrence grade.",
+          "forbidden_phrases": [
+            "Kellgren",
+            "radiograph",
+            "x-ray",
+            "standing views"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "047-C7a.1",
+      "status": "met",
+      "facts": [
+        "F06"
+      ],
+      "rationale": "MRI inside 6 months."
+    },
+    {
+      "node_id": "047-C7a.2",
+      "status": "met",
+      "facts": [
+        "F07"
+      ],
+      "rationale": "Qualifying lesion (7.4)."
+    },
+    {
+      "node_id": "047-C7a",
+      "status": "met",
+      "facts": [
+        "F06",
+        "F07"
+      ],
+      "rationale": "MRI pathway."
+    },
+    {
+      "node_id": "047-C7",
+      "status": "met",
+      "facts": [
+        "F06",
+        "F07"
+      ],
+      "rationale": "Imaging lesion (4.2)."
+    },
+    {
+      "node_id": "047-C6a.1",
+      "status": "met",
+      "facts": [
+        "F10"
+      ],
+      "rationale": "Exercise therapy documented."
+    },
+    {
+      "node_id": "047-C6a.2",
+      "status": "met",
+      "facts": [
+        "F09"
+      ],
+      "rationale": "Qualifying drug or injection."
+    },
+    {
+      "node_id": "047-C6a.3",
+      "status": "met",
+      "facts": [
+        "F08",
+        "F11",
+        "F12"
+      ],
+      "rationale": "98 days vs 84."
+    },
+    {
+      "node_id": "047-C6a.4",
+      "status": "met",
+      "facts": [
+        "F11"
+      ],
+      "rationale": "Care ended inside 12 months."
+    },
+    {
+      "node_id": "047-C6a.5",
+      "status": "met",
+      "facts": [
+        "F03"
+      ],
+      "rationale": "Symptom documented after care ended."
+    },
+    {
+      "node_id": "047-C6a",
+      "status": "met",
+      "facts": [
+        "F10",
+        "F09",
+        "F12",
+        "F03"
+      ],
+      "rationale": "Conservative care pathway."
+    },
+    {
+      "node_id": "047-C6",
+      "status": "met",
+      "facts": [
+        "F10",
+        "F09",
+        "F12",
+        "F03"
+      ],
+      "rationale": "Conservative care or locked knee (4.1)."
+    },
+    {
+      "node_id": "047-C2",
+      "status": "met",
+      "facts": [
+        "F02",
+        "F05"
+      ],
+      "rationale": "Every document used is of the right knee or names no side."
+    }
+  ],
+  "flags": [],
+  "expected_route": "request_info",
+  "author_notes": []
+}
