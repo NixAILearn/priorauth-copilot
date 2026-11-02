@@ -5,9 +5,9 @@
   "effective_date": "2026-01-01",
   "source_file": "policies/source/NHP-MP-021.md",
   "source_sha256": "89816c124aeeddfe596b4e6e3706274b98eb877ff2e356b14d47ba360b5f9535",
-  "review_status": "draft",
-  "reviewed_by": null,
-  "reviewed_date": null,
+  "review_status": "reviewed",
+  "reviewed_by": "Nick",
+  "reviewed_date": "2026-11-02",
   "scope": {
     "service_code": "NHP-P-1042",
     "primary_diagnoses": ["G47.33"],
@@ -143,7 +143,7 @@
           "policy_text": "The member had a face-to-face or video visit with a sleep medicine clinician within 12 months before the request date.",
           "summary": "In-person or video sleep visit within 12 months",
           "field": "sleep_visit_date", "window": {"months": 12},
-          "evidence": "A dated note by a sleep medicine clinician from an in-person or video visit. A telephone-only visit does not count.",
+          "evidence": "A dated note by a sleep medicine clinician from an in-person or video visit. A telephone-only visit does not count. A note that does not state the visit mode counts only if it records an exam or vital signs taken that day; otherwise it is insufficient evidence.",
           "definitions": ["7.3", "7.16"], "documentation": ["6.5"]
         },
         {
@@ -333,7 +333,7 @@
     {"id": "021-A03", "sections": ["3.2", "7.6"], "issue": "BMI recorded on one date, height and weight on a later date in the window", "readings": ["Recorded BMI always wins", "Most recent date wins, whether recorded or calculated"], "recommended": "Most recent date wins. 7.6 governs how a value is formed; 7.4 governs which date is used.", "encoded_as": "Field bmi is derived per date, then select=most_recent applies."},
     {"id": "021-A04", "sections": ["3.4(a)"], "issue": "Several DISE reports in the window", "readings": ["Most recent DISE governs 3.4(b)", "Any DISE without complete concentric collapse"], "recommended": "Most recent, consistent with 7.4.", "encoded_as": "021-C4a has select=most_recent; 021-C4b reads the same report."},
     {"id": "021-A05", "sections": ["3.5(b)"], "issue": "What counts as a recommendation", "readings": ["Explicit recommendation or 'good candidate'", "Any mention, including a referral to discuss"], "recommended": "Explicit recommendation or 'good candidate'; a referral only to discuss is insufficient (from Appendix A.2).", "encoded_as": "021-C5b evidence text."},
-    {"id": "021-A06", "sections": ["3.5(a)"], "issue": "A visit with no stated mode (in person, video or phone)", "readings": ["Count it", "Insufficient evidence"], "recommended": "Count it when the note records an exam or vital signs taken that day; otherwise insufficient.", "encoded_as": "Not yet encoded. Needs your call before the extractor prompt is written."},
+    {"id": "021-A06", "sections": ["3.5(a)"], "issue": "A visit with no stated mode (in person, video or phone)", "readings": ["Count it", "Insufficient evidence"], "recommended": "Count it when the note records an exam or vital signs taken that day; otherwise insufficient.", "encoded_as": "021-C5a evidence text. Accepted by Nick 2026-11-02."},
     {"id": "021-A07", "sections": ["7.14(b)"], "issue": "Titration report does not say which pressure was best tolerated", "readings": ["Use the AHI at the final or recommended pressure", "Insufficient evidence"], "recommended": "Use the AHI at the final or recommended pressure.", "encoded_as": "Field titration_residual_ahi description."},
     {"id": "021-A08", "sections": ["7.14(b)", "7.13"], "issue": "Device report longer than 30 days, for example 90 days at 72% of nights", "readings": ["Whole-report percentage stands in for the best 30-day period", "Need a 30-day breakdown"], "recommended": "Whole-report percentage counts when the report covers at least 30 days. It is a conservative stand-in, since some 30-day stretch must be at least as good.", "encoded_as": "021-C6a.2-ii.1 and .2 test the report as a whole."},
     {"id": "021-A09", "sections": ["7.15(e)"], "issue": "Which period counts for 'did not achieve adequate use' when the member used PAP well for years and then stopped", "readings": ["Never achieved adequate use in any 30-day period", "Did not achieve it in the last 30 days of use before stopping"], "recommended": "Last 30 days of use before stopping. The first reading excludes members whose tolerance changed over time, which is a common real story.", "encoded_as": "021-C6b.5-i summary; extractor must return the report closest to the stop date."},
