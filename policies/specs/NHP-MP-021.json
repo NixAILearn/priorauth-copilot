@@ -1,0 +1,347 @@
+{
+  "spec_schema_version": "1.0",
+  "policy_id": "NHP-MP-021",
+  "policy_version": "1.0",
+  "effective_date": "2026-01-01",
+  "source_file": "policies/source/NHP-MP-021.md",
+  "source_sha256": "89816c124aeeddfe596b4e6e3706274b98eb877ff2e356b14d47ba360b5f9535",
+  "review_status": "draft",
+  "reviewed_by": null,
+  "reviewed_date": null,
+  "scope": {
+    "service_code": "NHP-P-1042",
+    "primary_diagnoses": ["G47.33"],
+    "out_of_scope_route": "clinician_review"
+  },
+  "rules": {
+    "window_counting": "calendar_months",
+    "window_boundary_inclusive": true,
+    "missing_calendar_day": "last_day_of_month",
+    "value_selection": "most_recent",
+    "conflict_route": "clinician_review",
+    "contraindication_found_route": "clinician_review",
+    "exclusion_found_route": "clinician_review"
+  },
+  "fields": [
+    {"name": "date_of_birth", "type": "date", "evaluator": "model", "description": "Member date of birth from eligibility data or a dated clinical record."},
+    {"name": "age_years", "type": "number", "unit": "years", "evaluator": "code", "derived_from": ["date_of_birth"], "description": "Completed years on the request date (7.5)."},
+    {"name": "bmi_recorded", "type": "number", "unit": "kg/m2", "evaluator": "model", "description": "BMI as written in a dated note, with its date. Used as written, never rounded (7.6)."},
+    {"name": "height", "type": "number", "unit": "as recorded (cm, m or in)", "evaluator": "model", "description": "Height with unit and measurement date."},
+    {"name": "weight", "type": "number", "unit": "as recorded (kg or lb)", "evaluator": "model", "description": "Weight with unit and measurement date."},
+    {"name": "bmi", "type": "number", "unit": "kg/m2", "evaluator": "code", "derived_from": ["bmi_recorded", "height", "weight"], "description": "Recorded BMI if present on a date; otherwise calculated from same-date height and weight after unit conversion, rounded to one decimal, 0.05 rounds up (7.6)."},
+    {"name": "sleep_study_date", "type": "date", "evaluator": "model", "description": "Date of each diagnostic sleep study."},
+    {"name": "sleep_study_type", "type": "enum", "values": ["in_lab_psg", "split_night_diagnostic", "home_sleep_apnea_test", "titration"], "evaluator": "model", "description": "Study type. A titration study is not a diagnostic sleep study (7.7)."},
+    {"name": "ahi", "type": "number", "unit": "events/hour", "evaluator": "model", "description": "AHI from the diagnostic study (REI for a home test). Pick the 4% value when several rules are reported (7.8)."},
+    {"name": "ahi_scoring_rule", "type": "enum", "values": ["4_percent", "3_percent", "arousal_based", "not_stated"], "evaluator": "model", "description": "Hypopnea rule for the AHI value extracted."},
+    {"name": "central_apneas", "type": "number", "unit": "events (count or per hour)", "evaluator": "model", "description": "Central apneas from the same study."},
+    {"name": "mixed_apneas", "type": "number", "unit": "events (count or per hour)", "evaluator": "model", "description": "Mixed apneas from the same study, in the same unit as central_apneas."},
+    {"name": "total_apneas_hypopneas", "type": "number", "unit": "events (count or per hour)", "evaluator": "model", "description": "All apneas plus hypopneas from the same study, in the same unit."},
+    {"name": "central_mixed_share_pct", "type": "number", "unit": "%", "evaluator": "code", "derived_from": ["central_apneas", "mixed_apneas", "total_apneas_hypopneas"], "description": "(central + mixed) / total x 100 (7.9). A percentage stated in the report is used only when the counts are absent."},
+    {"name": "dise_date", "type": "date", "evaluator": "model", "description": "Date of each DISE."},
+    {"name": "sleep_visit_date", "type": "date", "evaluator": "model", "description": "Date of each visit with a sleep medicine clinician."},
+    {"name": "sleep_visit_mode", "type": "enum", "values": ["in_person", "video", "telephone", "not_stated"], "evaluator": "model", "description": "How the visit took place."},
+    {"name": "titration_residual_ahi", "type": "number", "unit": "events/hour", "evaluator": "model", "description": "AHI at the best tolerated or final recommended pressure on an attended titration study."},
+    {"name": "pap_device_residual_ahi", "type": "number", "unit": "events/hour", "evaluator": "model", "description": "Device-estimated AHI for the period covered by a usage report."},
+    {"name": "pap_pct_nights_4h", "type": "number", "unit": "%", "evaluator": "model", "description": "Percent of nights with at least 4 hours of use in a usage report, with the report's start and end dates."},
+    {"name": "pap_report_days", "type": "number", "unit": "consecutive days", "evaluator": "code", "derived_from": ["pap_pct_nights_4h"], "description": "Length of the usage-report period, from its start and end dates."},
+    {"name": "tonsil_grade", "type": "number", "unit": "grade 0-4", "evaluator": "model", "description": "Tonsil size grade from the most recent airway exam, with its date."},
+    {"name": "mi_date", "type": "date", "evaluator": "model", "description": "Date of any documented myocardial infarction."}
+  ],
+  "criteria": [
+    {
+      "id": "021-C1", "section": "3.1", "type": "numeric",
+      "policy_text": "The member's age is at least 22 years on the request date.",
+      "summary": "Member is at least 22 on the request date",
+      "field": "age_years", "op": ">=", "value": 22, "unit": "years",
+      "definitions": ["7.1", "7.5"], "documentation": ["6.1"]
+    },
+    {
+      "id": "021-C2", "section": "3.2", "type": "numeric",
+      "policy_text": "The member's body mass index (BMI) is less than 35.0 kg/m², using the most recent value documented within 6 months before the request date.",
+      "summary": "Most recent BMI in the last 6 months is less than 35.0",
+      "field": "bmi", "op": "<", "value": 35.0, "unit": "kg/m2",
+      "window": {"months": 6}, "select": "most_recent",
+      "definitions": ["7.3", "7.4", "7.6"], "documentation": ["6.2"],
+      "flag_rules": [
+        {"id": "021-C2-F1", "when": "Two BMI values share the latest date and disagree, or an earlier BMI in the window falls on the other side of 35.0 (7.4)", "route": "clinician_review"}
+      ]
+    },
+    {
+      "id": "021-C3", "section": "3.3", "type": "all_of",
+      "policy_text": "All of the following, using the most recent value from a diagnostic sleep study:",
+      "summary": "Most recent diagnostic sleep study is recent and shows qualifying obstructive severity",
+      "select": "most_recent",
+      "definitions": ["7.4", "7.7", "7.8", "7.9"], "documentation": ["6.3"],
+      "flag_rules": [
+        {"id": "021-C3-F1", "when": "An earlier diagnostic study inside the 24-month window would change whether 3.3(b), (c) or (d) is met (7.4)", "route": "clinician_review"},
+        {"id": "021-C3-F2", "when": "The study's AHI is given only for a 3% or arousal-based hypopnea rule (7.8)", "route": "clinician_review"}
+      ],
+      "children": [
+        {
+          "id": "021-C3a", "section": "3.3(a)", "type": "date_window",
+          "policy_text": "The study was performed within 24 months before the request date.",
+          "summary": "Sleep study within 24 months",
+          "field": "sleep_study_date", "window": {"months": 24},
+          "definitions": ["7.3"], "documentation": ["6.3"]
+        },
+        {
+          "id": "021-C3b", "section": "3.3(b)", "type": "numeric",
+          "policy_text": "The apnea-hypopnea index (AHI) is at least 15 events per hour.",
+          "summary": "AHI at least 15",
+          "field": "ahi", "op": ">=", "value": 15, "unit": "events/hour",
+          "definitions": ["7.8"], "documentation": ["6.3"]
+        },
+        {
+          "id": "021-C3c", "section": "3.3(c)", "type": "numeric",
+          "policy_text": "The AHI is no more than 65 events per hour.",
+          "summary": "AHI no more than 65",
+          "field": "ahi", "op": "<=", "value": 65, "unit": "events/hour",
+          "definitions": ["7.8"], "documentation": ["6.3"]
+        },
+        {
+          "id": "021-C3d", "section": "3.3(d)", "type": "numeric",
+          "policy_text": "The central and mixed apnea share is less than 25%.",
+          "summary": "Central plus mixed apneas less than 25% of events",
+          "field": "central_mixed_share_pct", "op": "<", "value": 25, "unit": "%",
+          "definitions": ["7.9"], "documentation": ["6.3"]
+        }
+      ]
+    },
+    {
+      "id": "021-C4", "section": "3.4", "type": "all_of",
+      "policy_text": "All of the following:",
+      "summary": "Recent DISE without complete concentric collapse at the soft palate",
+      "documentation": ["6.4"],
+      "children": [
+        {
+          "id": "021-C4a", "section": "3.4(a)", "type": "date_window",
+          "policy_text": "A drug-induced sleep endoscopy (DISE) was performed within 24 months before the request date.",
+          "summary": "DISE within 24 months",
+          "field": "dise_date", "window": {"months": 24}, "select": "most_recent",
+          "definitions": ["7.3", "7.10"], "documentation": ["6.4"]
+        },
+        {
+          "id": "021-C4b", "section": "3.4(b)", "type": "fact",
+          "policy_text": "The DISE report states that complete concentric collapse at the level of the soft palate was not seen.",
+          "summary": "DISE report states no complete concentric collapse at the soft palate",
+          "evidence": "A sentence in the most recent DISE report that describes the soft-palate collapse pattern and shows it was not complete concentric collapse. Silence about the soft palate is insufficient evidence. Wording such as 'near-complete' or 'predominantly concentric' is not clearly met.",
+          "definitions": ["7.11"], "documentation": ["6.4"],
+          "flag_rules": [
+            {"id": "021-C4b-F1", "when": "The report describes soft-palate collapse with a hedge such as near-complete, predominantly or mostly concentric", "route": "clinician_review"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "021-C5", "section": "3.5", "type": "all_of",
+      "policy_text": "All of the following:",
+      "summary": "Sleep specialist saw the member in the last 12 months and recommends HGNS",
+      "documentation": ["6.5"],
+      "children": [
+        {
+          "id": "021-C5a", "section": "3.5(a)", "type": "date_window",
+          "policy_text": "The member had a face-to-face or video visit with a sleep medicine clinician within 12 months before the request date.",
+          "summary": "In-person or video sleep visit within 12 months",
+          "field": "sleep_visit_date", "window": {"months": 12},
+          "evidence": "A dated note by a sleep medicine clinician from an in-person or video visit. A telephone-only visit does not count.",
+          "definitions": ["7.3", "7.16"], "documentation": ["6.5"]
+        },
+        {
+          "id": "021-C5b", "section": "3.5(b)", "type": "fact",
+          "policy_text": "The note from that visit recommends hypoglossal nerve stimulation for this member.",
+          "summary": "That visit's note recommends HGNS",
+          "evidence": "A sentence in the note of a visit that meets 3.5(a) recommending hypoglossal nerve stimulation, or calling the member a good candidate for it. A referral only to discuss the option is insufficient evidence.",
+          "documentation": ["6.5"]
+        }
+      ]
+    },
+    {
+      "id": "021-C6", "section": "4.1", "type": "any_of",
+      "policy_text": "Any one of the following:",
+      "summary": "PAP was tried first and failed or was not tolerated",
+      "definitions": ["7.12", "7.13"], "documentation": ["6.6"],
+      "children": [
+        {
+          "id": "021-C6a", "section": "4.1(a)", "type": "all_of",
+          "policy_text": "PAP failure, as defined in 7.14",
+          "summary": "PAP failure: AHI still at least 15 on PAP",
+          "definitions": ["7.14"], "documentation": ["6.6"],
+          "flag_rules": [
+            {"id": "021-C6a-F1", "when": "A clinician describes PAP failure on symptoms alone (for example persistent sleepiness) with no qualifying residual AHI", "route": "clinician_review"}
+          ],
+          "children": [
+            {
+              "id": "021-C6a.1", "section": "7.14(a)", "type": "fact",
+              "policy_text": "The member used PAP therapy.",
+              "summary": "Member used PAP",
+              "evidence": "A dated record showing the member used CPAP, APAP or BPAP.",
+              "documentation": ["6.6"]
+            },
+            {
+              "id": "021-C6a.2", "section": "7.14(b)", "type": "any_of",
+              "policy_text": "While on PAP therapy, the AHI was at least 15 events per hour, shown by either an attended titration study at the best pressure the member tolerated, or a device usage report covering a 30-day period of adequate PAP use.",
+              "summary": "Residual AHI at least 15 on titration study or on 30 days of adequate device use",
+              "documentation": ["6.6"],
+              "children": [
+                {
+                  "id": "021-C6a.2-i", "section": "7.14(b)", "type": "numeric",
+                  "policy_text": "an attended titration study at the best pressure the member tolerated",
+                  "summary": "Titration study residual AHI at least 15",
+                  "field": "titration_residual_ahi", "op": ">=", "value": 15, "unit": "events/hour",
+                  "documentation": ["6.6"]
+                },
+                {
+                  "id": "021-C6a.2-ii", "section": "7.14(b)", "type": "all_of",
+                  "policy_text": "a device usage report covering a 30-day period of adequate PAP use",
+                  "summary": "Device report: adequate use over at least 30 days with residual AHI at least 15",
+                  "definitions": ["7.13"], "documentation": ["6.6"],
+                  "children": [
+                    {
+                      "id": "021-C6a.2-ii.1", "section": "7.13", "type": "numeric",
+                      "policy_text": "Device-recorded use of at least 4 hours per night on at least 70% of nights during a period of 30 consecutive days.",
+                      "summary": "At least 70% of nights with 4+ hours",
+                      "field": "pap_pct_nights_4h", "op": ">=", "value": 70, "unit": "%",
+                      "documentation": ["6.6"]
+                    },
+                    {
+                      "id": "021-C6a.2-ii.2", "section": "7.13", "type": "numeric",
+                      "policy_text": "during a period of 30 consecutive days",
+                      "summary": "Usage report covers at least 30 consecutive days",
+                      "field": "pap_report_days", "op": ">=", "value": 30, "unit": "consecutive days",
+                      "documentation": ["6.6"]
+                    },
+                    {
+                      "id": "021-C6a.2-ii.3", "section": "7.14(b)", "type": "numeric",
+                      "policy_text": "the AHI was at least 15 events per hour",
+                      "summary": "Device residual AHI at least 15 for that period",
+                      "field": "pap_device_residual_ahi", "op": ">=", "value": 15, "unit": "events/hour",
+                      "documentation": ["6.6"]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "021-C6b", "section": "4.1(b)", "type": "all_of",
+          "policy_text": "PAP intolerance, as defined in 7.15",
+          "summary": "PAP intolerance: stopped or unable, with a reason, a fix attempt and low use",
+          "definitions": ["7.15"], "documentation": ["6.6"],
+          "children": [
+            {
+              "id": "021-C6b.1", "section": "7.15(a)", "type": "fact",
+              "policy_text": "The member started PAP therapy.",
+              "summary": "Member started PAP",
+              "evidence": "A dated record showing the member started CPAP, APAP or BPAP.",
+              "documentation": ["6.6"]
+            },
+            {
+              "id": "021-C6b.2", "section": "7.15(b)", "type": "fact",
+              "policy_text": "A clinician documents that the member is unable to continue PAP therapy, or stopped using it.",
+              "summary": "Clinician documents member cannot continue or stopped PAP",
+              "evidence": "A clinician's statement that the member cannot continue PAP or has stopped using it.",
+              "documentation": ["6.6"]
+            },
+            {
+              "id": "021-C6b.3", "section": "7.15(c)", "type": "fact",
+              "policy_text": "The record names at least one specific reason, such as mask discomfort, claustrophobia, pressure intolerance, swallowing air, skin breakdown or sleep disrupted by the device.",
+              "summary": "A specific reason is named",
+              "evidence": "A specific reason the member could not use PAP. 'Did not tolerate' with no reason is insufficient evidence.",
+              "documentation": ["6.6"]
+            },
+            {
+              "id": "021-C6b.4", "section": "7.15(d)", "type": "fact",
+              "policy_text": "The record shows at least one attempt to fix the problem before the member stopped, such as a mask change or refit, a pressure change, added humidification or a desensitization program.",
+              "summary": "At least one fix was tried before stopping",
+              "evidence": "A record of at least one troubleshooting step (mask change or refit, pressure change, humidification, desensitization) dated before the member stopped PAP.",
+              "documentation": ["6.6"]
+            },
+            {
+              "id": "021-C6b.5", "section": "7.15(e)", "type": "any_of",
+              "policy_text": "A device usage report or a clinician note shows the member did not achieve adequate PAP use.",
+              "summary": "Use stayed below the adequate-use benchmark",
+              "definitions": ["7.13"], "documentation": ["6.6"],
+              "children": [
+                {
+                  "id": "021-C6b.5-i", "section": "7.15(e)", "type": "numeric",
+                  "policy_text": "A device usage report or a clinician note shows the member did not achieve adequate PAP use.",
+                  "summary": "Device report: less than 70% of nights with 4+ hours in the last 30 days of use",
+                  "field": "pap_pct_nights_4h", "op": "<", "value": 70, "unit": "%",
+                  "documentation": ["6.6"]
+                },
+                {
+                  "id": "021-C6b.5-ii", "section": "7.15(e)", "type": "fact",
+                  "policy_text": "A device usage report or a clinician note shows the member did not achieve adequate PAP use.",
+                  "summary": "Clinician note states use below the benchmark",
+                  "evidence": "A clinician note giving hours or nights of use that fall below at least 4 hours on at least 70% of nights, or stating the member stopped PAP within 30 days of starting.",
+                  "documentation": ["6.6"]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "contraindications": [
+    {"id": "021-CI01", "section": "5.1.1", "type": "fact", "policy_text": "A neuromuscular disease that affects control of the tongue or upper airway, such as amyotrophic lateral sclerosis or myasthenia gravis.", "summary": "Neuromuscular disease affecting tongue or airway", "evidence": "Any mention, current or historical, in problem list, history or notes.", "documentation": ["6.7"]},
+    {"id": "021-CI02", "section": "5.1.2", "type": "fact", "policy_text": "Weakness or paralysis of either hypoglossal nerve, from any cause.", "summary": "Hypoglossal nerve weakness or paralysis", "evidence": "Any mention, including tongue deviation or atrophy attributed to the nerve. A history described as resolved still counts as found.", "documentation": ["6.7"]},
+    {"id": "021-CI03", "section": "5.1.3", "type": "numeric", "policy_text": "Tonsil size of at least grade 3 on a 0 to 4 scale, on the most recent documented airway exam.", "summary": "Tonsils grade 3 or 4", "field": "tonsil_grade", "op": ">=", "value": 3, "unit": "grade 0-4", "select": "most_recent", "documentation": ["6.7"]},
+    {"id": "021-CI04", "section": "5.1.4", "type": "fact", "policy_text": "Another upper airway finding, such as a tongue-base mass or severe nasal obstruction, that a treating surgeon has documented needs correction before implant.", "summary": "Airway finding a surgeon says must be fixed first", "evidence": "A surgeon's statement that an airway finding needs correction before implant.", "documentation": ["6.7"]},
+    {"id": "021-CI05", "section": "5.1.5", "type": "fact", "policy_text": "Chronic lung disease that requires supplemental oxygen while awake.", "summary": "Lung disease needing daytime oxygen", "evidence": "Home or daytime supplemental oxygen for a chronic lung disease, in history, medication or equipment lists.", "documentation": ["6.7"]},
+    {"id": "021-CI06", "section": "5.1.6", "type": "fact", "policy_text": "Pulmonary hypertension documented as moderate or severe.", "summary": "Moderate or severe pulmonary hypertension", "evidence": "Pulmonary hypertension described as moderate or severe.", "documentation": ["6.7"]},
+    {"id": "021-CI07", "section": "5.1.7", "type": "fact", "policy_text": "Heart failure documented as New York Heart Association class III or class IV.", "summary": "Heart failure NYHA III or IV", "evidence": "Heart failure with NYHA class III or IV stated.", "documentation": ["6.7"]},
+    {"id": "021-CI08", "section": "5.1.8", "type": "date_window", "policy_text": "A heart attack (myocardial infarction) within 6 months before the request date.", "summary": "Heart attack in the last 6 months", "field": "mi_date", "window": {"months": 6}, "definitions": ["7.3"], "documentation": ["6.7"]},
+    {"id": "021-CI09", "section": "5.1.9", "type": "fact", "policy_text": "Heart valve disease documented as severe.", "summary": "Severe heart valve disease", "evidence": "Valve disease described as severe.", "documentation": ["6.7"]},
+    {"id": "021-CI10", "section": "5.1.10", "type": "fact", "policy_text": "Current pregnancy.", "summary": "Currently pregnant", "evidence": "Pregnancy documented as current in the most recent record that addresses pregnancy status.", "documentation": ["6.7"]},
+    {"id": "021-CI11", "section": "5.1.11", "type": "fact", "policy_text": "An expected, ongoing need for MRI scans that the planned device's labeling does not permit.", "summary": "Ongoing MRI need the device cannot accept", "evidence": "A documented expected need for repeated MRI. Any such mention is treated as found, because the engine cannot check device labeling.", "documentation": ["6.7"]},
+    {
+      "id": "021-CI12", "section": "5.1.12", "type": "fact",
+      "policy_text": "Another active implanted electrical device, such as a pacemaker, defibrillator or spinal cord stimulator, unless a treating clinician documents that interaction between the devices has been evaluated and is acceptable.",
+      "summary": "Another active implanted device, without a clearance statement",
+      "evidence": "Any active implanted electrical device in history, device or medication lists, or imaging.",
+      "documentation": ["6.7"],
+      "exception": {
+        "id": "021-CI12-E", "section": "5.1.12", "type": "fact",
+        "policy_text": "unless a treating clinician documents that interaction between the devices has been evaluated and is acceptable",
+        "summary": "Clinician states device interaction was evaluated and is acceptable",
+        "evidence": "A specific clinician statement that interaction between the devices was evaluated and is acceptable. A bare mention of the device does not count.",
+        "documentation": ["6.7"]
+      }
+    },
+    {"id": "021-CI13", "section": "5.1.13", "type": "fact", "policy_text": "A cognitive, psychiatric or physical condition documented as preventing the member from operating the device's handheld remote, with no caregiver documented as able to do so.", "summary": "Cannot operate the remote and no caregiver can", "evidence": "A statement that a condition prevents the member from using the remote, and no statement that a caregiver can.", "documentation": ["6.7"]},
+    {"id": "021-CI14", "section": "5.1.14", "type": "fact", "policy_text": "Untreated narcolepsy or another untreated central disorder of excessive sleepiness.", "summary": "Untreated narcolepsy or similar", "evidence": "Narcolepsy or idiopathic hypersomnia with no documented treatment.", "documentation": ["6.5"]}
+  ],
+  "exclusions": [
+    {"id": "021-EX01", "section": "5.2.1", "type": "fact", "policy_text": "The member already has a hypoglossal nerve stimulator implanted.", "summary": "Already has an HGNS implant", "evidence": "An existing hypoglossal nerve stimulator in history, device list or imaging.", "documentation": ["6.7"]},
+    {"id": "021-EX02", "section": "5.2.2", "type": "fact", "policy_text": "The request is for snoring alone, without obstructive sleep apnea that meets 3.3.", "summary": "Request is for snoring alone", "evidence": "The request or notes state the goal is snoring, and 3.3 is not met.", "documentation": ["6.3"]},
+    {"id": "021-EX03", "section": "5.2.3", "type": "fact", "policy_text": "The planned device does not have US Food and Drug Administration marketing authorization for treating obstructive sleep apnea.", "summary": "Device lacks FDA authorization for OSA", "evidence": "A statement that the planned device is investigational or not FDA-authorized for OSA. The engine cannot confirm authorization; it only finds statements.", "documentation": ["6.7"]}
+  ],
+  "documentation": [
+    {"id": "6.1", "name": "Member date of birth", "must_show": "Date of birth, from Northwind eligibility data or a dated clinical record", "supports": ["3.1"]},
+    {"id": "6.2", "name": "Office visit note with vital signs", "must_show": "Visit date; height and weight, or a recorded BMI", "supports": ["3.2"]},
+    {"id": "6.3", "name": "Diagnostic sleep study report", "must_show": "Study date; study type; AHI (or REI for a home test); hypopnea scoring rule; counts or percentages of central and mixed apneas; interpreting physician's signature", "supports": ["3.3"]},
+    {"id": "6.4", "name": "DISE report", "must_show": "Procedure date; level-by-level description of airway collapse, including the pattern at the soft palate; performing clinician", "supports": ["3.4"]},
+    {"id": "6.5", "name": "Sleep medicine consultation note", "must_show": "Visit date; visit type (in person or video); clinician's credentials; recommendation for hypoglossal nerve stimulation; status of other sleep disorders", "supports": ["3.5", "5.1.14"]},
+    {"id": "6.6", "name": "PAP records", "must_show": "Device usage report (dates covered, nightly hours, percent of nights with at least 4 hours, residual AHI) or titration study report; clinic notes on PAP problems, the reason use stopped and each step taken to fix it", "supports": ["4.1"]},
+    {"id": "6.7", "name": "Surgical consultation or history and physical", "must_show": "Visit date; airway exam with tonsil grade; problem list; medication list; implanted devices; cardiac, lung, neurologic and pregnancy status; ability to use the remote", "supports": ["5.1.1", "5.1.2", "5.1.3", "5.1.4", "5.1.5", "5.1.6", "5.1.7", "5.1.8", "5.1.9", "5.1.10", "5.1.11", "5.1.12", "5.1.13"]}
+  ],
+  "ambiguities": [
+    {"id": "021-A01", "sections": ["3.3"], "issue": "Must 3.3(b), (c) and (d) all come from the same study as 3.3(a)?", "readings": ["All four from the single most recent diagnostic study", "Each sub-item may be met by any study in the window"], "recommended": "Same study. Mixing studies could pass a member no single study qualifies.", "encoded_as": "021-C3 has select=most_recent at the group level; children read that one study."},
+    {"id": "021-A02", "sections": ["3.2", "7.4"], "issue": "Same-date BMI values from two sources that differ only by rounding (34.96 in vitals, 35.0 in the note)", "readings": ["Conflict, go to clinician review", "Use the note's value"], "recommended": "Conflict. 7.4 says same-date disagreement is a conflict, and this sits on the cutoff.", "encoded_as": "Flag rule 021-C2-F1."},
+    {"id": "021-A03", "sections": ["3.2", "7.6"], "issue": "BMI recorded on one date, height and weight on a later date in the window", "readings": ["Recorded BMI always wins", "Most recent date wins, whether recorded or calculated"], "recommended": "Most recent date wins. 7.6 governs how a value is formed; 7.4 governs which date is used.", "encoded_as": "Field bmi is derived per date, then select=most_recent applies."},
+    {"id": "021-A04", "sections": ["3.4(a)"], "issue": "Several DISE reports in the window", "readings": ["Most recent DISE governs 3.4(b)", "Any DISE without complete concentric collapse"], "recommended": "Most recent, consistent with 7.4.", "encoded_as": "021-C4a has select=most_recent; 021-C4b reads the same report."},
+    {"id": "021-A05", "sections": ["3.5(b)"], "issue": "What counts as a recommendation", "readings": ["Explicit recommendation or 'good candidate'", "Any mention, including a referral to discuss"], "recommended": "Explicit recommendation or 'good candidate'; a referral only to discuss is insufficient (from Appendix A.2).", "encoded_as": "021-C5b evidence text."},
+    {"id": "021-A06", "sections": ["3.5(a)"], "issue": "A visit with no stated mode (in person, video or phone)", "readings": ["Count it", "Insufficient evidence"], "recommended": "Count it when the note records an exam or vital signs taken that day; otherwise insufficient.", "encoded_as": "Not yet encoded. Needs your call before the extractor prompt is written."},
+    {"id": "021-A07", "sections": ["7.14(b)"], "issue": "Titration report does not say which pressure was best tolerated", "readings": ["Use the AHI at the final or recommended pressure", "Insufficient evidence"], "recommended": "Use the AHI at the final or recommended pressure.", "encoded_as": "Field titration_residual_ahi description."},
+    {"id": "021-A08", "sections": ["7.14(b)", "7.13"], "issue": "Device report longer than 30 days, for example 90 days at 72% of nights", "readings": ["Whole-report percentage stands in for the best 30-day period", "Need a 30-day breakdown"], "recommended": "Whole-report percentage counts when the report covers at least 30 days. It is a conservative stand-in, since some 30-day stretch must be at least as good.", "encoded_as": "021-C6a.2-ii.1 and .2 test the report as a whole."},
+    {"id": "021-A09", "sections": ["7.15(e)"], "issue": "Which period counts for 'did not achieve adequate use' when the member used PAP well for years and then stopped", "readings": ["Never achieved adequate use in any 30-day period", "Did not achieve it in the last 30 days of use before stopping"], "recommended": "Last 30 days of use before stopping. The first reading excludes members whose tolerance changed over time, which is a common real story.", "encoded_as": "021-C6b.5-i summary; extractor must return the report closest to the stop date."},
+    {"id": "021-A10", "sections": ["4.1", "7.14"], "issue": "PAP failure on symptoms alone", "readings": ["Counts as failure", "Only a residual AHI counts"], "recommended": "Only residual AHI counts for approve-ready; symptom-only failure goes to clinician review (from Appendix A.2).", "encoded_as": "Flag rule 021-C6a-F1."},
+    {"id": "021-A11", "sections": ["5.1.2", "5.1.1"], "issue": "Contraindication documented as history or resolved", "readings": ["Treat as found", "Treat as not found"], "recommended": "Treat as found. It only sends the case to a person, which is the safe direction.", "encoded_as": "Evidence text of 021-CI01 and 021-CI02."},
+    {"id": "021-A12", "sections": ["5.1.10"], "issue": "Pregnancy status not addressed anywhere in the chart", "readings": ["Not found, so no contraindication", "Insufficient evidence"], "recommended": "Not found. Contraindications are triggered by documentation; requiring proof of absence would send nearly every case to request info.", "encoded_as": "Contraindications have no insufficient status; only 'found' routes."},
+    {"id": "021-A13", "sections": ["5.2.3"], "issue": "The engine cannot verify FDA authorization of the named device", "readings": ["Assume authorized unless a statement says otherwise", "Require a device name checked against a list"], "recommended": "Assume authorized unless stated otherwise in v1; add a Northwind approved-device table later if wanted.", "encoded_as": "021-EX03 evidence text."},
+    {"id": "021-A14", "sections": ["2.2"], "issue": "Primary diagnosis G47.33 on the request but the notes describe central sleep apnea", "readings": ["Trust the request diagnosis", "Treat as conflict"], "recommended": "Conflict, so clinician review. 3.3(d) will usually catch it anyway.", "encoded_as": "rules.conflict_route; no separate node."}
+  ],
+  "source_quote_required": true
+}
