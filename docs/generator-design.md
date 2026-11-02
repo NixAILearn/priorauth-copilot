@@ -1,6 +1,6 @@
 # PriorAuth Copilot: Case Generator Design (v0.1)
 
-**Owner:** Nick · **Status:** Draft for review · **Updated:** 2026-11-02 (rev. 2: documents written in-session, D-041) · Input: [`data/case_specs/`](../data/case_specs/) · Output: [`data/cases/`](../data/cases/) · Decisions: D-033 to D-041 in [`decision-log.md`](decision-log.md)
+**Owner:** Nick · **Status:** Accepted · **Updated:** 2026-11-02 (rev. 2: documents written in-session, D-041) · Input: [`data/case_specs/`](../data/case_specs/) · Output: [`data/cases/`](../data/cases/) · Decisions: D-033 to D-041 in [`decision-log.md`](decision-log.md)
 
 The generator turns each of the 60 reviewed case specs into what the copilot will actually see: a request, a packet of clinical documents and, for the eval, a label file. The spec already fixes the answer, so the generator's only job is to write convincing text **around** fixed facts, then prove in code that the text says what the spec says and nothing that would change the answer.
 
