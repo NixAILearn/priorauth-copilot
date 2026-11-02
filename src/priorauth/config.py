@@ -6,7 +6,7 @@ routing are code and run the same on every backend.
     PRIORAUTH_BACKEND          anthropic (default) | openrouter | lmstudio | fake
     PRIORAUTH_EXTRACT_MODEL    overrides the extraction model for the chosen backend
     PRIORAUTH_HARD_MODEL       overrides the hard-case model; "none" turns the re-run off
-    PRIORAUTH_CONTEXT_TOKENS   context length the model was loaded with (lmstudio default 32k tokens)
+    PRIORAUTH_CONTEXT_TOKENS   context length the model was loaded with (lmstudio: 32k)
     PRIORAUTH_MAX_OUTPUT_TOKENS
     PRIORAUTH_BASE_URL         overrides the OpenAI-compatible endpoint
     ANTHROPIC_API_KEY          anthropic (the SDK also accepts an `ant auth login` profile)
