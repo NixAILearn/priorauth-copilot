@@ -5,9 +5,9 @@
   "effective_date": "2026-01-01",
   "source_file": "policies/source/NHP-MP-034.md",
   "source_sha256": "b26c51ff9db2473acfc4816b7d262bbd78e9e3d657f806e1413ea067e2f72cea",
-  "review_status": "draft",
-  "reviewed_by": null,
-  "reviewed_date": null,
+  "review_status": "reviewed",
+  "reviewed_by": "Nick",
+  "reviewed_date": "2026-11-02",
   "scope": {
     "service_code": "NHP-P-2017",
     "primary_diagnoses": [
