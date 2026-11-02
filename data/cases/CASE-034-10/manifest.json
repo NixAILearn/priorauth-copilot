@@ -1,0 +1,50 @@
+{
+  "case_id": "CASE-034-10",
+  "generator_version": "0.1.0",
+  "writer": "claude-code-session",
+  "case_spec_sha256": "17407009babb918f393596a81fb9dd58bb3d942cead6989a8d67b3e58ef8c385",
+  "brief_sha256": "8f9f2372147de9ecb4ba9a200bad41d27a959bce52a12d40daadccf827a3914b",
+  "documents": {
+    "D01": {
+      "prompt_sha256": "2d7b3d20b4210da1243e037ba0768953a3697b473009c557bd9a7f217e410438",
+      "text_sha256": "9259c9873d33165328043858fbf5d6cd6a7262c5cbafb787dde02e0a2f20c90f"
+    },
+    "D02": {
+      "prompt_sha256": "ea6f57179c035352f52b49491405249c1f1f85a556e14bad9341e6e71805c37b",
+      "text_sha256": "6e27416fa7e35e492f788cecb5893a364dc60905fd0d36a9905d9d16352cb20d"
+    },
+    "D03": {
+      "prompt_sha256": "5ec61c08397fcbe745cdb36eac8559b269136628817a7971ba6f64c847490305",
+      "text_sha256": "8ded92dd47ea8336ce01fd19fab00b52f286987006e1e3928168c2bd651b54ae"
+    },
+    "D04": {
+      "prompt_sha256": "a8a20c9301d423dba27a35d322287d9078ce9537044c85c9b5ce873cf29ace7b",
+      "text_sha256": "a5bd814e0b2cc8fc9572e88567d435b836d7cb545b833368e1c6160917e528a4"
+    },
+    "D05": {
+      "prompt_sha256": "ee57091c05e20c0dcb03a8f5448f3256621e0f9483320fe4cef9d1fbc789e9f2",
+      "text_sha256": "b2fe9a6f931144e92a2d088b33f9d5cc7ea77627055a242a7cd07c24602bcd6f"
+    },
+    "D07": {
+      "prompt_sha256": "8021e2711454edb4bc2312ee99e2a1014abb18cd0f22e92b5be159324f15a849",
+      "text_sha256": "d03d198e184f9e5dae2ad4ed5a54be1e37acef25a337b8faca34c44611b0d4fc"
+    },
+    "D08": {
+      "prompt_sha256": "c7c2d618bcbc5bd06e3b0ed44c96da00ca5ecbc661a0c6f8ba811c614d54c77f",
+      "text_sha256": "774b2673755f619cbc1bf91c562d6955e922982f424d08d0dd65d21f7781607a"
+    },
+    "D09": {
+      "prompt_sha256": "ea52537b02b61fe548afd9c78454e02a9520186a982d93d975fd8c62fafef8fb",
+      "text_sha256": "d186dbc99c6a0bc88a3b94f0b2a4325407afaeeffa74416e3eb990754970ca53"
+    },
+    "D10": {
+      "prompt_sha256": "2610e53859fc5953521ba05eb9be0fde4a93857e32487c7979c4778ca1b92f9b",
+      "text_sha256": "9f38fd639b3a47dd93c3cc7e1826680066c930b8143f4e17c3de9fa5274a6e63"
+    },
+    "D11": {
+      "prompt_sha256": "db6b44ae0ddd7cc9d746f654a34be21d2242740e62d2bcf919b5d97353b2e909",
+      "text_sha256": "01760359ae99e249c8ce807fe782f8b9f1708bf63263010e52755150e69dbc7c"
+    }
+  },
+  "synthea_seed": null
+}

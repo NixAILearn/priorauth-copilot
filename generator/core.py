@@ -363,14 +363,14 @@ def parse_dates(text: str) -> list[date]:
     return out
 
 
-GUARD_SKIP_UNITS = re.compile(r"\s*(?:cm\b|mm\s*Hg|days?\b|nights?\b)")
+GUARD_SKIP_UNITS = re.compile(r"(?:/\d)|\s*(?:cm\b|mm\s*Hg|days?\b|nights?\b)")
 
 
 def guarded_value(body: str, start: int) -> tuple[float | None, str]:
     """The first number within a short reach after a guarded keyword, skipping numbers that
     carry another unit (for example the pressure in "AHI at 12 cm H2O: 22.0")."""
     tail = body[start : start + 40].split("\n", 1)[0]
-    for m in re.finditer(r"(?<![A-Za-z])\d+(?:\.\d+)?", tail):
+    for m in re.finditer(r"(?<![A-Za-z/\d.])\d+(?:\.\d+)?", tail):
         if GUARD_SKIP_UNITS.match(tail, m.end()):
             continue
         if m.start() > 24:

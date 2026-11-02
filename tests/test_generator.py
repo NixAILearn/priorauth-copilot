@@ -151,3 +151,13 @@ def test_sla():
     case, spec = load("CASE-021-01")
     req = core.build_request(case, spec)
     assert req.sla_due_at - req.received_at in (timedelta(hours=72), timedelta(days=7))
+
+
+def test_value_guard_skips_dates_and_other_units():
+    assert core.guarded_value("HbA1c drawn 05/21/2026.", 5)[0] is None
+    assert core.guarded_value(" at 12 cm H2O: 22.0 events/hour", 0)[0] == 22.0
+
+
+def test_bmi_must_match_weight_and_height():
+    assert core.bmi_mismatch("Wt 217.8 lb, Ht 5'10\", BMI 31.2 kg/m2") is None
+    assert core.bmi_mismatch("Wt 211 lb, Ht 5'10\", BMI 31.2 kg/m2") is not None

@@ -1,0 +1,623 @@
+{
+  "label_schema_version": "1.0",
+  "case_id": "CASE-034-09",
+  "policy_id": "NHP-MP-034",
+  "policy_version": "1.0",
+  "archetype": "missing_documentation",
+  "split": "dev",
+  "expected_route": "request_info",
+  "findings": [
+    {
+      "node_id": "034-C1",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D01",
+          "quote": "Type 2 diabetes mellitus with diabetic foot ulcer (E11.621)."
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C2",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "Collected: 08/04/2026 09:14"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C3",
+      "unit_id": null,
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D02",
+          "quote": "RESULT: Hemoglobin A1c 8.1 % (H)"
+        },
+        {
+          "doc_id": "D02",
+          "quote": "Collected: 08/04/2026 09:14"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C4",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "REQUEST",
+          "quote": "ulcer_laterality: left"
+        },
+        {
+          "doc_id": "REQUEST",
+          "quote": "ulcer_site: plantar first metatarsal head"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C5a",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D09",
+          "quote": "Location | left plantar first metatarsal head"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C5b",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D09",
+          "quote": "Tissue depth | Full thickness; subcutaneous fat visible in the plantar first metatarsal head wound bed"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C5c",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D09",
+          "quote": "Bone | plantar first metatarsal head: no exposed bone and does not probe to bone"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C5d",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.4 cm x 2.1 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C5",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D09",
+          "quote": "Location | left plantar first metatarsal head"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Tissue depth | Full thickness; subcutaneous fat visible in the plantar first metatarsal head wound bed"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Bone | plantar first metatarsal head: no exposed bone and does not probe to bone"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.4 cm x 2.1 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C6",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Baseline measurement for standard care, plantar first metatarsal head: today's measurement starts the standard wound care course."
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Size (L x W) | 2.6 cm x 2.4 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C7",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Baseline measurement for standard care, plantar first metatarsal head: today's measurement starts the standard wound care course."
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Size (L x W) | 2.6 cm x 2.4 cm"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.4 cm x 2.1 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C8",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Size (L x W) | 2.6 cm x 2.4 cm"
+        },
+        {
+          "doc_id": "D05",
+          "quote": "Size (L x W) | 2.6 cm x 2.3 cm"
+        },
+        {
+          "doc_id": "D06",
+          "quote": "Size (L x W) | 2.5 cm x 2.3 cm"
+        },
+        {
+          "doc_id": "D07",
+          "quote": "Size (L x W) | 2.5 cm x 2.2 cm"
+        },
+        {
+          "doc_id": "D08",
+          "quote": "Size (L x W) | 2.4 cm x 2.2 cm"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.4 cm x 2.1 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C9",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Size (L x W) | 2.6 cm x 2.4 cm"
+        },
+        {
+          "doc_id": "D05",
+          "quote": "Size (L x W) | 2.6 cm x 2.3 cm"
+        },
+        {
+          "doc_id": "D06",
+          "quote": "Size (L x W) | 2.5 cm x 2.3 cm"
+        },
+        {
+          "doc_id": "D07",
+          "quote": "Size (L x W) | 2.5 cm x 2.2 cm"
+        },
+        {
+          "doc_id": "D08",
+          "quote": "Size (L x W) | 2.4 cm x 2.2 cm"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.4 cm x 2.1 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C10a",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D10",
+          "quote": "08/03/2026 | 2.6 x 2.4 | Foam dressing applied | none | Z. Strathmore NP"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C10b",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D11",
+          "quote": "08/03/2026 | Removable cast walker, below knee | Removable cast walker dispensed; fitted and gait checked | Zeno Strathmore"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C10",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D10",
+          "quote": "08/03/2026 | 2.6 x 2.4 | Foam dressing applied | none | Z. Strathmore NP"
+        },
+        {
+          "doc_id": "D11",
+          "quote": "08/03/2026 | Removable cast walker, below knee | Removable cast walker dispensed; fitted and gait checked | Zeno Strathmore"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C11",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D09",
+          "quote": "Infection | plantar first metatarsal head: no signs of infection, with no erythema, warmth, induration, purulence or odor"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C12a",
+      "unit_id": "U1",
+      "status": "insufficient",
+      "citations": [],
+      "missing": [
+        {
+          "doc_item": "6.7",
+          "what": "The vascular study report for the ulcer's leg: test type, value and date.",
+          "forbidden_phrases": [
+            "Right ABI:",
+            "Left ABI:",
+            "Toe pressure:",
+            "TcPO2:"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "034-C12b",
+      "unit_id": "U1",
+      "status": "insufficient",
+      "citations": [],
+      "missing": [
+        {
+          "doc_item": "6.7",
+          "what": "The vascular study report for the ulcer's leg: test type, value and date.",
+          "forbidden_phrases": [
+            "Right ABI:",
+            "Left ABI:",
+            "Toe pressure:",
+            "TcPO2:"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "034-C12c",
+      "unit_id": "U1",
+      "status": "insufficient",
+      "citations": [],
+      "missing": [
+        {
+          "doc_item": "6.7",
+          "what": "The vascular study report for the ulcer's leg: test type, value and date.",
+          "forbidden_phrases": [
+            "Right ABI:",
+            "Left ABI:",
+            "Toe pressure:",
+            "TcPO2:"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "034-C12",
+      "unit_id": "U1",
+      "status": "insufficient",
+      "citations": [],
+      "missing": [
+        {
+          "doc_item": "6.7",
+          "what": "The vascular study report for the ulcer's leg: test type, value and date.",
+          "forbidden_phrases": [
+            "Right ABI:",
+            "Left ABI:",
+            "Toe pressure:",
+            "TcPO2:"
+          ]
+        }
+      ]
+    },
+    {
+      "node_id": "034-C13a.1",
+      "unit_id": "U1",
+      "status": "insufficient",
+      "citations": [],
+      "missing": [
+        {
+          "doc_item": "6.7",
+          "what": "The vascular study report, which sets the ulcer type (7.13).",
+          "forbidden_phrases": []
+        }
+      ]
+    },
+    {
+      "node_id": "034-C13b.1",
+      "unit_id": "U1",
+      "status": "insufficient",
+      "citations": [],
+      "missing": [
+        {
+          "doc_item": "6.7",
+          "what": "The vascular study report, which sets the ulcer type (7.13).",
+          "forbidden_phrases": []
+        }
+      ]
+    },
+    {
+      "node_id": "034-C13a.2",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Baseline measurement for standard care, plantar first metatarsal head: today's measurement starts the standard wound care course."
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Size (L x W) | 2.6 cm x 2.4 cm"
+        },
+        {
+          "doc_id": "D05",
+          "quote": "Size (L x W) | 2.6 cm x 2.3 cm"
+        },
+        {
+          "doc_id": "D06",
+          "quote": "Size (L x W) | 2.5 cm x 2.3 cm"
+        },
+        {
+          "doc_id": "D07",
+          "quote": "Size (L x W) | 2.5 cm x 2.2 cm"
+        },
+        {
+          "doc_id": "D08",
+          "quote": "Size (L x W) | 2.4 cm x 2.2 cm"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.4 cm x 2.1 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C13b.2",
+      "unit_id": "U1",
+      "status": "not_met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Baseline measurement for standard care, plantar first metatarsal head: today's measurement starts the standard wound care course."
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Size (L x W) | 2.6 cm x 2.4 cm"
+        },
+        {
+          "doc_id": "D05",
+          "quote": "Size (L x W) | 2.6 cm x 2.3 cm"
+        },
+        {
+          "doc_id": "D06",
+          "quote": "Size (L x W) | 2.5 cm x 2.3 cm"
+        },
+        {
+          "doc_id": "D07",
+          "quote": "Size (L x W) | 2.5 cm x 2.2 cm"
+        },
+        {
+          "doc_id": "D08",
+          "quote": "Size (L x W) | 2.4 cm x 2.2 cm"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.4 cm x 2.1 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C13a",
+      "unit_id": "U1",
+      "status": "insufficient",
+      "citations": [],
+      "missing": [
+        {
+          "doc_item": "6.7",
+          "what": "The vascular study report, which sets the ulcer type (7.13).",
+          "forbidden_phrases": []
+        }
+      ]
+    },
+    {
+      "node_id": "034-C13b",
+      "unit_id": "U1",
+      "status": "not_met",
+      "citations": [
+        {
+          "doc_id": "D04",
+          "quote": "Baseline measurement for standard care, plantar first metatarsal head: today's measurement starts the standard wound care course."
+        },
+        {
+          "doc_id": "D04",
+          "quote": "Size (L x W) | 2.6 cm x 2.4 cm"
+        },
+        {
+          "doc_id": "D05",
+          "quote": "Size (L x W) | 2.6 cm x 2.3 cm"
+        },
+        {
+          "doc_id": "D06",
+          "quote": "Size (L x W) | 2.5 cm x 2.3 cm"
+        },
+        {
+          "doc_id": "D07",
+          "quote": "Size (L x W) | 2.5 cm x 2.2 cm"
+        },
+        {
+          "doc_id": "D08",
+          "quote": "Size (L x W) | 2.4 cm x 2.2 cm"
+        },
+        {
+          "doc_id": "D09",
+          "quote": "Size (L x W) | 2.4 cm x 2.1 cm"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C13",
+      "unit_id": "U1",
+      "status": "insufficient",
+      "citations": [],
+      "missing": [
+        {
+          "doc_item": "6.7",
+          "what": "The vascular study report, which sets the ulcer type (7.13).",
+          "forbidden_phrases": []
+        }
+      ]
+    },
+    {
+      "node_id": "034-C14a",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D10",
+          "quote": "08/10/2026 | 2.6 x 2.3 | Foam dressing applied | Sharp debridement, plantar first metatarsal head | Z. Strathmore NP"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-C14",
+      "unit_id": "U1",
+      "status": "met",
+      "citations": [
+        {
+          "doc_id": "D10",
+          "quote": "08/10/2026 | 2.6 x 2.3 | Foam dressing applied | Sharp debridement, plantar first metatarsal head | Z. Strathmore NP"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-EX01",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [
+        {
+          "doc_id": "REQUEST",
+          "quote": "applications_planned: 4"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "node_id": "034-CI01",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-CI02",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-CI03",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-CI04",
+      "unit_id": null,
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-CI05",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-EX02",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-EX03",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-EX04",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    },
+    {
+      "node_id": "034-EX05",
+      "unit_id": "U1",
+      "status": "not_found",
+      "citations": [],
+      "missing": []
+    }
+  ],
+  "flags": []
+}

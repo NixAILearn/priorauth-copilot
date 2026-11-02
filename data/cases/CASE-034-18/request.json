@@ -1,0 +1,61 @@
+{
+  "request_schema_version": "1.0",
+  "request_id": "NHP-PA-03418",
+  "received_at": "2026-08-16T09:00:00",
+  "review_type": "standard",
+  "sla_due_at": "2026-08-23T09:00:00",
+  "member": {
+    "synthetic_id": "SYN-0039",
+    "birth_date": "1966-08-08",
+    "sex": "female"
+  },
+  "requesting_provider": {
+    "name": "Nadir Quarrington",
+    "npi": "9693368471",
+    "specialty": "Wound care",
+    "organization": "Lakemont Wound Care Clinic"
+  },
+  "service": {
+    "code": "NHP-P-2017",
+    "description": "Bilayer skin substitute graft (fictional product, no animal-derived components), weekly applications.",
+    "side": null,
+    "target_ulcers": [
+      {
+        "id": "U1",
+        "laterality": "left",
+        "site": "plantar first metatarsal head",
+        "diagnosis": "L97.522",
+        "applications_planned": 4
+      }
+    ],
+    "units": 4
+  },
+  "diagnoses": [
+    {
+      "code": "E11.621",
+      "role": "primary"
+    },
+    {
+      "code": "E11.42",
+      "role": "secondary"
+    },
+    {
+      "code": "L97.522",
+      "role": "secondary"
+    }
+  ],
+  "attachments": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05",
+    "D06",
+    "D07",
+    "D08",
+    "D09",
+    "D10",
+    "D11",
+    "D12"
+  ]
+}
