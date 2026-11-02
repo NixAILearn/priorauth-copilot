@@ -4,7 +4,7 @@
 
 An AI utilization-review copilot. It reads a prior authorization request and its clinical documents, checks them against Northwind Health Plan's written medical policy, and gives a human nurse reviewer a cited, criterion-by-criterion recommendation. It never denies: the only outcomes are **approve-ready**, **request info** and **clinician review**.
 
-**Status:** week 1, foundations. No pipeline code yet.
+**Status:** week 3. Policies, specs, 60 labeled cases and the review pipeline are in; the eval runner and scorecard come in week 4.
 
 ## Why
 
@@ -41,6 +41,23 @@ python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 make check   # lint, tests, code scan
 ```
+
+### Review a case
+
+The model backend is chosen by environment variable (D-044). Only `anthropic` runs count toward the scorecard; the others are for cheap or free development runs. Quote checks, derived values, thresholds and routing are code and behave the same on every backend.
+
+| Backend | Set | Models |
+| --- | --- | --- |
+| `anthropic` (default) | `ANTHROPIC_API_KEY` | `claude-sonnet-5-5` extraction, `claude-opus-5-5` hard cases |
+| `openrouter` | `OPENROUTER_API_KEY`, `PRIORAUTH_EXTRACT_MODEL` | any model with JSON-schema output |
+| `lmstudio` | LM Studio server on `localhost:1234`, model loaded with at least a 32k context | Gemma 4 12B (`PRIORAUTH_EXTRACT_MODEL` must match `lms ls`) |
+
+```bash
+PRIORAUTH_BACKEND=lmstudio python -m priorauth review data/cases/CASE-021-01
+python -m priorauth review data/cases/CASE-034-02 --audit runs.db --json
+```
+
+The tests need no key: they replay a perfect extractor built from the labels through the real pipeline (`tests/oracle.py`) and use a scripted fake client for retries, low confidence and adversarial behaviour.
 
 ## Data and disclaimer
 
