@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Secrets: the Anthropic API key lives in .env or Streamlit secrets, never in Git
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Local runtime state (SQLite: cases, findings, overrides, audit log)
+*.db
+*.sqlite
+*.sqlite3
+
+# Synthea tool and its scratch output; curated bundles go in data/synthea/
+synthea/
+synthea-with-dependencies.jar
+output/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

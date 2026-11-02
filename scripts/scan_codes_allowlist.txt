@@ -1,0 +1,6 @@
+# Reviewed false alarms for scripts/scan_codes.py.
+# Format: <path glob> <exact token, or * for any token in that path>  # reason
+# Every entry needs a reason. Prefer an exact token over *.
+#
+# Example (written in words so this file passes its own scan):
+#   data/cases/hgns-007/documents/pt-note.md  <the five-digit step count>  # daily steps in a PT note, not a code

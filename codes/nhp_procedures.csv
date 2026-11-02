@@ -1,0 +1,5 @@
+code,short_name,description,policy_id,scope,setting,unit_basis,laterality_required,pa_required,effective_date,end_date
+NHP-P-1042,Hypoglossal nerve stimulator implant,"Surgical implant of a nerve stimulator that moves the tongue forward during sleep to keep the upper airway open, for obstructive sleep apnea",NHP-MP-021,mvp,outpatient surgery,per implant,N,Y,2026-01-01,
+NHP-P-2017,Skin substitute graft for diabetic foot ulcer,"Placement of a manufactured skin substitute on a chronic foot ulcer in a member with diabetes, to help the wound close",NHP-MP-034,mvp,clinic or outpatient wound center,per wound per application,Y,Y,2026-01-01,
+NHP-P-3005,Arthroscopic knee debridement for osteoarthritis,"Keyhole surgery on a knee with osteoarthritis to remove loose fragments, torn tissue or damaged cartilage",NHP-MP-047,mvp,outpatient surgery,per knee,Y,Y,2026-01-01,
+NHP-P-4011,Lumbar or sacral epidural steroid injection,"Image-guided injection of a steroid into the space around the spinal nerves in the lower back, for pain that spreads from a nerve root",NHP-MP-052,stretch,clinic or outpatient surgery,per session,N,Y,2026-01-01,
