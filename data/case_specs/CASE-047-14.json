@@ -1,0 +1,482 @@
+{
+  "case_schema_version": "1.0",
+  "case_id": "CASE-047-14",
+  "policy_id": "NHP-MP-047",
+  "policy_version": "1.0",
+  "archetype": "clearly_not_met",
+  "variant": "degenerative_tear_only",
+  "split": "dev",
+  "smoke": false,
+  "purpose": "A degenerative tear is not a mechanical lesion under 7.4: 4.2 not met.",
+  "review_status": "draft",
+  "patient": {
+    "synthetic_id": "SYN-0054",
+    "sex": "male",
+    "date_of_birth": "1960-01-24",
+    "race": "asian",
+    "ethnicity": "hispanic",
+    "background_conditions": [
+      "M17.11"
+    ],
+    "summary": "66-year-old man with catching, but the MRI shows only a degenerative tear and the films show no loose body."
+  },
+  "request": {
+    "request_date": "2026-09-03",
+    "review_type": "standard",
+    "service_code": "NHP-P-3005",
+    "primary_diagnosis": "M17.11",
+    "secondary_diagnoses": [],
+    "requested_side": "right",
+    "requesting_specialty": "Orthopedic surgery",
+    "service_details": "Arthroscopic debridement of the right knee."
+  },
+  "documents": [
+    {
+      "id": "D01",
+      "type": "orthopedic_note",
+      "title": "Orthopedic surgery office visit",
+      "date": "2026-08-20",
+      "author_role": "Orthopedic surgeon",
+      "satisfies": [
+        "6.2",
+        "6.7"
+      ],
+      "length": "long",
+      "noise": [
+        "templated_text",
+        "irrelevant_history",
+        "abbreviations"
+      ],
+      "guidance": "Right knee history, symptoms, treatment so far, exam, imaging review, surgical and medical history, plan for arthroscopic debridement."
+    },
+    {
+      "id": "D02",
+      "type": "radiograph_report",
+      "title": "Right knee radiographs",
+      "date": "2026-08-06",
+      "author_role": "Radiologist",
+      "satisfies": [
+        "6.4"
+      ],
+      "length": "short",
+      "noise": [
+        "templated_text"
+      ],
+      "guidance": "Views, compartments, joint space, osteophytes, grade, loose bodies."
+    },
+    {
+      "id": "D03",
+      "type": "mri_report",
+      "title": "MRI right knee without contrast",
+      "date": "2026-07-25",
+      "author_role": "Radiologist",
+      "satisfies": [
+        "6.5"
+      ],
+      "length": "medium",
+      "noise": [
+        "templated_text"
+      ],
+      "guidance": "Menisci, ligaments, cartilage, bone, effusion; impression."
+    },
+    {
+      "id": "D04",
+      "type": "physical_therapy_note",
+      "title": "Physical therapy discharge summary",
+      "date": "2026-08-10",
+      "author_role": "Physical therapist",
+      "satisfies": [
+        "6.6"
+      ],
+      "length": "medium",
+      "noise": [
+        "templated_text"
+      ],
+      "guidance": "Dates of care, what was done, response, symptoms at discharge."
+    },
+    {
+      "id": "D05",
+      "type": "office_visit_note",
+      "title": "Primary care visit for knee pain",
+      "date": "2026-05-04",
+      "author_role": "Primary care physician",
+      "satisfies": [
+        "6.2",
+        "6.6"
+      ],
+      "length": "medium",
+      "noise": [
+        "copy_forward"
+      ],
+      "guidance": "Right knee osteoarthritis pain; starts treatment below and refers to exercise therapy."
+    },
+    {
+      "id": "D06",
+      "type": "medication_list",
+      "title": "Current medication list",
+      "date": "2026-08-20",
+      "author_role": "Orthopedic clinic",
+      "satisfies": [
+        "6.6"
+      ],
+      "length": "short",
+      "noise": [
+        "old_values"
+      ],
+      "guidance": "Current and discontinued medications with dates."
+    }
+  ],
+  "facts": [
+    {
+      "id": "F01",
+      "date": "2026-09-03",
+      "doc_id": "REQUEST",
+      "statement": "Request names the right knee.",
+      "field": "requested_knee_side",
+      "value": "right"
+    },
+    {
+      "id": "F02",
+      "date": "2026-08-20",
+      "doc_id": "D01",
+      "statement": "Office note describes the requested knee.",
+      "anchor": "right knee",
+      "field": "evidence_knee_side",
+      "value": "right"
+    },
+    {
+      "id": "F03",
+      "date": "2026-08-20",
+      "doc_id": "D01",
+      "statement": "Symptom description: catching.",
+      "anchor": "knee catches suddenly mid-stride, with a brief block before it moves again",
+      "field": "mechanical_symptom",
+      "value": "catching"
+    },
+    {
+      "id": "F04",
+      "date": "2026-08-20",
+      "doc_id": "D01",
+      "statement": "Date of the symptom note.",
+      "anchor": "Date of visit: 08/20/2026",
+      "field": "symptom_note_date"
+    },
+    {
+      "id": "F05",
+      "date": "2026-08-06",
+      "doc_id": "D02",
+      "statement": "Radiograph report describes the requested knee.",
+      "anchor": "RIGHT KNEE",
+      "field": "evidence_knee_side",
+      "value": "right"
+    },
+    {
+      "id": "F06",
+      "date": "2026-08-06",
+      "doc_id": "D02",
+      "statement": "Weight-bearing statement.",
+      "anchor": "Standing AP, lateral and sunrise views",
+      "field": "xray_weight_bearing",
+      "value": "stated"
+    },
+    {
+      "id": "F07",
+      "date": "2026-08-06",
+      "doc_id": "D02",
+      "statement": "Radiograph date.",
+      "anchor": "Exam date: 08/06/2026",
+      "field": "xray_date"
+    },
+    {
+      "id": "F08",
+      "date": "2026-08-06",
+      "doc_id": "D02",
+      "statement": "Reported KL grade.",
+      "anchor": "Kellgren-Lawrence grade 2",
+      "field": "kl_grade_reported",
+      "value": 2,
+      "unit": "grade 0-4"
+    },
+    {
+      "id": "F09",
+      "date": "2026-08-06",
+      "doc_id": "DERIVED",
+      "statement": "Highest compartment grade 2.",
+      "field": "kl_grade_highest",
+      "value": 2,
+      "unit": "grade 0-4",
+      "derived_from": [
+        "F08"
+      ]
+    },
+    {
+      "id": "F10",
+      "date": "2026-08-06",
+      "doc_id": "D02",
+      "statement": "Loose body statement.",
+      "anchor": "No loose body",
+      "field": "xray_loose_body",
+      "value": false
+    },
+    {
+      "id": "F11",
+      "date": "2026-07-25",
+      "doc_id": "D03",
+      "statement": "MRI side.",
+      "anchor": "MRI RIGHT KNEE",
+      "field": "evidence_knee_side",
+      "value": "right"
+    },
+    {
+      "id": "F12",
+      "date": "2026-07-25",
+      "doc_id": "D03",
+      "statement": "MRI scan date.",
+      "anchor": "Scan date: 07/25/2026",
+      "field": "mri_date"
+    },
+    {
+      "id": "F13",
+      "date": "2026-07-25",
+      "doc_id": "D03",
+      "statement": "MRI lesion: degenerative.",
+      "anchor": "degenerative horizontal tear of the posterior horn of the medial meniscus",
+      "field": "mri_lesion",
+      "value": "non_qualifying"
+    },
+    {
+      "id": "F14",
+      "date": "2026-05-04",
+      "doc_id": "D05",
+      "statement": "Conservative care started.",
+      "anchor": "Start of care: 05/04/2026",
+      "field": "conservative_care_start_date"
+    },
+    {
+      "id": "F15",
+      "date": "2026-05-04",
+      "doc_id": "D05",
+      "statement": "Pharmacologic measure.",
+      "anchor": "naproxen 500 mg twice daily",
+      "field": "pharmacologic_measure",
+      "value": "nsaid"
+    },
+    {
+      "id": "F16",
+      "date": "2026-08-10",
+      "doc_id": "D04",
+      "statement": "Exercise therapy.",
+      "anchor": "supervised physical therapy visits",
+      "field": "exercise_therapy",
+      "value": "supervised_pt"
+    },
+    {
+      "id": "F17",
+      "date": "2026-08-10",
+      "doc_id": "D04",
+      "statement": "Last measure ended.",
+      "anchor": "Last day of care: 08/10/2026",
+      "field": "conservative_care_end_date"
+    },
+    {
+      "id": "F18",
+      "date": "2026-08-10",
+      "doc_id": "DERIVED",
+      "statement": "2026-05-04 to 2026-08-10: 98 days.",
+      "field": "conservative_care_days",
+      "value": 98,
+      "unit": "days",
+      "derived_from": [
+        "F14",
+        "F17"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "node_id": "047-C1",
+      "status": "met",
+      "facts": [
+        "F01"
+      ],
+      "rationale": "Right knee on the request."
+    },
+    {
+      "node_id": "047-C3a",
+      "status": "met",
+      "facts": [
+        "F03"
+      ],
+      "rationale": "Mechanical symptom described in terms that fit 7.3."
+    },
+    {
+      "node_id": "047-C3b",
+      "status": "met",
+      "facts": [
+        "F04"
+      ],
+      "rationale": "Note inside the 3-month window."
+    },
+    {
+      "node_id": "047-C3",
+      "status": "met",
+      "facts": [
+        "F03",
+        "F04"
+      ],
+      "rationale": "Mechanical symptom requirement (3.3)."
+    },
+    {
+      "node_id": "047-C4b",
+      "status": "met",
+      "facts": [
+        "F07"
+      ],
+      "rationale": "Inside 12 months."
+    },
+    {
+      "node_id": "047-C4a",
+      "status": "met",
+      "facts": [
+        "F06"
+      ],
+      "rationale": "Standing views stated."
+    },
+    {
+      "node_id": "047-C4",
+      "status": "met",
+      "facts": [
+        "F06",
+        "F07"
+      ],
+      "rationale": "Standing radiographs inside 12 months."
+    },
+    {
+      "node_id": "047-C5",
+      "status": "met",
+      "facts": [
+        "F08",
+        "F09"
+      ],
+      "rationale": "KL 2 is no more than 3."
+    },
+    {
+      "node_id": "047-C7b",
+      "status": "not_met",
+      "facts": [
+        "F10"
+      ],
+      "rationale": "No loose body on the radiograph."
+    },
+    {
+      "node_id": "047-C7a.1",
+      "status": "met",
+      "facts": [
+        "F12"
+      ],
+      "rationale": "MRI inside 6 months."
+    },
+    {
+      "node_id": "047-C7a.2",
+      "status": "not_met",
+      "facts": [
+        "F13"
+      ],
+      "rationale": "A degenerative tear is not a lesion listed in 7.4."
+    },
+    {
+      "node_id": "047-C7a",
+      "status": "not_met",
+      "facts": [
+        "F13"
+      ],
+      "rationale": "MRI pathway."
+    },
+    {
+      "node_id": "047-C7",
+      "status": "not_met",
+      "facts": [
+        "F10",
+        "F13"
+      ],
+      "rationale": "Imaging lesion (4.2)."
+    },
+    {
+      "node_id": "047-C6a.1",
+      "status": "met",
+      "facts": [
+        "F16"
+      ],
+      "rationale": "Exercise therapy documented."
+    },
+    {
+      "node_id": "047-C6a.2",
+      "status": "met",
+      "facts": [
+        "F15"
+      ],
+      "rationale": "Qualifying drug or injection."
+    },
+    {
+      "node_id": "047-C6a.3",
+      "status": "met",
+      "facts": [
+        "F14",
+        "F17",
+        "F18"
+      ],
+      "rationale": "98 days vs 84."
+    },
+    {
+      "node_id": "047-C6a.4",
+      "status": "met",
+      "facts": [
+        "F17"
+      ],
+      "rationale": "Care ended inside 12 months."
+    },
+    {
+      "node_id": "047-C6a.5",
+      "status": "met",
+      "facts": [
+        "F03"
+      ],
+      "rationale": "Symptom documented after care ended."
+    },
+    {
+      "node_id": "047-C6a",
+      "status": "met",
+      "facts": [
+        "F16",
+        "F15",
+        "F18",
+        "F03"
+      ],
+      "rationale": "Conservative care pathway."
+    },
+    {
+      "node_id": "047-C6",
+      "status": "met",
+      "facts": [
+        "F16",
+        "F15",
+        "F18",
+        "F03"
+      ],
+      "rationale": "Conservative care or locked knee (4.1)."
+    },
+    {
+      "node_id": "047-C2",
+      "status": "met",
+      "facts": [
+        "F02",
+        "F05",
+        "F11"
+      ],
+      "rationale": "Every document used is of the right knee or names no side."
+    }
+  ],
+  "flags": [],
+  "expected_route": "clinician_review",
+  "author_notes": []
+}

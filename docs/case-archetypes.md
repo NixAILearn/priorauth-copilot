@@ -52,11 +52,11 @@ Each archetype has a contract that `check_case()` enforces, so a case can't drif
 | Held-out test | 20 (7 HGNS, 7 skin substitute, 6 knee) | 6, 5, 3, 2, 2, 1, 1 | Matches metrics.md; never tuned on |
 | Smoke (CI) | 10 dev cases | 3 clean (one per service), 2 missing, 1 each of the rest | Includes the three demo cases |
 
-Patient demographics are spread when each spec is written: Medicare Advantage members are mostly 65 or older, with some younger members who qualify through disability, so ages run from the 40s to the 80s, with both sexes and a mix of race and ethnicity in every service and split. A test for that spread comes with the full set of specs.
+Patient demographics are spread when each spec is written: Medicare Advantage members are mostly 65 or older, with some younger members who qualify through disability, so ages run from 56 to 78 (15 of 60 under 65), with both sexes and a mix of race and ethnicity in every service and split. `tests/test_case_specs.py` checks that spread for every service.
 
 ## 5. The 60 cases
 
-The three demo cases from the kickoff script are written in full as exemplars: [`CASE-021-01`](../data/case_specs/CASE-021-01.json) (clean HGNS), [`CASE-034-07`](../data/case_specs/CASE-034-07.json) (offloading missing) and [`CASE-047-12`](../data/case_specs/CASE-047-12.json) (pain alone). The other 57 follow the plan below.
+The three demo cases from the kickoff script are written in full as exemplars: [`CASE-021-01`](../data/case_specs/CASE-021-01.json) (clean HGNS), [`CASE-034-07`](../data/case_specs/CASE-034-07.json) (offloading missing) and [`CASE-047-12`](../data/case_specs/CASE-047-12.json) (pain alone). All 60 are now written as specs in `data/case_specs/`.
 
 ### NHP-MP-021: hypoglossal nerve stimulator (HGNS)
 
