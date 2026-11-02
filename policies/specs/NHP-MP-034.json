@@ -1,0 +1,1282 @@
+{
+  "spec_schema_version": "1.0",
+  "policy_id": "NHP-MP-034",
+  "policy_version": "1.0",
+  "effective_date": "2026-01-01",
+  "source_file": "policies/source/NHP-MP-034.md",
+  "source_sha256": "b26c51ff9db2473acfc4816b7d262bbd78e9e3d657f806e1413ea067e2f72cea",
+  "review_status": "reviewed",
+  "reviewed_by": "Nick",
+  "reviewed_date": "2026-11-02",
+  "scope": {
+    "service_code": "NHP-P-2017",
+    "primary_diagnoses": [
+      "E10.621",
+      "E11.621",
+      "E13.621"
+    ],
+    "out_of_scope_route": "clinician_review",
+    "review_unit": "target_ulcer",
+    "unit_diagnoses": [
+      "L97.412",
+      "L97.415",
+      "L97.422",
+      "L97.425",
+      "L97.512",
+      "L97.515",
+      "L97.522",
+      "L97.525"
+    ],
+    "unit_routing": "weakest_unit"
+  },
+  "rules": {
+    "window_counting": "calendar_months_or_days",
+    "window_boundary_inclusive": true,
+    "missing_calendar_day": "last_day_of_month",
+    "value_selection": "most_recent",
+    "conflict_route": "clinician_review",
+    "contraindication_found_route": "clinician_review",
+    "exclusion_found_route": "clinician_review"
+  },
+  "fields": [
+    {
+      "name": "hba1c_pct",
+      "type": "number",
+      "unit": "%",
+      "evaluator": "model",
+      "per": "request",
+      "description": "Each HbA1c result as written, in %, with its collection date."
+    },
+    {
+      "name": "hba1c_date",
+      "type": "date",
+      "evaluator": "model",
+      "per": "request",
+      "description": "Collection date of each HbA1c result."
+    },
+    {
+      "name": "ulcer_laterality",
+      "type": "enum",
+      "values": [
+        "right",
+        "left",
+        "not_stated"
+      ],
+      "evaluator": "model",
+      "per": "target_ulcer",
+      "description": "Laterality the request states for the target ulcer."
+    },
+    {
+      "name": "ulcer_site",
+      "type": "text",
+      "evaluator": "model",
+      "per": "target_ulcer",
+      "description": "Site on the foot the request states for the target ulcer, e.g. plantar first metatarsal head."
+    },
+    {
+      "name": "measurement_date",
+      "type": "date",
+      "evaluator": "model",
+      "per": "target_ulcer",
+      "description": "Date of each documented wound measurement of the target ulcer on or before the request date."
+    },
+    {
+      "name": "wound_length",
+      "type": "number",
+      "unit": "as recorded (cm or mm)",
+      "evaluator": "model",
+      "per": "target_ulcer",
+      "description": "Longest dimension of the open ulcer at each measurement, with unit as recorded."
+    },
+    {
+      "name": "wound_width",
+      "type": "number",
+      "unit": "as recorded (cm or mm)",
+      "evaluator": "model",
+      "per": "target_ulcer",
+      "description": "Dimension at right angles to the length at each measurement, with unit as recorded."
+    },
+    {
+      "name": "wound_area_recorded",
+      "type": "number",
+      "unit": "as recorded (cm2 or mm2)",
+      "evaluator": "model",
+      "per": "target_ulcer",
+      "description": "Area from tracing or digital imaging, if the record gives one, with unit as recorded."
+    },
+    {
+      "name": "measurement_method",
+      "type": "enum",
+      "values": [
+        "ruler",
+        "tracing",
+        "digital_imaging",
+        "not_stated"
+      ],
+      "evaluator": "model",
+      "per": "target_ulcer",
+      "description": "How each measurement was taken."
+    },
+    {
+      "name": "wound_area_cm2",
+      "type": "number",
+      "unit": "cm2",
+      "evaluator": "code",
+      "per": "target_ulcer",
+      "derived_from": [
+        "wound_length",
+        "wound_width",
+        "wound_area_recorded"
+      ],
+      "description": "Area at each measurement: recorded tracing or imaging area if present, otherwise length x width, after mm to cm conversion (7.6)."
+    },
+    {
+      "name": "baseline_date",
+      "type": "date",
+      "evaluator": "model",
+      "per": "target_ulcer",
+      "description": "Date of the baseline measurement (7.7): the measurement a signed note names as the start of standard care; if none, the earliest measurement after which a moist dressing and offloading are both documented. Quote the sentence that sets it."
+    },
+    {
+      "name": "current_measurement_date",
+      "type": "date",
+      "evaluator": "code",
+      "per": "target_ulcer",
+      "derived_from": [
+        "measurement_date"
+      ],
+      "description": "Date of the most recent measurement on or before the request date (7.8)."
+    },
+    {
+      "name": "baseline_area_cm2",
+      "type": "number",
+      "unit": "cm2",
+      "evaluator": "code",
+      "per": "target_ulcer",
+      "derived_from": [
+        "wound_area_cm2",
+        "baseline_date"
+      ],
+      "description": "Wound area at the baseline measurement."
+    },
+    {
+      "name": "current_area_cm2",
+      "type": "number",
+      "unit": "cm2",
+      "evaluator": "code",
+      "per": "target_ulcer",
+      "derived_from": [
+        "wound_area_cm2",
+        "current_measurement_date"
+      ],
+      "description": "Wound area at the current measurement."
+    },
+    {
+      "name": "area_reduction_pct",
+      "type": "number",
+      "unit": "%",
+      "evaluator": "code",
+      "per": "target_ulcer",
+      "derived_from": [
+        "baseline_area_cm2",
+        "current_area_cm2"
+      ],
+      "description": "(baseline area - current area) / baseline area x 100; negative if the ulcer grew (7.10)."
+    },
+    {
+      "name": "standard_care_days",
+      "type": "number",
+      "unit": "days",
+      "evaluator": "code",
+      "per": "target_ulcer",
+      "derived_from": [
+        "baseline_date",
+        "current_measurement_date"
+      ],
+      "description": "Current measurement date minus baseline date, in days (7.9)."
+    },
+    {
+      "name": "max_measurement_gap_days",
+      "type": "number",
+      "unit": "days",
+      "evaluator": "code",
+      "per": "target_ulcer",
+      "derived_from": [
+        "measurement_date",
+        "baseline_date",
+        "current_measurement_date"
+      ],
+      "description": "Largest number of days between two consecutive measurements from baseline to current (3.9)."
+    },
+    {
+      "name": "perfusion_test_type",
+      "type": "enum",
+      "values": [
+        "abi",
+        "toe_pressure",
+        "tcpo2"
+      ],
+      "evaluator": "model",
+      "per": "target_ulcer",
+      "description": "Type of each perfusion test on the target ulcer's leg."
+    },
+    {
+      "name": "perfusion_test_date",
+      "type": "date",
+      "evaluator": "model",
+      "per": "target_ulcer",
+      "description": "Date of each perfusion test."
+    },
+    {
+      "name": "perfusion_test_value",
+      "type": "number",
+      "unit": "ratio or mmHg",
+      "evaluator": "model",
+      "per": "target_ulcer",
+      "description": "Value of each perfusion test: ABI as a ratio, toe pressure and TcPO2 in mmHg."
+    },
+    {
+      "name": "abi_reported_noncompressible",
+      "type": "boolean",
+      "evaluator": "model",
+      "per": "target_ulcer",
+      "description": "The ABI report calls the result unreliable because the arteries could not be compressed (7.12)."
+    },
+    {
+      "name": "revascularization_date",
+      "type": "date",
+      "evaluator": "model",
+      "per": "target_ulcer",
+      "description": "Date of any revascularization of the target ulcer's leg (7.14)."
+    },
+    {
+      "name": "counted_tests",
+      "type": "text",
+      "evaluator": "code",
+      "per": "target_ulcer",
+      "derived_from": [
+        "perfusion_test_type",
+        "perfusion_test_date",
+        "perfusion_test_value",
+        "revascularization_date"
+      ],
+      "description": "Perfusion tests that count under 7.11: dated within 3 months before the request date and, if a revascularization is documented, after it."
+    },
+    {
+      "name": "best_counted_abi",
+      "type": "number",
+      "unit": "ratio",
+      "evaluator": "code",
+      "per": "target_ulcer",
+      "derived_from": [
+        "counted_tests",
+        "abi_reported_noncompressible"
+      ],
+      "description": "Highest counted ABI that is not non-compressible (more than 1.30 or reported non-compressible, 7.12)."
+    },
+    {
+      "name": "best_counted_toe_pressure",
+      "type": "number",
+      "unit": "mmHg",
+      "evaluator": "code",
+      "per": "target_ulcer",
+      "derived_from": [
+        "counted_tests"
+      ],
+      "description": "Highest counted toe pressure."
+    },
+    {
+      "name": "best_counted_tcpo2",
+      "type": "number",
+      "unit": "mmHg",
+      "evaluator": "code",
+      "per": "target_ulcer",
+      "derived_from": [
+        "counted_tests"
+      ],
+      "description": "Highest counted TcPO2 measured on the foot."
+    },
+    {
+      "name": "ulcer_type",
+      "type": "enum",
+      "values": [
+        "neuropathic",
+        "neuro_ischemic"
+      ],
+      "evaluator": "code",
+      "per": "target_ulcer",
+      "derived_from": [
+        "counted_tests",
+        "abi_reported_noncompressible"
+      ],
+      "description": "neuro_ischemic if any counted test shows ABI less than 0.90 (non-compressible ABIs excluded), toe pressure less than 70 mmHg or TcPO2 less than 40 mmHg; otherwise neuropathic (7.13). The label in the notes is ignored."
+    },
+    {
+      "name": "applications_planned",
+      "type": "number",
+      "unit": "applications",
+      "evaluator": "model",
+      "per": "target_ulcer",
+      "description": "Number of applications requested for the target ulcer in this treatment course."
+    },
+    {
+      "name": "prior_course_end_date",
+      "type": "date",
+      "evaluator": "model",
+      "per": "target_ulcer",
+      "description": "End date of any earlier skin substitute treatment course on the same ulcer (7.20)."
+    }
+  ],
+  "criteria": [
+    {
+      "id": "034-C1",
+      "section": "3.1",
+      "type": "fact",
+      "policy_text": "The member has a documented diagnosis of type 1, type 2 or other specified diabetes mellitus.",
+      "summary": "Diabetes diagnosis documented",
+      "per": "request",
+      "evidence": "A diabetes diagnosis (type 1, type 2 or other specified) in a signed, dated note or problem list. A diagnosis code only on the request form is not documentation (7.2).",
+      "definitions": [
+        "7.2"
+      ],
+      "documentation": [
+        "6.1"
+      ]
+    },
+    {
+      "id": "034-C2",
+      "section": "3.2",
+      "type": "date_window",
+      "policy_text": "At least one hemoglobin A1c (HbA1c) result is dated within 3 months before the request date.",
+      "summary": "HbA1c in the last 3 months",
+      "field": "hba1c_date",
+      "window": {
+        "months": 3
+      },
+      "per": "request",
+      "definitions": [
+        "7.1",
+        "7.21"
+      ],
+      "documentation": [
+        "6.2"
+      ]
+    },
+    {
+      "id": "034-C3",
+      "section": "3.3",
+      "type": "numeric",
+      "policy_text": "The most recent HbA1c result dated within 3 months before the request date is no more than 12.0%.",
+      "summary": "Most recent HbA1c in the window is no more than 12.0%",
+      "field": "hba1c_pct",
+      "op": "<=",
+      "value": 12.0,
+      "unit": "%",
+      "window": {
+        "months": 3
+      },
+      "select": "most_recent",
+      "per": "request",
+      "definitions": [
+        "7.1",
+        "7.21"
+      ],
+      "documentation": [
+        "6.2"
+      ],
+      "flag_rules": [
+        {
+          "id": "034-C3-F1",
+          "when": "Two HbA1c results share the latest date and fall on opposite sides of 12.0%",
+          "route": "clinician_review"
+        }
+      ]
+    },
+    {
+      "id": "034-C4",
+      "section": "3.4",
+      "type": "fact",
+      "policy_text": "For each target ulcer, the request states the laterality (right or left) and the site on the foot.",
+      "summary": "Request names laterality and foot site for the ulcer",
+      "per": "target_ulcer",
+      "evidence": "The request lists the target ulcer with right or left and a site on the foot. A request with several ulcers must separate them.",
+      "definitions": [
+        "7.3",
+        "7.4"
+      ],
+      "documentation": [
+        "6.3"
+      ],
+      "flag_rules": [
+        {
+          "id": "034-C4-F1",
+          "when": "The laterality or site in the request differs from the wound notes for the same ulcer",
+          "route": "clinician_review"
+        }
+      ]
+    },
+    {
+      "id": "034-C5",
+      "section": "3.5",
+      "type": "all_of",
+      "policy_text": "For each target ulcer, all of the following, as recorded at the current measurement:",
+      "summary": "Ulcer at the current measurement is on the foot, full thickness, no exposed bone, at least 1.0 cm2",
+      "per": "target_ulcer",
+      "definitions": [
+        "7.8"
+      ],
+      "documentation": [
+        "6.4"
+      ],
+      "children": [
+        {
+          "id": "034-C5a",
+          "section": "3.5(a)",
+          "type": "fact",
+          "policy_text": "The ulcer is on the foot.",
+          "summary": "Ulcer on the foot",
+          "per": "target_ulcer",
+          "evidence": "The wound note for the current measurement places the ulcer below the ankle joint (heel, midfoot, forefoot or toes).",
+          "definitions": [
+            "7.4"
+          ],
+          "documentation": [
+            "6.4"
+          ]
+        },
+        {
+          "id": "034-C5b",
+          "section": "3.5(b)",
+          "type": "fact",
+          "policy_text": "The ulcer is full thickness.",
+          "summary": "Ulcer is full thickness",
+          "per": "target_ulcer",
+          "evidence": "The current wound note describes fat, muscle, tendon or joint capsule visible or probing in the ulcer bed. 'Superficial' or 'partial thickness' is not met; depth not described is insufficient evidence.",
+          "definitions": [
+            "7.5"
+          ],
+          "documentation": [
+            "6.4"
+          ]
+        },
+        {
+          "id": "034-C5c",
+          "section": "3.5(c)",
+          "type": "fact",
+          "policy_text": "Bone is not exposed in the ulcer bed.",
+          "summary": "No exposed bone",
+          "per": "target_ulcer",
+          "evidence": "The current wound note describes the ulcer bed and states, or its tissue description shows, that bone is not exposed. A note that does not address the ulcer bed is insufficient evidence.",
+          "documentation": [
+            "6.4"
+          ]
+        },
+        {
+          "id": "034-C5d",
+          "section": "3.5(d)",
+          "type": "numeric",
+          "policy_text": "The wound area is at least 1.0 cm².",
+          "summary": "Current area at least 1.0 cm2",
+          "field": "current_area_cm2",
+          "op": ">=",
+          "value": 1.0,
+          "unit": "cm2",
+          "per": "target_ulcer",
+          "definitions": [
+            "7.6"
+          ],
+          "documentation": [
+            "6.4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "034-C6",
+      "section": "3.6",
+      "type": "fact",
+      "policy_text": "For each target ulcer, a baseline measurement with its date and wound area is documented.",
+      "summary": "A dated baseline measurement with an area exists",
+      "per": "target_ulcer",
+      "evidence": "A dated wound measurement with length and width or an area, which is either named in a signed note as the start of standard care or is the earliest measurement after which a moist dressing and offloading are both documented (7.7). Quote both the measurement and the sentence that makes it the baseline.",
+      "definitions": [
+        "7.6",
+        "7.7"
+      ],
+      "documentation": [
+        "6.4"
+      ]
+    },
+    {
+      "id": "034-C7",
+      "section": "3.7",
+      "type": "numeric",
+      "policy_text": "For each target ulcer, the area reduction across the standard-care period is less than 50%.",
+      "summary": "Ulcer shrank by less than 50% over the standard-care period",
+      "field": "area_reduction_pct",
+      "op": "<",
+      "value": 50,
+      "unit": "%",
+      "per": "target_ulcer",
+      "definitions": [
+        "7.6",
+        "7.9",
+        "7.10"
+      ],
+      "documentation": [
+        "6.4"
+      ],
+      "flag_rules": [
+        {
+          "id": "034-C7-F1",
+          "when": "The baseline and current measurements use different methods (for example ruler at baseline, digital imaging at current)",
+          "route": "clinician_review"
+        }
+      ]
+    },
+    {
+      "id": "034-C8",
+      "section": "3.8",
+      "type": "date_window",
+      "policy_text": "For each target ulcer, the current measurement is dated within 14 days before the request date.",
+      "summary": "Current measurement in the last 14 days",
+      "field": "current_measurement_date",
+      "window": {
+        "days": 14
+      },
+      "per": "target_ulcer",
+      "definitions": [
+        "7.1",
+        "7.8",
+        "7.21"
+      ],
+      "documentation": [
+        "6.4"
+      ]
+    },
+    {
+      "id": "034-C9",
+      "section": "3.9",
+      "type": "numeric",
+      "policy_text": "For each target ulcer, no more than 14 days pass between any two consecutive documented wound measurements in the standard-care period.",
+      "summary": "No gap of more than 14 days between measurements",
+      "field": "max_measurement_gap_days",
+      "op": "<=",
+      "value": 14,
+      "unit": "days",
+      "per": "target_ulcer",
+      "definitions": [
+        "7.9"
+      ],
+      "documentation": [
+        "6.4"
+      ],
+      "flag_rules": [
+        {
+          "id": "034-C9-F1",
+          "when": "A gap of more than 14 days spans visits that later notes refer to but whose notes are not in the packet; the status is insufficient evidence, not not met",
+          "route": "request_info"
+        }
+      ]
+    },
+    {
+      "id": "034-C10",
+      "section": "3.10",
+      "type": "all_of",
+      "policy_text": "For each target ulcer, all of the following are documented throughout the standard-care period:",
+      "summary": "Moist dressing and offloading in place from baseline to current",
+      "per": "target_ulcer",
+      "definitions": [
+        "7.9"
+      ],
+      "documentation": [
+        "6.5",
+        "6.6"
+      ],
+      "children": [
+        {
+          "id": "034-C10a",
+          "section": "3.10(a)",
+          "type": "fact",
+          "policy_text": "A moist wound dressing is used.",
+          "summary": "Moist wound dressing used",
+          "per": "target_ulcer",
+          "evidence": "Dressing type named in the notes as a moist dressing (hydrogel, foam, alginate, hydrocolloid or similar) from baseline to current, with no documented switch to dry gauze alone. A visit note that does not mention the dressing does not break it when earlier and later notes show a moist dressing. 'Dressing changed' with no type at every visit is insufficient evidence.",
+          "definitions": [
+            "7.15"
+          ],
+          "documentation": [
+            "6.5"
+          ]
+        },
+        {
+          "id": "034-C10b",
+          "section": "3.10(b)",
+          "type": "fact",
+          "policy_text": "The ulcer is offloaded.",
+          "summary": "Ulcer offloaded",
+          "per": "target_ulcer",
+          "evidence": "A device or method from 7.16 prescribed or provided by the baseline and not documented as stopped or unused before the current measurement. Advice to reduce walking alone is not offloading. Documented non-adherence ('not wearing boot') is not met for the visits it covers. Offloading never mentioned is insufficient evidence.",
+          "definitions": [
+            "7.16"
+          ],
+          "documentation": [
+            "6.6"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "034-C11",
+      "section": "3.11",
+      "type": "fact",
+      "policy_text": "For each target ulcer, the wound note for the current measurement documents that the ulcer has no signs of active infection.",
+      "summary": "Current wound note says no signs of infection",
+      "per": "target_ulcer",
+      "evidence": "An explicit statement in the current wound note, such as 'no signs of infection' or 'no s/s infection'. Silence is insufficient evidence. An infection earlier in the period that the record shows as treated and resolved does not fail this criterion. A positive culture without clinical signs is not active infection.",
+      "definitions": [
+        "7.18"
+      ],
+      "documentation": [
+        "6.4"
+      ],
+      "flag_rules": [
+        {
+          "id": "034-C11-F1",
+          "when": "The current wound note both states no signs of infection and describes a sign from 7.18 (for example copy-forward text)",
+          "route": "clinician_review"
+        }
+      ]
+    },
+    {
+      "id": "034-C12",
+      "section": "4.1",
+      "type": "any_of",
+      "policy_text": "For each target ulcer, any one of the following, from a counted perfusion test on the same leg:",
+      "summary": "Adequate blood flow on a counted test: ABI, toe pressure or TcPO2",
+      "per": "target_ulcer",
+      "definitions": [
+        "7.11",
+        "7.14"
+      ],
+      "documentation": [
+        "6.7"
+      ],
+      "children": [
+        {
+          "id": "034-C12a",
+          "section": "4.1(a)",
+          "type": "numeric",
+          "policy_text": "An ankle-brachial index (ABI) of at least 0.60 that is not non-compressible.",
+          "summary": "Counted ABI at least 0.60, compressible",
+          "field": "best_counted_abi",
+          "op": ">=",
+          "value": 0.6,
+          "unit": "ratio",
+          "per": "target_ulcer",
+          "definitions": [
+            "7.12"
+          ],
+          "documentation": [
+            "6.7"
+          ]
+        },
+        {
+          "id": "034-C12b",
+          "section": "4.1(b)",
+          "type": "numeric",
+          "policy_text": "A toe pressure of at least 30 mmHg.",
+          "summary": "Counted toe pressure at least 30 mmHg",
+          "field": "best_counted_toe_pressure",
+          "op": ">=",
+          "value": 30,
+          "unit": "mmHg",
+          "per": "target_ulcer",
+          "documentation": [
+            "6.7"
+          ]
+        },
+        {
+          "id": "034-C12c",
+          "section": "4.1(c)",
+          "type": "numeric",
+          "policy_text": "A transcutaneous oxygen pressure (TcPO2) of at least 30 mmHg, measured on the foot.",
+          "summary": "Counted TcPO2 on the foot at least 30 mmHg",
+          "field": "best_counted_tcpo2",
+          "op": ">=",
+          "value": 30,
+          "unit": "mmHg",
+          "per": "target_ulcer",
+          "documentation": [
+            "6.7"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "034-C13",
+      "section": "4.2",
+      "type": "any_of",
+      "policy_text": "For each target ulcer, the standard-care period meets any one of the following:",
+      "summary": "Standard care lasted 28 days (neuropathic) or 42 days (neuro-ischemic)",
+      "per": "target_ulcer",
+      "definitions": [
+        "7.9",
+        "7.13",
+        "7.21"
+      ],
+      "documentation": [
+        "6.4",
+        "6.7"
+      ],
+      "children": [
+        {
+          "id": "034-C13a",
+          "section": "4.2(a)",
+          "type": "all_of",
+          "policy_text": "Neuropathic pathway. All of the following:",
+          "summary": "Neuropathic ulcer with at least 28 days of standard care",
+          "per": "target_ulcer",
+          "documentation": [
+            "6.4",
+            "6.7"
+          ],
+          "children": [
+            {
+              "id": "034-C13a.1",
+              "section": "4.2(a)(i)",
+              "type": "enum",
+              "policy_text": "The ulcer type is neuropathic.",
+              "summary": "Ulcer type is neuropathic",
+              "field": "ulcer_type",
+              "equals": "neuropathic",
+              "per": "target_ulcer",
+              "definitions": [
+                "7.13"
+              ],
+              "documentation": [
+                "6.7"
+              ]
+            },
+            {
+              "id": "034-C13a.2",
+              "section": "4.2(a)(ii)",
+              "type": "numeric",
+              "policy_text": "The standard-care period lasts at least 28 days.",
+              "summary": "Standard care at least 28 days",
+              "field": "standard_care_days",
+              "op": ">=",
+              "value": 28,
+              "unit": "days",
+              "per": "target_ulcer",
+              "definitions": [
+                "7.9"
+              ],
+              "documentation": [
+                "6.4"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "034-C13b",
+          "section": "4.2(b)",
+          "type": "all_of",
+          "policy_text": "Neuro-ischemic pathway (exception clause). All of the following:",
+          "summary": "Neuro-ischemic ulcer with at least 42 days of standard care",
+          "per": "target_ulcer",
+          "documentation": [
+            "6.4",
+            "6.7"
+          ],
+          "children": [
+            {
+              "id": "034-C13b.1",
+              "section": "4.2(b)(i)",
+              "type": "enum",
+              "policy_text": "The ulcer type is neuro-ischemic.",
+              "summary": "Ulcer type is neuro-ischemic",
+              "field": "ulcer_type",
+              "equals": "neuro_ischemic",
+              "per": "target_ulcer",
+              "definitions": [
+                "7.13"
+              ],
+              "documentation": [
+                "6.7"
+              ]
+            },
+            {
+              "id": "034-C13b.2",
+              "section": "4.2(b)(ii)",
+              "type": "numeric",
+              "policy_text": "The standard-care period lasts at least 42 days.",
+              "summary": "Standard care at least 42 days",
+              "field": "standard_care_days",
+              "op": ">=",
+              "value": 42,
+              "unit": "days",
+              "per": "target_ulcer",
+              "definitions": [
+                "7.9"
+              ],
+              "documentation": [
+                "6.4"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "034-C14",
+      "section": "4.3",
+      "type": "any_of",
+      "policy_text": "For each target ulcer, any one of the following:",
+      "summary": "Debridement done at least once, or every note documents no nonviable tissue",
+      "per": "target_ulcer",
+      "definitions": [
+        "7.17"
+      ],
+      "documentation": [
+        "6.4",
+        "6.5"
+      ],
+      "children": [
+        {
+          "id": "034-C14a",
+          "section": "4.3(a)",
+          "type": "fact",
+          "policy_text": "Debridement of the ulcer is documented at least once during the standard-care period.",
+          "summary": "Debridement documented in the period",
+          "per": "target_ulcer",
+          "evidence": "A dated procedure note or wound note recording debridement of the target ulcer between the baseline and current dates.",
+          "definitions": [
+            "7.17"
+          ],
+          "documentation": [
+            "6.5"
+          ]
+        },
+        {
+          "id": "034-C14b",
+          "section": "4.3(b)",
+          "type": "fact",
+          "policy_text": "Every wound note in the standard-care period documents that the ulcer bed has no nonviable tissue.",
+          "summary": "Every note documents a clean ulcer bed",
+          "per": "target_ulcer",
+          "evidence": "An explicit statement in every wound note of the period, such as 'clean granular base' or 'no slough or eschar'. A note silent on the wound bed is insufficient evidence.",
+          "documentation": [
+            "6.4"
+          ]
+        }
+      ]
+    }
+  ],
+  "contraindications": [
+    {
+      "id": "034-CI01",
+      "section": "5.1.1",
+      "type": "fact",
+      "policy_text": "Osteomyelitis (bone infection) of bone beneath or next to the target ulcer that is documented as active or not yet treated.",
+      "summary": "Active or untreated osteomyelitis at the ulcer",
+      "per": "target_ulcer",
+      "evidence": "Osteomyelitis at the target ulcer in imaging, a bone biopsy or a note, unless the record shows its treatment was completed. Suspected osteomyelitis with workup pending counts as found.",
+      "documentation": [
+        "6.10"
+      ]
+    },
+    {
+      "id": "034-CI02",
+      "section": "5.1.2",
+      "type": "fact",
+      "policy_text": "Gangrene on the same foot as the target ulcer.",
+      "summary": "Gangrene on the same foot",
+      "per": "target_ulcer",
+      "evidence": "Any mention of dry or wet gangrene on the foot of the target ulcer.",
+      "documentation": [
+        "6.4"
+      ]
+    },
+    {
+      "id": "034-CI03",
+      "section": "5.1.3",
+      "type": "fact",
+      "policy_text": "Cancer in the ulcer bed or at the ulcer edge, or a biopsy of the ulcer with results still pending.",
+      "summary": "Cancer in the ulcer, or ulcer biopsy pending",
+      "per": "target_ulcer",
+      "evidence": "A malignancy at the ulcer, or a biopsy of the ulcer with no result in the packet.",
+      "documentation": [
+        "6.4",
+        "6.10"
+      ]
+    },
+    {
+      "id": "034-CI04",
+      "section": "5.1.4",
+      "type": "fact",
+      "policy_text": "A known allergy or hypersensitivity to any component of the requested skin substitute product.",
+      "summary": "Allergy to a product component",
+      "per": "request",
+      "evidence": "An allergy-list or note entry matching a component of the requested product (for example bovine or porcine collagen for an animal-derived product).",
+      "documentation": [
+        "6.3",
+        "6.8"
+      ]
+    },
+    {
+      "id": "034-CI05",
+      "section": "5.1.5",
+      "type": "fact",
+      "policy_text": "Active (acute) Charcot neuroarthropathy of the same foot.",
+      "summary": "Acute Charcot foot on the same foot",
+      "per": "target_ulcer",
+      "evidence": "Charcot neuroarthropathy of the target ulcer's foot described as active, acute or in the active phase.",
+      "documentation": [
+        "6.4"
+      ]
+    }
+  ],
+  "exclusions": [
+    {
+      "id": "034-EX01",
+      "section": "5.2.1",
+      "type": "numeric",
+      "policy_text": "More than 10 applications to one target ulcer within one treatment course.",
+      "summary": "More than 10 applications planned for the ulcer",
+      "field": "applications_planned",
+      "op": ">",
+      "value": 10,
+      "unit": "applications",
+      "per": "target_ulcer",
+      "definitions": [
+        "7.19",
+        "7.20"
+      ],
+      "documentation": [
+        "6.3"
+      ]
+    },
+    {
+      "id": "034-EX02",
+      "section": "5.2.2",
+      "type": "date_window",
+      "policy_text": "A new treatment course for a target ulcer that completed a treatment course within 12 months before the request date.",
+      "summary": "Earlier course on the same ulcer ended in the last 12 months",
+      "field": "prior_course_end_date",
+      "window": {
+        "months": 12
+      },
+      "per": "target_ulcer",
+      "definitions": [
+        "7.20",
+        "7.21"
+      ],
+      "documentation": [
+        "6.9"
+      ]
+    },
+    {
+      "id": "034-EX03",
+      "section": "5.2.3",
+      "type": "fact",
+      "policy_text": "More than one skin substitute product on the same target ulcer within one treatment course.",
+      "summary": "More than one product for the ulcer in one course",
+      "per": "target_ulcer",
+      "evidence": "The request or history names two or more skin substitute products for the same ulcer within one treatment course.",
+      "definitions": [
+        "7.20"
+      ],
+      "documentation": [
+        "6.3",
+        "6.9"
+      ]
+    },
+    {
+      "id": "034-EX04",
+      "section": "5.2.4",
+      "type": "fact",
+      "policy_text": "An ulcer whose main cause is venous disease, pressure from lying or sitting, a burn, or trauma rather than diabetes.",
+      "summary": "Ulcer mainly venous, pressure, burn or trauma",
+      "per": "target_ulcer",
+      "evidence": "A clinician names venous disease, pressure, a burn or trauma as the main cause of the target ulcer.",
+      "documentation": [
+        "6.4"
+      ]
+    },
+    {
+      "id": "034-EX05",
+      "section": "5.2.5",
+      "type": "fact",
+      "policy_text": "An ulcer documented as fully closed on or before the request date.",
+      "summary": "Ulcer already closed",
+      "per": "target_ulcer",
+      "evidence": "A wound note on or before the request date records the target ulcer as closed or fully epithelialized.",
+      "documentation": [
+        "6.4"
+      ]
+    }
+  ],
+  "documentation": [
+    {
+      "id": "6.1",
+      "name": "Office visit note or problem list",
+      "must_show": "Diabetes diagnosis and type, signed and dated",
+      "supports": [
+        "3.1"
+      ]
+    },
+    {
+      "id": "6.2",
+      "name": "HbA1c lab result",
+      "must_show": "Value in %, collection date",
+      "supports": [
+        "3.2",
+        "3.3"
+      ]
+    },
+    {
+      "id": "6.3",
+      "name": "Prior authorization request",
+      "must_show": "Each target ulcer with laterality, site, table B diagnosis code, requested product, planned number of applications",
+      "supports": [
+        "3.4",
+        "5.2.1",
+        "5.2.3"
+      ]
+    },
+    {
+      "id": "6.4",
+      "name": "Wound assessment notes for every visit in the standard-care period",
+      "must_show": "Date; ulcer length and width in cm (or area in cm²) and measurement method; depth and tissue exposed; wound bed tissue; signs of infection present or absent",
+      "supports": [
+        "3.5",
+        "3.6",
+        "3.7",
+        "3.8",
+        "3.9",
+        "3.11",
+        "4.2",
+        "4.3(b)",
+        "5.2.5"
+      ]
+    },
+    {
+      "id": "6.5",
+      "name": "Wound treatment records",
+      "must_show": "Dressing type at each visit; procedure note for each debridement with date",
+      "supports": [
+        "3.10(a)",
+        "4.3(a)"
+      ]
+    },
+    {
+      "id": "6.6",
+      "name": "Offloading record",
+      "must_show": "Device or method, date started, whether in use at each visit",
+      "supports": [
+        "3.10(b)"
+      ]
+    },
+    {
+      "id": "6.7",
+      "name": "Vascular study report",
+      "must_show": "Test type, leg, value, date; date of any revascularization of that leg",
+      "supports": [
+        "4.1",
+        "4.2"
+      ]
+    },
+    {
+      "id": "6.8",
+      "name": "Allergy list",
+      "must_show": "Allergies, including to animal-derived or other product components",
+      "supports": [
+        "5.1.4"
+      ]
+    },
+    {
+      "id": "6.9",
+      "name": "Prior skin substitute history",
+      "must_show": "Dates and products of any earlier treatment course on the same ulcer, or a statement that there was none",
+      "supports": [
+        "5.2.2",
+        "5.2.3"
+      ]
+    },
+    {
+      "id": "6.10",
+      "name": "Imaging, bone biopsy or infectious disease note, when osteomyelitis was suspected",
+      "must_show": "Result, date, treatment status",
+      "supports": [
+        "5.1.1"
+      ]
+    }
+  ],
+  "ambiguities": [
+    {
+      "id": "034-A01",
+      "sections": [
+        "7.7",
+        "3.6"
+      ],
+      "issue": "Which measurement is the baseline",
+      "readings": [
+        "The first wound-clinic visit",
+        "The first visit with a moist dressing and offloading both in place",
+        "The visit the provider names in the request letter"
+      ],
+      "recommended": "The clinician's statement in a signed note; otherwise the first measurement with dressing and offloading both documented.",
+      "encoded_as": "field baseline_date; 034-C6 evidence"
+    },
+    {
+      "id": "034-A02",
+      "sections": [
+        "3.9"
+      ],
+      "issue": "A gap of more than 14 days between measurements",
+      "readings": [
+        "Care was interrupted: not met",
+        "Notes exist but were not sent: insufficient evidence"
+      ],
+      "recommended": "Insufficient evidence (request info) when later notes refer to visits whose notes are missing; otherwise not met.",
+      "encoded_as": "034-C9-F1"
+    },
+    {
+      "id": "034-A03",
+      "sections": [
+        "3.7",
+        "7.6"
+      ],
+      "issue": "Baseline and current areas measured by different methods",
+      "readings": [
+        "Compare as given",
+        "Require the same method"
+      ],
+      "recommended": "Compare as given and flag the method change to a reviewer.",
+      "encoded_as": "034-C7-F1"
+    },
+    {
+      "id": "034-A04",
+      "sections": [
+        "3.10(b)",
+        "7.16"
+      ],
+      "issue": "What 'provided and in use' needs",
+      "readings": [
+        "A device was prescribed",
+        "The device was worn"
+      ],
+      "recommended": "Prescription with no documented non-use counts as in use; documented non-adherence is not met for the visits it covers.",
+      "encoded_as": "034-C10b evidence"
+    },
+    {
+      "id": "034-A05",
+      "sections": [
+        "3.10"
+      ],
+      "issue": "What 'throughout the standard-care period' needs",
+      "readings": [
+        "Every visit note mentions the dressing and offloading",
+        "In place from start to end with no documented stop"
+      ],
+      "recommended": "No documented stop is enough; one silent visit note does not break it.",
+      "encoded_as": "034-C10a and 034-C10b evidence"
+    },
+    {
+      "id": "034-A06",
+      "sections": [
+        "4.3(b)"
+      ],
+      "issue": "Wound notes silent on nonviable tissue",
+      "readings": [
+        "Silence means none",
+        "Insufficient evidence"
+      ],
+      "recommended": "Each note must say so explicitly; silence is insufficient evidence.",
+      "encoded_as": "034-C14b evidence"
+    },
+    {
+      "id": "034-A07",
+      "sections": [
+        "3.11",
+        "7.18"
+      ],
+      "issue": "What counts as documenting 'no signs of active infection'",
+      "readings": [
+        "An explicit statement",
+        "No infection words anywhere"
+      ],
+      "recommended": "An explicit statement ('no s/s infection' counts); an earlier infection shown as treated and resolved does not fail 3.11.",
+      "encoded_as": "034-C11 evidence; 034-C11-F1"
+    },
+    {
+      "id": "034-A08",
+      "sections": [
+        "7.13"
+      ],
+      "issue": "Ulcer type when perfusion tests disagree, or the notes label the ulcer differently",
+      "readings": [
+        "Most recent test",
+        "Worst test",
+        "The clinician's label"
+      ],
+      "recommended": "Any counted low test makes the ulcer neuro-ischemic; the label in the notes does not override the numbers.",
+      "encoded_as": "field ulcer_type (code)"
+    },
+    {
+      "id": "034-A09",
+      "sections": [
+        "2.2"
+      ],
+      "issue": "Order of the table A and table B codes on the request",
+      "readings": [
+        "Table A code must be primary",
+        "Both present in any order"
+      ],
+      "recommended": "Both codes present in any order.",
+      "encoded_as": "scope.primary_diagnoses and scope.unit_diagnoses are matched in any order"
+    },
+    {
+      "id": "034-A10",
+      "sections": [
+        "2.1",
+        "3"
+      ],
+      "issue": "More than one target ulcer, only some qualify",
+      "readings": [
+        "Approve the qualifying ulcers",
+        "Route the whole case on the weakest ulcer"
+      ],
+      "recommended": "Route the whole case on the weakest ulcer, with per-ulcer findings in the brief and letter (D-020).",
+      "encoded_as": "scope.unit_routing = weakest_unit"
+    },
+    {
+      "id": "034-A11",
+      "sections": [
+        "5.1.1"
+      ],
+      "issue": "Which osteomyelitis history counts",
+      "readings": [
+        "Any history",
+        "Only current disease, or disease whose treatment is not shown as completed"
+      ],
+      "recommended": "Only current disease, or disease whose treatment the record does not show as completed.",
+      "encoded_as": "034-CI01 evidence"
+    },
+    {
+      "id": "034-A12",
+      "sections": [
+        "7.21"
+      ],
+      "issue": "Day windows versus month windows",
+      "readings": [
+        "Convert every window to months (D-019)",
+        "Keep windows shorter than a month in days"
+      ],
+      "recommended": "Windows shorter than a month stay in calendar days; 3 months or more use calendar months (D-022).",
+      "encoded_as": "rules.window_counting = calendar_months_or_days; 034-C8 window.days"
+    }
+  ],
+  "source_quote_required": true
+}

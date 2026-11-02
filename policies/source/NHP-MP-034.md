@@ -81,7 +81,7 @@ All of the following must be met unless a criterion says otherwise. Criteria mar
 - (c) Bone is not exposed in the ulcer bed.
 - (d) The **wound area** is at least 1.0 cm².
 
-**3.6 Standard-care duration.** For each target ulcer, the **standard-care period** meets the duration for its **ulcer type** in 4.2.
+**3.6 Baseline measurement.** For each target ulcer, a **baseline measurement** with its date and **wound area** is documented.
 
 **3.7 Inadequate response.** For each target ulcer, the **area reduction** across the standard-care period is less than 50%.
 
@@ -106,7 +106,7 @@ All numbered items in this section are required. Each is met through any one of 
 - (b) A toe pressure of at least 30 mmHg.
 - (c) A transcutaneous oxygen pressure (TcPO2) of at least 30 mmHg, measured on the foot.
 
-**4.2 Standard-care duration by ulcer type.** For each target ulcer, any one of the following:
+**4.2 Standard-care duration by ulcer type.** For each target ulcer, the **standard-care period** meets any one of the following:
 
 - (a) Neuropathic pathway. All of the following:
   - (i) The ulcer type is **neuropathic**.
@@ -151,7 +151,7 @@ The request must include the following. Each item names the criteria it supports
 | 6.1 | Office visit note or problem list | Diabetes diagnosis and type, signed and dated | 3.1 |
 | 6.2 | HbA1c lab result | Value in %, collection date | 3.2, 3.3 |
 | 6.3 | Prior authorization request | Each target ulcer with laterality, site, table B diagnosis code, requested product, planned number of applications | 3.4, 5.2.1, 5.2.3 |
-| 6.4 | Wound assessment notes for every visit in the standard-care period | Date; ulcer length and width in cm (or area in cm²) and measurement method; depth and tissue exposed; wound bed tissue; signs of infection present or absent | 3.5, 3.7, 3.8, 3.9, 3.11, 4.2, 4.3(b), 5.2.5 |
+| 6.4 | Wound assessment notes for every visit in the standard-care period | Date; ulcer length and width in cm (or area in cm²) and measurement method; depth and tissue exposed; wound bed tissue; signs of infection present or absent | 3.5, 3.6, 3.7, 3.8, 3.9, 3.11, 4.2, 4.3(b), 5.2.5 |
 | 6.5 | Wound treatment records | Dressing type at each visit; procedure note for each debridement with date | 3.10(a), 4.3(a) |
 | 6.6 | Offloading record | Device or method, date started, whether in use at each visit | 3.10(b) |
 | 6.7 | Vascular study report | Test type, leg, value, date; date of any revascularization of that leg | 4.1, 4.2 |
@@ -203,7 +203,7 @@ The request must include the following. Each item names the criteria it supports
 
 **7.20 Treatment course.** The 84 days starting on the date of the first application to a target ulcer, with that date counted as day 1.
 
-**7.21 Counting time.** Time windows include their boundary day. A window in months is counted in calendar months: "within 3 months before the request date" starts on the same calendar day 3 months earlier, or on the last day of that month if it has no such day. A window in days is counted in calendar days: "within 14 days before the request date" starts 14 days before the request date. A window ends on the request date. Durations (3.6, 4.2) are the number of days between two dates, as in 7.9.
+**7.21 Counting time.** Time windows include their boundary day. A window in months is counted in calendar months: "within 3 months before the request date" starts on the same calendar day 3 months earlier, or on the last day of that month if it has no such day. A window in days is counted in calendar days: "within 14 days before the request date" starts 14 days before the request date. A window ends on the request date. Durations (4.2) are the number of days between two dates, as in 7.9.
 
 ## 8. Clinical basis
 
@@ -254,6 +254,9 @@ Sources considered:
 | 5.2.2 | No new course within 12 months | Low | A coverage limit, not clinical evidence; a recurrent ulcer may reasonably be treated again |
 
 ### A.2 Expected ambiguities
+
+Nick accepted every recommended reading below on 2026-11-02. The criteria spec encodes each one (`ambiguities` in `policies/specs/NHP-MP-034.json`).
+
 
 | Section | Wording | Possible readings | Recommended reading |
 | --- | --- | --- | --- |
