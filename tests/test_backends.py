@@ -46,6 +46,12 @@ def test_lmstudio_counts_as_a_scorecard_run():  # D-057
     assert load_config({"PRIORAUTH_BACKEND": "lmstudio"}).official
 
 
+def test_timeouts():
+    assert load_config({"PRIORAUTH_BACKEND": "lmstudio"}).timeout_s == 3600
+    assert load_config({}).timeout_s == 600
+    assert load_config({"PRIORAUTH_TIMEOUT_S": "90"}).timeout_s == 90
+
+
 def test_lmstudio_defaults_and_minimum_context():
     cfg = load_config({"PRIORAUTH_BACKEND": "lmstudio"})
     assert cfg.base_url == "http://localhost:1234/v1"

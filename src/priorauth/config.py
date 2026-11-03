@@ -9,6 +9,8 @@ routing are code and run the same on every backend.
     PRIORAUTH_CONTEXT_TOKENS   context length the model was loaded with (lmstudio: 32k)
     PRIORAUTH_MAX_OUTPUT_TOKENS
     PRIORAUTH_BASE_URL         overrides the OpenAI-compatible endpoint
+    PRIORAUTH_TIMEOUT_S        per-call HTTP timeout (default 600; lmstudio 3600, a local model
+                               can take many minutes to write one case's JSON)
     ANTHROPIC_API_KEY          anthropic (the SDK also accepts an `ant auth login` profile)
     OPENROUTER_API_KEY         openrouter
 """
@@ -64,6 +66,7 @@ class ModelConfig:
     api_key: str | None
     context_tokens: int
     max_output_tokens: int
+    timeout_s: float = 600.0
 
     @property
     def official(self) -> bool:
@@ -109,4 +112,5 @@ def load_config(env: Mapping[str, str] | None = None) -> ModelConfig:
         api_key=api_key,
         context_tokens=context,
         max_output_tokens=int(env.get("PRIORAUTH_MAX_OUTPUT_TOKENS") or 16_000),
+        timeout_s=float(env.get("PRIORAUTH_TIMEOUT_S") or (3600 if backend == "lmstudio" else 600)),
     )

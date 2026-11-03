@@ -216,5 +216,5 @@ def make_client(cfg: ModelConfig) -> ModelClient:
     if cfg.backend == "anthropic":
         return AnthropicClient(cfg)
     if cfg.backend in ("openrouter", "lmstudio"):
-        return OpenAICompatClient(cfg)
+        return OpenAICompatClient(cfg, timeout=cfg.timeout_s)
     raise ValueError("the fake backend is built in tests with FakeClient(replies)")
