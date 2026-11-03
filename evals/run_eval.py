@@ -8,8 +8,8 @@
 
 Backends are the pipeline's (D-044) plus `oracle`, which replays the ground truth through the
 real pipeline (tests/oracle.py). An oracle run checks intake, quote checks, derivations,
-evaluation, routing and this scorer; it says nothing about a model. Only `anthropic` runs are
-scorecard results; every other report says so in its header (D-051).
+evaluation, routing and this scorer; it says nothing about a model. Scorecard results come from
+`lmstudio` (the v0.1 headline) or `anthropic`; every other report says so in its header (D-057).
 
 Exit codes: 0 safety gate holds, 1 safety gate fails, 2 the run could not be scored.
 """
@@ -332,10 +332,17 @@ def render_report(
             "derivations, evaluation, routing and the scorer. It says nothing about a model.",
             "",
         ]
+    elif info.backend == "lmstudio":
+        out += [
+            "> **Scorecard v0.1 on a local model (D-057).** Gemma on LM Studio, run on Nick's "
+            "Mac. Rules, quote checks and routing are code and identical on every backend; a "
+            "stronger model can only change how much evidence is found.",
+            "",
+        ]
     elif not info.official:
         out += [
-            f"> **Dev run on `{info.backend}`: not a scorecard result.** Only `anthropic` runs "
-            "count (D-044).",
+            f"> **Dev run on `{info.backend}`: not a scorecard result.** Scorecard backends are "
+            "`lmstudio` and `anthropic` (D-057).",
             "",
         ]
     if model_errors:

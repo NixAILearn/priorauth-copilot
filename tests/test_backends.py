@@ -42,6 +42,10 @@ def test_openrouter_needs_a_key_and_a_model():
     assert cfg.base_url == "https://openrouter.ai/api/v1" and not cfg.official
 
 
+def test_lmstudio_counts_as_a_scorecard_run():  # D-057
+    assert load_config({"PRIORAUTH_BACKEND": "lmstudio"}).official
+
+
 def test_lmstudio_defaults_and_minimum_context():
     cfg = load_config({"PRIORAUTH_BACKEND": "lmstudio"})
     assert cfg.base_url == "http://localhost:1234/v1"

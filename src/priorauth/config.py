@@ -67,8 +67,9 @@ class ModelConfig:
 
     @property
     def official(self) -> bool:
-        """Only Anthropic runs count toward the week 4 scorecard (D-044)."""
-        return self.backend == "anthropic"
+        """Scorecard backends: local Gemma on LM Studio is the v0.1 headline (D-057); Anthropic
+        stays a scorecard backend for when a key exists. OpenRouter and fake runs never count."""
+        return self.backend in ("anthropic", "lmstudio")
 
 
 def load_config(env: Mapping[str, str] | None = None) -> ModelConfig:

@@ -4,7 +4,7 @@
 
 An AI utilization-review copilot. It reads a prior authorization request and its clinical documents, checks them against Northwind Health Plan's written medical policy, and gives a human nurse reviewer a cited, criterion-by-criterion recommendation. It never denies: the only outcomes are **approve-ready**, **request info** and **clinician review**.
 
-**Status:** week 4. Policies, specs, 60 labeled cases, the review pipeline and the eval runner are in. The first official scorecard (Claude backend) is pending an API key.
+**Status:** week 4. Policies, specs, 60 labeled cases, the review pipeline and the eval runner are in. The v0.1 scorecard runs on local Gemma (LM Studio, D-057).
 
 ## Why
 
@@ -24,7 +24,7 @@ An AI utilization-review copilot. It reads a prior authorization request and its
 
 ## Results
 
-*Official scorecard pending: it needs a run on the `anthropic` backend.* Targets are in [`docs/metrics.md`](docs/metrics.md).
+*Scorecard v0.1 pending: an all-60 run on local Gemma (`lmstudio`), D-057.* Targets are in [`docs/metrics.md`](docs/metrics.md).
 
 The harness check ([`evals/reports/2026-11-03-all-oracle.md`](evals/reports/2026-11-03-all-oracle.md)) replays the ground truth through the real pipeline: all 60 cases route as labeled, the safety gate holds, and every scored metric is 100%. That proves the rules, routing and scorer, not a model.
 
@@ -46,7 +46,7 @@ make check   # lint, tests, code scan
 
 ### Review a case
 
-The model backend is chosen by environment variable (D-044). Only `anthropic` runs count toward the scorecard; the others are for cheap or free development runs. Quote checks, derived values, thresholds and routing are code and behave the same on every backend.
+The model backend is chosen by environment variable (D-044). The v0.1 scorecard runs on `lmstudio` (D-057); `anthropic` also counts once a key exists; `openrouter` is for cheap development runs only. Quote checks, derived values, thresholds and routing are code and behave the same on every backend.
 
 | Backend | Set | Models |
 | --- | --- | --- |
@@ -65,7 +65,7 @@ python -m priorauth review data/cases/CASE-034-02 --audit runs.db --json
 make eval-smoke                      # 10-case smoke set, safety gate only (what CI runs)
 make eval-oracle                     # all 60 cases on the ground-truth replay, no key needed
 make eval                            # scorecard: all 60 on $PRIORAUTH_BACKEND (default anthropic)
-make eval BACKEND=lmstudio WORKERS=1 # dev run on the local model; not a scorecard result
+make eval BACKEND=lmstudio WORKERS=1 # v0.1 scorecard on local Gemma (D-057)
 ```
 
 Each run writes a dated Markdown and JSON report to `evals/reports/` and exits 1 if the safety gate fails (D-051 to D-056).

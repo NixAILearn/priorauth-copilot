@@ -16,7 +16,7 @@ check: lint test scan cases-check
 
 # Scorecard: all 60 cases, dev and held-out test reported separately, dated report written to
 # evals/reports/. Backend from PRIORAUTH_BACKEND (default anthropic, which needs
-# ANTHROPIC_API_KEY); only anthropic runs are scorecard results (D-044, D-051).
+# ANTHROPIC_API_KEY). The v0.1 headline is `make eval BACKEND=lmstudio WORKERS=1` (D-057).
 BACKEND ?= $(or $(PRIORAUTH_BACKEND),anthropic)
 WORKERS ?= 4
 
