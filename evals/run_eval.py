@@ -22,6 +22,7 @@ import json
 import os
 import subprocess
 import sys
+import threading
 import time
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
@@ -145,10 +146,27 @@ def run_one(case_id: str, make: ClientFactory) -> CaseResult:
 
 
 def run_cases(case_ids: list[str], make: ClientFactory, workers: int = 1) -> list[CaseResult]:
+    """Runs every case; prints one progress line per finished case to stderr (slow backends)."""
+    done = 0
+    lock = threading.Lock()
+
+    def one(c: str) -> CaseResult:
+        nonlocal done
+        r = run_one(c, make)
+        with lock:
+            done += 1
+            got = r.route or f"ERROR {r.error}"
+            print(
+                f"[{done}/{len(case_ids)}] {c}: {got} ({r.seconds:.0f} s)",
+                file=sys.stderr,
+                flush=True,
+            )
+        return r
+
     if workers <= 1:
-        return [run_one(c, make) for c in case_ids]
+        return [one(c) for c in case_ids]
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        return list(pool.map(lambda c: run_one(c, make), case_ids))
+        return list(pool.map(one, case_ids))
 
 
 def model_error_cases(results: list[CaseResult]) -> list[str]:
