@@ -4,7 +4,7 @@
 
 An AI utilization-review copilot. It reads a prior authorization request and its clinical documents, checks them against Northwind Health Plan's written medical policy, and gives a human nurse reviewer a cited, criterion-by-criterion recommendation. It never denies: the only outcomes are **approve-ready**, **request info** and **clinician review**.
 
-**Status:** week 3. Policies, specs, 60 labeled cases and the review pipeline are in; the eval runner and scorecard come in week 4.
+**Status:** week 4. Policies, specs, 60 labeled cases, the review pipeline and the eval runner are in. The first official scorecard (Claude backend) is pending an API key.
 
 ## Why
 
@@ -24,7 +24,9 @@ An AI utilization-review copilot. It reads a prior authorization request and its
 
 ## Results
 
-*Coming soon: table from the latest report in `evals/reports/`.* Targets are in [`docs/metrics.md`](docs/metrics.md).
+*Official scorecard pending: it needs a run on the `anthropic` backend.* Targets are in [`docs/metrics.md`](docs/metrics.md).
+
+The harness check ([`evals/reports/2026-11-03-all-oracle.md`](evals/reports/2026-11-03-all-oracle.md)) replays the ground truth through the real pipeline: all 60 cases route as labeled, the safety gate holds, and every scored metric is 100%. That proves the rules, routing and scorer, not a model.
 
 ## Guardrails
 
@@ -56,6 +58,17 @@ The model backend is chosen by environment variable (D-044). Only `anthropic` ru
 PRIORAUTH_BACKEND=lmstudio python -m priorauth review data/cases/CASE-021-01
 python -m priorauth review data/cases/CASE-034-02 --audit runs.db --json
 ```
+
+### Run the evals
+
+```bash
+make eval-smoke                      # 10-case smoke set, safety gate only (what CI runs)
+make eval-oracle                     # all 60 cases on the ground-truth replay, no key needed
+make eval                            # scorecard: all 60 on $PRIORAUTH_BACKEND (default anthropic)
+make eval BACKEND=lmstudio WORKERS=1 # dev run on the local model; not a scorecard result
+```
+
+Each run writes a dated Markdown and JSON report to `evals/reports/` and exits 1 if the safety gate fails (D-051 to D-056).
 
 The tests need no key: they replay a perfect extractor built from the labels through the real pipeline (`tests/oracle.py`) and use a scripted fake client for retries, low confidence and adversarial behaviour.
 
