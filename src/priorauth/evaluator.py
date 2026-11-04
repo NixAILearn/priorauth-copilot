@@ -246,6 +246,11 @@ class _Run:
                 if blocking:  # an unverified warning never becomes a clean pass (D-046)
                     self.low_confidence(node, unit, f"unverified {a.status} claim", cites)
                 status = gap
+            if status == "met" and node.id in EVERY_NOTE:
+                gaps = uncovered_notes(self, node, unit, cites)
+                if gaps:  # D-065: one visit's quote cannot show "every note"
+                    status = gap
+                    note = f"no verified quote from {', '.join(gaps)}; model said met. {a.rationale}"
             if a.confidence == "low":
                 self.low_confidence(node, unit, "the model marked this low confidence", cites)
             self.finding(node, unit, status, "model", cites=cites, note=note)
@@ -315,7 +320,23 @@ def method_changed(run: _Run, unit) -> tuple[bool, list[Evidence]] | None:
     return mb != mc, cites
 
 
-CODE_FLAG_RULES = {"034-C7-F1": method_changed}
+def ahi_rule_only_3pct_or_arousal(run: _Run, unit) -> tuple[bool, list[Evidence]] | None:
+    """021-C3-F2 (D-066): the scoring rule of the latest verified study's AHI."""
+    obs = [o for o in run.store.get(("ahi_scoring_rule", unit), []) if o.value != "not_stated"]
+    if not obs:
+        return None
+    last = max((o.on for o in obs if o.on), default=None)
+    latest = [o for o in obs if o.on == last] if last else obs
+    rules = {str(o.value) for o in latest}
+    cites = [e for o in latest for e in o.evidence()]
+    if "4_percent" in rules:
+        return False, cites
+    if rules <= {"3_percent", "arousal_based"}:
+        return True, cites
+    return None
+
+
+CODE_FLAG_RULES = {"034-C7-F1": method_changed, "021-C3-F2": ahi_rule_only_3pct_or_arousal}
 
 _OPPOSITE = {"right": "left", "left": "right"}
 
@@ -363,6 +384,36 @@ def same_site_as_request(run: _Run, unit, cites: list[Evidence]) -> bool:
 
 
 CLAIM_CHECKS = {"034-C4-F1": same_site_as_request}
+
+# --- "Every note" facts (D-065): met only when each note of the period has a verified quote ---
+
+EVERY_NOTE = {"034-C14b": "wound_care_note"}
+_HEAD = re.compile(r"\A\s*---(.*?)---", re.S)
+
+
+def doc_meta(text: str) -> tuple[str | None, date | None]:
+    m = _HEAD.match(text)
+    if not m:
+        return None, None
+    t = re.search(r"\btype:\s*(\S+)", m[1])
+    d = re.search(r"\bdate:\s*(\d{4})-(\d{2})-(\d{2})", m[1])
+    return (t[1] if t else None), (date(int(d[1]), int(d[2]), int(d[3])) if d else None)
+
+
+def uncovered_notes(run: _Run, node: Node, unit, cites: list[Evidence]) -> list[str]:
+    """Notes of the kind the node needs, in the standard-care period, with no verified quote.
+    Without a verified baseline and current date, every such note up to the request counts."""
+    base = [o.value for o in run.store.get(("baseline_date", unit), []) if isinstance(o.value, date)]
+    cur = [o.value for o in run.store.get(("current_measurement_date", unit), [])]
+    lo = max(base) if base else date.min  # type: ignore[type-var]
+    hi = cur[0] if cur and isinstance(cur[0], date) else run.rd
+    cited = {c.doc_id for c in cites if c.verified}
+    out = []
+    for doc_id, text in run.case.documents.items():
+        kind, on = doc_meta(text)
+        if kind == EVERY_NOTE[node.id] and on and lo <= on <= hi and doc_id not in cited:
+            out.append(doc_id)
+    return sorted(out)
 
 
 def evaluate(case: CaseInput, verified: Verified) -> Evaluation:

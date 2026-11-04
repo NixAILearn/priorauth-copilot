@@ -221,6 +221,10 @@ def case_schema(case: CaseInput, lengths: bool = True) -> dict:
 # A date field whose quote names the event but not the date may take it from this field (D-064).
 DATE_FROM = {"baseline_date": "measurement_date"}
 
+# An event date must come with its event: the value's own quote names it (D-066). A header
+# line in date_quote can give the date but never the event.
+EVENT_WORDS = {"prior_arthroscopy_date": ("arthroscop",)}
+
 PER_FIELD_CAP = 8  # committed cases need at most 6 (measurement_date); room for more (D-063)
 KEYED_BACKENDS = ("lmstudio", "openrouter")
 KEYED_NOTE = (
@@ -602,6 +606,10 @@ def verify(case: CaseInput, out: ExtractionOutput | None) -> Verified:
             reason = f"value {x.value!r} does not fit {fd.type} field"
         elif not quote_in(docs, x.doc_id, x.quote):
             reason = "quote not found verbatim in the document"
+        elif x.field in EVENT_WORDS and not any(
+            w in x.quote.lower() for w in EVENT_WORDS[x.field]
+        ):
+            reason = "the quote does not name the event"
         elif isinstance(val, float) and not number_in(x.quote, val):
             reason = "the number is not in its quote"
         elif isinstance(val, date) and not date_in(x.quote, val):
