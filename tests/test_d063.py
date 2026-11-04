@@ -141,15 +141,10 @@ def test_knee_side_is_decided_in_code_from_verified_sides():
     assert ev.get("047-C2", None).status == "not_met"
 
 
-def test_missing_documents_are_listed_on_clinician_review_too():
+def test_missing_documents_stay_request_info_only():  # D-063 (D) withdrawn
     import json
 
-    out = oracle_output("CASE-034-07")  # labeled request info, with missing documents
-    plain = review_case(CASES / "CASE-034-07", FakeClient([json.dumps(out)], hard_model=None))
-    assert plain.route == Route.REQUEST_INFO and plain.missing
-
-    flagged = copy.deepcopy(out)
-    _claim_method_change(flagged)  # a verified reviewer flag forces clinician review
-    rec = review_case(CASES / "CASE-034-07", FakeClient([json.dumps(flagged)], hard_model=None))
-    assert rec.route == Route.CLINICIAN_REVIEW
-    assert {m.doc_item for m in rec.missing} == {m.doc_item for m in plain.missing}
+    out = copy.deepcopy(oracle_output("CASE-034-07"))
+    _claim_method_change(out)  # a verified reviewer flag forces clinician review
+    rec = review_case(CASES / "CASE-034-07", FakeClient([json.dumps(out)], hard_model=None))
+    assert rec.route == Route.CLINICIAN_REVIEW and rec.missing == []
