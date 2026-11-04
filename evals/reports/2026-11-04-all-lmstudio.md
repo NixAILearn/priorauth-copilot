@@ -1,6 +1,6 @@
 # Eval report: all set, 2026-11-04
 
-> **Scorecard v0.1 on a local model (D-057).** Gemma on LM Studio, run on Nick's Mac. Rules, quote checks and routing are code and identical on every backend; a stronger model can only change how much evidence is found.
+> **Scorecard on a local model (D-057).** `qwen2.5-14b-instruct-1m` on LM Studio, run on Nick's Mac. Rules, quote checks and routing are code and identical on every backend; a stronger model can only change how much evidence is found. *(Banner corrected 2026-11-04, D-076: it first said "Gemma", a stale string; the model line below was always right.)*
 
 > **Incomplete run:** 2 case(s) hit a model error and were routed to clinician review without a usable extraction: CASE-034-03, CASE-034-20.
 

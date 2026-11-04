@@ -1,4 +1,4 @@
-.PHONY: lint test scan cases-check check eval eval-smoke eval-oracle app snapshot-oracle
+.PHONY: lint test scan cases-check check eval eval-smoke eval-oracle app snapshot-oracle demo-gif
 
 lint:
 	ruff check .
@@ -38,3 +38,8 @@ app:
 # Rebuild the ground-truth replay snapshot the app falls back to.
 snapshot-oracle:
 	python -m priorauth snapshot oracle
+
+# Re-record docs/assets/demo.gif from the real app (D-074). Needs: pip install -e ".[demo]"
+# and `playwright install chromium`.
+demo-gif:
+	python scripts/record_demo.py
