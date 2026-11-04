@@ -181,9 +181,13 @@ def test_case_schema_is_strict_and_bounded():
 
 def _keyed(flat: dict, case) -> dict:
     """Group a flat oracle answer the way the keyed schema asks for it."""
-    values = {f.name: [] for f in model_fields(case.spec)}
+    fields = {f.name: f for f in model_fields(case.spec)}
+    values = {name: [] for name in fields}
     for v in flat["values"]:
-        values[v["field"]].append({k: x for k, x in v.items() if k != "field"})
+        row = {k: x for k, x in v.items() if k != "field"}
+        if fields[v["field"]].type == "date":
+            row["date_quote"] = None  # D-063: required key, null when the quote shows the date
+        values[v["field"]].append(row)
     facts = {}
     for n in fact_nodes(case.spec):
         rows = [

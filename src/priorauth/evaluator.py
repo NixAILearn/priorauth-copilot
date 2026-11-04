@@ -220,6 +220,12 @@ class _Run:
         return out
 
     def fact(self, node: Node, unit, yes: Status, no: Status, gap: Status) -> Status:
+        code = CODE_FACTS.get(node.id)
+        decided = code(self, node, unit) if code else None
+        if decided is not None:
+            status, cites, note = decided
+            self.finding(node, unit, status, "code", cites=cites, note=note)
+            return status
         allowed = FLAGGED_STATUSES if yes == "found" else CRITERION_STATUSES
         got = self.v.facts.get((node.id, unit))
         if got is None or got[0].status not in allowed:
@@ -279,6 +285,63 @@ def group_status(kind: str, kids: list[Status], flagged: bool) -> Status:
     return "insufficient" if "insufficient" in kids else "not_met"
 
 
+# --- Checks code makes from verified values instead of the model's judgment (D-063) -----------
+# Each returns None when the verified values cannot settle it; the model's answer then stands.
+
+
+def _on(run: _Run, name: str, unit, when: date) -> set[str]:
+    return {str(o.value) for o in run.store.get((name, unit), []) if o.on == when}
+
+
+def method_changed(run: _Run, unit) -> tuple[bool, list[Evidence]] | None:
+    """034-C7-F1: the measurement method at baseline versus at the current measurement."""
+    base = [o for o in run.store.get(("baseline_date", unit), []) if isinstance(o.value, date)]
+    cur = run.store.get(("current_measurement_date", unit), [])
+    if not base or not cur:
+        return None
+    b = max(base, key=lambda o: o.value).value  # type: ignore[arg-type,return-value]
+    c = cur[0].value
+    mb, mc = _on(run, "measurement_method", unit, b), _on(run, "measurement_method", unit, c)  # type: ignore[arg-type]
+    if not mb or not mc or "not_stated" in mb | mc:
+        return None
+    cites = [
+        e
+        for o in run.store.get(("measurement_method", unit), [])
+        if o.on in (b, c)
+        for e in o.evidence()
+    ]
+    return mb != mc, cites
+
+
+CODE_FLAG_RULES = {"034-C7-F1": method_changed}
+
+_OPPOSITE = {"right": "left", "left": "right"}
+
+
+def knee_side(run: _Run, node: Node, unit) -> tuple[Status, list[Evidence], str] | None:
+    """047-C2: every verified document side is the requested side, both, or not stated."""
+    req = {
+        str(o.value)
+        for o in run.store.get(("requested_knee_side", unit), [])
+        if o.value in _OPPOSITE
+    }
+    sides = run.store.get(("evidence_knee_side", unit), [])
+    if len(req) != 1 or not sides:
+        return None
+    want = req.pop()
+    wrong = [o for o in sides if o.value == _OPPOSITE[want]]
+    if wrong:
+        cites = [e for o in wrong for e in o.evidence()]
+        return "not_met", cites, f"a document names the {_OPPOSITE[want]} knee"
+    if not any(o.value in (want, "both") for o in sides):
+        return None
+    cites = [e for o in sides for e in o.evidence()]
+    return "met", cites, f"every verified document side is {want}, both or not stated"
+
+
+CODE_FACTS = {"047-C2": knee_side}
+
+
 def evaluate(case: CaseInput, verified: Verified) -> Evaluation:
     run = _Run(case, verified)
     for top in (*case.spec.criteria, *case.spec.contraindications, *case.spec.exclusions):
@@ -286,8 +349,29 @@ def evaluate(case: CaseInput, verified: Verified) -> Evaluation:
             run.evaluate(top, unit)
 
     rules = {r.id: (n, r) for n in case.spec.nodes() for r in n.flag_rules}
+    settled: set[tuple[str, str | None]] = set()
+    for rule_id, check in CODE_FLAG_RULES.items():
+        if rule_id not in rules:
+            continue
+        node, rule = rules[rule_id]
+        for unit in [None] if node.per == "request" else case.unit_ids:
+            got = check(run, unit)
+            if got is None:
+                continue
+            settled.add((rule_id, unit))
+            if got[0]:
+                run.flag(
+                    kind="flag_rule",
+                    route=Route(rule.route),
+                    rule_id=rule.id,
+                    unit_id=unit,
+                    detail=f"{rule.id}: {rule.when}",
+                    citations=got[1],
+                )
     for claim, cites in verified.flag_claims:
         node, rule = rules[claim.rule_id]
+        if (claim.rule_id, claim.unit_id) in settled:
+            continue  # code decided this rule from verified values
         if any(c.verified for c in cites):
             run.flag(
                 kind="flag_rule",

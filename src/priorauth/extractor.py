@@ -29,7 +29,7 @@ from priorauth.schemas import (
 )
 from priorauth.spec import CriteriaSpec, FieldDef, Node
 
-PROMPT_VERSION = "extract-v0.1"
+PROMPT_VERSION = "extract-v0.2"  # D-063 keyed note: quote, date and status rules
 
 SYSTEM = """You are an evidence extractor for utilization review at Northwind Health Plan, a \
 fictional Medicare Advantage plan. Every patient and document is synthetic.
@@ -217,13 +217,21 @@ def case_schema(case: CaseInput, lengths: bool = True) -> dict:
     )
 
 
-PER_FIELD_CAP = 6  # most observations of one field in a committed case (measurement_date)
+PER_FIELD_CAP = 8  # committed cases need at most 6 (measurement_date); room for more (D-063)
 KEYED_BACKENDS = ("lmstudio", "openrouter")
 KEYED_NOTE = (
     "Answer format for this case: `values` has one key per field and `facts` one key per fact "
     "node. Under each field list each distinct observation once, newest first, at most "
     f"{PER_FIELD_CAP} (per target ulcer); an empty list means the documents do not give it. "
-    "Never repeat an entry or write the same value in another format."
+    "Never repeat an entry or write the same value in another format.\n"
+    "Quotes: copy one continuous passage from one document, character for character. Never add "
+    "a heading, a '|' or a ':' that is not in the text, and never join text from two places. "
+    "doc_id is the document the passage is in.\n"
+    "Dates: when a date field's quote does not itself show the date (for example the date is on "
+    "a header line such as 'Collected: ...' or 'Date of visit: ...'), put that header line, "
+    "copied exactly from the same document, in date_quote; otherwise date_quote is null.\n"
+    "Statuses: criteria use met / not_met / insufficient; contraindications and exclusions use "
+    "found / not_found only."
 )
 
 
@@ -254,6 +262,8 @@ def keyed_schema(case: CaseInput) -> dict:
             vs = {"type": "string", "pattern": r"^[0-9]+(\.[0-9]+)?$", "maxLength": 12}
         elif f.type == "date":
             vs = {"type": "string", "pattern": r"^[0-9]{4}-[0-9]{2}(-[0-9]{2})?$", "maxLength": 10}
+            dq = {"type": ["string", "null"], "maxLength": LENGTHS["quote"]}
+            return _obj({**v_props, "value": vs, "date_quote": dq})
         else:
             vs = v_props["value"]
         return _obj({**v_props, "value": vs})
@@ -262,12 +272,19 @@ def keyed_schema(case: CaseInput) -> dict:
         f.name: capped(typed(f), PER_FIELD_CAP * (max(1, len(units)) if f.per != "request" else 1))
         for f in model_fields(case.spec)
     }
+    kinds = kind_of(case.spec)
+    statuses = {
+        "criterion": ["met", "not_met", "insufficient"],
+        "contraindication": ["found", "not_found"],
+        "exclusion": ["found", "not_found"],
+    }
     facts: dict[str, dict] = {}
     for n in fact_nodes(case.spec):
+        props = {**f_props, "status": {"type": "string", "enum": statuses[kinds[n.id]]}}
         if n.per == "request" or not units:
-            facts[n.id] = _obj({k: v for k, v in f_props.items() if k != "unit_id"})
+            facts[n.id] = _obj({k: v for k, v in props.items() if k != "unit_id"})
         else:
-            facts[n.id] = capped(_obj(f_props), len(units))
+            facts[n.id] = capped(_obj(props), len(units))
     return _obj(
         {
             "values": _obj(values),
@@ -281,7 +298,9 @@ def keyed_schema(case: CaseInput) -> dict:
 def unkey(data: dict) -> dict:
     """A keyed answer back into the flat ExtractionOutput shape."""
     values = [
-        {"field": name, **v} for name, items in (data.get("values") or {}).items() for v in items
+        {"field": name, **{k: x for k, x in v.items() if not (k == "date_quote" and x is None)}}
+        for name, items in (data.get("values") or {}).items()
+        for v in items
     ]
     facts = []
     for node_id, x in (data.get("facts") or {}).items():
@@ -476,6 +495,7 @@ class Obs:
     start: date | None = None
     end: date | None = None
     sources: tuple[Obs, ...] = ()
+    date_quote: str | None = None  # the header line that shows the date, same document (D-063)
 
     def evidence(self) -> list[Evidence]:
         if self.sources:
@@ -483,7 +503,10 @@ class Obs:
             for s in self.sources:
                 out += [e for e in s.evidence() if e not in out]
             return out
-        return [Evidence(doc_id=self.doc_id, quote=self.quote, verified=True)]
+        ev = [Evidence(doc_id=self.doc_id, quote=self.quote, verified=True)]
+        if self.date_quote:
+            ev.append(Evidence(doc_id=self.doc_id, quote=self.date_quote, verified=True))
+        return ev
 
 
 @dataclass
@@ -567,6 +590,7 @@ def verify(case: CaseInput, out: ExtractionOutput | None) -> Verified:
         ok_unit, unit = unit_for(fd.per, x.unit_id)
         val = parse_value(fd, x.value)
         reason = None
+        date_quote = None
         if not ok_unit:
             reason = f"unknown target ulcer {x.unit_id}"
         elif val is None:
@@ -576,7 +600,13 @@ def verify(case: CaseInput, out: ExtractionOutput | None) -> Verified:
         elif isinstance(val, float) and not number_in(x.quote, val):
             reason = "the number is not in its quote"
         elif isinstance(val, date) and not date_in(x.quote, val):
-            reason = "the date is not in its quote"
+            # D-063: the date may sit on a header line of the same document instead. Both quotes
+            # must be exact, and the date must be in the second one.
+            dq = x.date_quote
+            if dq and quote_in(docs, x.doc_id, dq) and date_in(dq, val):
+                date_quote = dq
+            else:
+                reason = "the date is not in its quote"
         if reason:
             v.rejected.append(Rejected("value", x.field, x.unit_id, reason))
             continue
@@ -594,6 +624,7 @@ def verify(case: CaseInput, out: ExtractionOutput | None) -> Verified:
             quote=x.quote,
             start=parse_date(x.period_start),
             end=parse_date(x.period_end),
+            date_quote=date_quote,
         )
         v.obs.setdefault((o.field, o.unit_id), []).append(o)
 

@@ -36,7 +36,12 @@ def review_case(
     verified = verify(case, raw.output)
     ev = evaluate(case, verified)
     route, reasons = route_case(case.spec, case.unit_ids, ev, flags)
-    missing = missing_documents(case.spec, case.unit_ids, ev) if route == Route.REQUEST_INFO else []
+    # D-063: also listed on clinician review, as information for the reviewer (no letter).
+    missing = (
+        missing_documents(case.spec, case.unit_ids, ev)
+        if route in (Route.REQUEST_INFO, Route.CLINICIAN_REVIEW)
+        else []
+    )
     rec = Recommendation(
         case_id=case.case_id,
         request_id=case.request.request_id,

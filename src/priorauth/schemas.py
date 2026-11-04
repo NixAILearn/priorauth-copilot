@@ -118,6 +118,7 @@ class ExtractedValue(Strict):
     record: str  # values from the same test, measurement or report share a record
     doc_id: str
     quote: str
+    date_quote: str | None = None  # date fields: the line showing the date, same doc (D-063)
 
 
 class FactAssessment(Strict):
