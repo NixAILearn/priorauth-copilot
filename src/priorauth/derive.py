@@ -149,12 +149,32 @@ _AREA_CM2 = {
 }
 
 
+def _pair_by_document(groups: dict[tuple, dict[str, Obs]]) -> None:
+    """D-064: a length and a width with different record labels still pair when they are the
+    only unpaired length and width from the same document on the same date."""
+    loose: dict[tuple, list[tuple[tuple, dict[str, Obs]]]] = {}
+    for key, g in groups.items():
+        if len(g) == 1 and next(iter(g)) in ("wound_length", "wound_width"):
+            o = next(iter(g.values()))
+            loose.setdefault((o.on, o.doc_id), []).append((key, g))
+    for (on, _doc), items in loose.items():
+        lens = [g for _, g in items if "wound_length" in g]
+        wids = [g for _, g in items if "wound_width" in g]
+        if on is None or len(lens) != 1 or len(wids) != 1:
+            continue  # ambiguous: leave unpaired rather than guess
+        lens[0]["wound_width"] = wids[0]["wound_width"]
+        for key, g in items:
+            if g is wids[0]:
+                del groups[key]
+
+
 def wound_area_cm2(store: Store, unit, ctx) -> None:
     keys = ("wound_length", "wound_width", "wound_area_recorded")
     groups: dict[tuple, dict[str, Obs]] = {}
     for k in keys:
         for o in _get(store, k, unit):
             groups.setdefault((o.on, o.record), {}).setdefault(k, o)
+    _pair_by_document(groups)
     for (on, record), g in groups.items():
         area = g.get("wound_area_recorded")
         if area and (area.unit or "").strip().lower() in _AREA_CM2 and _num(area) is not None:

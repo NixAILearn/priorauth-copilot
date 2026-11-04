@@ -10,12 +10,14 @@
 from __future__ import annotations
 
 import operator
+import re
 from dataclasses import dataclass, field
 from datetime import date
 
 from priorauth.derive import Store, derive_all, in_window
 from priorauth.extractor import Obs, Verified, kind_of
-from priorauth.intake import CaseInput
+from priorauth.intake import REQUEST_DOC, CaseInput
+from priorauth.quotes import norm
 from priorauth.schemas import Evidence, Finding, Flag, Route, Status
 from priorauth.spec import CriteriaSpec, Node
 
@@ -342,6 +344,27 @@ def knee_side(run: _Run, node: Node, unit) -> tuple[Status, list[Evidence], str]
 CODE_FACTS = {"047-C2": knee_side}
 
 
+def same_site_as_request(run: _Run, unit, cites: list[Evidence]) -> bool:
+    """034-C4-F1 (D-064): True when the claim's own wound-note quotes show the request's side
+    and site, so the claimed mismatch contradicts its evidence. Code can only drop such a claim,
+    never raise one: it cannot see notes the model did not quote."""
+    side = {str(o.value) for o in run.store.get(("ulcer_laterality", unit), [])}
+    site = {str(o.value).strip().lower() for o in run.store.get(("ulcer_site", unit), [])}
+    notes = [c for c in cites if c.verified and c.doc_id != REQUEST_DOC]
+    if len(side) != 1 or len(site) != 1 or not notes or side & {"not_stated"}:
+        return False
+    want, where = side.pop(), site.pop()
+    other = _OPPOSITE[want]
+    for c in notes:
+        q = norm(c.quote).lower()
+        if not re.search(rf"\b{want}\b", q) or re.search(rf"\b{other}\b", q) or where not in q:
+            return False
+    return True
+
+
+CLAIM_CHECKS = {"034-C4-F1": same_site_as_request}
+
+
 def evaluate(case: CaseInput, verified: Verified) -> Evaluation:
     run = _Run(case, verified)
     for top in (*case.spec.criteria, *case.spec.contraindications, *case.spec.exclusions):
@@ -372,6 +395,9 @@ def evaluate(case: CaseInput, verified: Verified) -> Evaluation:
         node, rule = rules[claim.rule_id]
         if (claim.rule_id, claim.unit_id) in settled:
             continue  # code decided this rule from verified values
+        drop = CLAIM_CHECKS.get(claim.rule_id)
+        if drop and drop(run, claim.unit_id, cites):
+            continue  # the claim's own verified quotes contradict it (D-064)
         if any(c.verified for c in cites):
             run.flag(
                 kind="flag_rule",

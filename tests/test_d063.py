@@ -54,9 +54,56 @@ def test_the_second_date_quote_must_be_exact_same_document_and_show_the_date():
                 doc,
                 dq,
             )
+            _drop_measurement_dates(out, "D04")  # keep the D-064 fallback out of this test
 
         _, v, _ = _run("CASE-034-07", edit)
         assert ("baseline_date", "U1") not in v.obs, (dq, doc)
+
+
+def _drop_measurement_dates(out, doc):
+    out["values"] = [
+        x for x in out["values"] if not (x["field"] == "measurement_date" and x["doc_id"] == doc)
+    ]
+
+
+def _undated_baseline(out):
+    b = _baseline(out)
+    b["quote"], b["date_quote"] = "Baseline measurement for standard care", None
+
+
+def test_an_undated_baseline_takes_the_same_documents_measurement_date():  # D-064
+    _, v, _ = _run("CASE-034-07", _undated_baseline)
+    (o,) = v.obs[("baseline_date", "U1")]
+    assert str(o.value) == "2026-09-08" and len(o.evidence()) == 2
+    assert "09/08/2026" in o.evidence()[1].quote or "2026-09-08" in o.evidence()[1].quote
+
+
+def test_an_undated_baseline_is_rejected_without_one_matching_measurement_date():  # D-064
+    def no_dates(out):
+        _undated_baseline(out)
+        _drop_measurement_dates(out, "D04")
+
+    _, v, _ = _run("CASE-034-07", no_dates)
+    assert ("baseline_date", "U1") not in v.obs
+
+    def other_date(out):
+        _undated_baseline(out)
+        _baseline(out)["value"] = "2026-09-15"  # not the date D04 records
+
+    _, v, _ = _run("CASE-034-07", other_date)
+    assert ("baseline_date", "U1") not in v.obs
+
+
+def test_length_and_width_pair_by_document_and_date_when_labels_differ():  # D-064
+    def relabel(out):
+        for x in out["values"]:
+            if x["field"] in ("wound_length", "wound_width"):
+                x["record"] = f"{x['doc_id']}-{x['field']}-{x['observed_on']}"
+
+    _, _, ev = _run("CASE-034-07", relabel)
+    _, _, base = _run("CASE-034-07")
+    for node in ("034-C5d", "034-C7"):
+        assert ev.get(node, "U1").status == base.get(node, "U1").status, node
 
 
 def test_exclusions_and_contraindications_offer_only_found_or_not_found():
@@ -148,3 +195,29 @@ def test_missing_documents_stay_request_info_only():  # D-063 (D) withdrawn
     _claim_method_change(out)  # a verified reviewer flag forces clinician review
     rec = review_case(CASES / "CASE-034-07", FakeClient([json.dumps(out)], hard_model=None))
     assert rec.route == Route.CLINICIAN_REVIEW and rec.missing == []
+
+
+def _site_claim(quote):
+    def edit(out):
+        out["flag_rules"].append(
+            {
+                "rule_id": "034-C4-F1",
+                "unit_id": "U1",
+                "citations": [{"doc_id": "D04", "quote": quote}],
+                "rationale": "sides match",
+            }
+        )
+
+    return edit
+
+
+def test_a_site_mismatch_claim_whose_quote_matches_the_request_is_dropped():  # D-064
+    _, _, ev = _run("CASE-034-07", _site_claim("Location | right plantar first metatarsal head"))
+    assert not any(f.rule_id == "034-C4-F1" for f in ev.flags)
+
+
+def test_a_real_site_mismatch_still_flags():  # D-064
+    _, _, ev = _run("CASE-034-18")  # request says left, notes say right
+    assert any(f.rule_id == "034-C4-F1" for f in ev.flags)
+    _, _, ev = _run("CASE-034-07", _site_claim("Etiology | Diabetic neuropathic ulcer"))
+    assert any(f.rule_id == "034-C4-F1" for f in ev.flags)  # quote shows no side: kept

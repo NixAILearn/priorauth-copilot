@@ -21,6 +21,7 @@ from priorauth.intake import REQUEST_DOC, ROOT, CaseInput
 from priorauth.quotes import date_in, number_in, quote_in
 from priorauth.schemas import (
     Evidence,
+    ExtractedValue,
     ExtractionOutput,
     FactAssessment,
     FlagClaim,
@@ -216,6 +217,9 @@ def case_schema(case: CaseInput, lengths: bool = True) -> dict:
         }
     )
 
+
+# A date field whose quote names the event but not the date may take it from this field (D-064).
+DATE_FROM = {"baseline_date": "measurement_date"}
 
 PER_FIELD_CAP = 8  # committed cases need at most 6 (measurement_date); room for more (D-063)
 KEYED_BACKENDS = ("lmstudio", "openrouter")
@@ -577,6 +581,7 @@ def verify(case: CaseInput, out: ExtractionOutput | None) -> Verified:
     v = Verified(obs={}, facts={}, flag_claims=[], injections=[], rejected=[])
     if out is None:
         return v
+    undated: list[tuple[ExtractedValue, date, str | None]] = []
 
     def unit_for(per: str, unit_id: str | None) -> tuple[bool, str | None]:
         if per == "request":
@@ -605,6 +610,9 @@ def verify(case: CaseInput, out: ExtractionOutput | None) -> Verified:
             dq = x.date_quote
             if dq and quote_in(docs, x.doc_id, dq) and date_in(dq, val):
                 date_quote = dq
+            elif x.field in DATE_FROM and quote_in(docs, x.doc_id, x.quote):
+                undated.append((x, val, unit))  # D-064: settled after the loop
+                continue
             else:
                 reason = "the date is not in its quote"
         if reason:
@@ -625,6 +633,31 @@ def verify(case: CaseInput, out: ExtractionOutput | None) -> Verified:
             start=parse_date(x.period_start),
             end=parse_date(x.period_end),
             date_quote=date_quote,
+        )
+        v.obs.setdefault((o.field, o.unit_id), []).append(o)
+
+    # D-064: a baseline sentence with no date in it takes its date from the same document's
+    # verified measurement date, only when that document has exactly one and it is the claimed
+    # date. Two verified quotes from one document, the same trust as date_quote (D-063).
+    for x, val, unit in undated:
+        src = [
+            o
+            for o in v.obs.get((DATE_FROM[x.field], unit), [])
+            if o.doc_id == x.doc_id and isinstance(o.value, date)
+        ]
+        if {o.value for o in src} != {val}:
+            v.rejected.append(Rejected("value", x.field, x.unit_id, "the date is not in its quote"))
+            continue
+        o = Obs(
+            field=x.field,
+            unit_id=unit,
+            value=val,
+            unit=x.unit,
+            on=val,
+            record=x.record or f"{x.doc_id}@{val}",
+            doc_id=x.doc_id,
+            quote=x.quote,
+            date_quote=src[0].date_quote or src[0].quote,
         )
         v.obs.setdefault((o.field, o.unit_id), []).append(o)
 
