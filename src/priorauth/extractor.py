@@ -251,7 +251,7 @@ def keyed_schema(case: CaseInput) -> dict:
         elif f.type == "boolean":
             vs = {"type": "string", "enum": ["true", "false"]}
         elif f.type == "number":
-            vs = {"type": "string", "pattern": r"^-?[0-9]+(\.[0-9]+)?$", "maxLength": 12}
+            vs = {"type": "string", "pattern": r"^[0-9]+(\.[0-9]+)?$", "maxLength": 12}
         elif f.type == "date":
             vs = {"type": "string", "pattern": r"^[0-9]{4}-[0-9]{2}(-[0-9]{2})?$", "maxLength": 10}
         else:

@@ -55,7 +55,7 @@ North star: approve-ready decisions per reviewer-hour
 | Routing accuracy | Cases whose routing matches the label | All cases | Code |
 | Missing-doc recall | Labeled missing items named in the RFI letter or case brief | All labeled missing items | Code: match on (documentation item, target ulcer) in the letter's structured output, not on free text; denominator is cases labeled request info (D-053) |
 | Missing-doc precision | Items named as missing that are labeled missing | All items the copilot names as missing | Code; asking for documents already in the chart burdens the provider |
-| Citation precision | Citations that (a) exist verbatim in the cited document and (b) support the finding | All citations emitted | (a) code, after whitespace and quote-mark normalization only; (b) LLM judge with rubric, Nick spot-checks 10 judged items per run. v0.1 scores (a) only (D-054) |
+| Citation precision | Citations that (a) exist verbatim in the cited document and (b) support the finding | All citations emitted | (a) code, after whitespace and quote-mark normalization only (plus first-letter case, D-061, and table bar or colon as one separator, D-062); (b) LLM judge with rubric, Nick spot-checks 10 judged items per run. v0.1 scores (a) only (D-054) |
 | Letter quality | Mean rubric score: specific reason, missing items listed, plain language, correct policy cited, no invented facts | Letters drafted | LLM judge + Nick spot-check |
 | Pipeline time per case | Wall-clock from intake to recommendation | n/a (median and p90) | Logged timestamps |
 | Reviewer minutes per case | Minutes to review 5 cases manually vs. with copilot | n/a | Nick times their own reviews; present as an illustration, not a benchmark |

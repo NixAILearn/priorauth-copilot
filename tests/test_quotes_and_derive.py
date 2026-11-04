@@ -182,3 +182,24 @@ def test_number_field_takes_a_single_number_from_prose():  # D-061
     assert parse_value(fd, "22%") == 22
     assert parse_value(fd, "5'10\"") is None  # two numbers: refused, never guessed
     assert parse_value(fd, "not reported") is None
+
+
+def test_table_bars_and_colons_are_one_separator():  # D-062
+    docs = {"D01": "| Location | right plantar first metatarsal head |\n| Size | 2.1 x 1.4 cm |"}
+    assert quote_in(docs, "D01", "Location: right plantar first metatarsal head")
+    assert quote_in(docs, "D01", "Size | 2.1 x 1.4 cm")
+    assert not quote_in(docs, "D01", "Location: left plantar first metatarsal head")
+    assert not quote_in(docs, "D01", "Location right plantar first metatarsal head")  # no separator
+
+
+def test_keyed_number_pattern_has_no_sign():  # D-062: no policy number is negative
+    import re
+
+    from evals.run_eval import CASES
+    from priorauth.extractor import keyed_schema
+    from priorauth.intake import load_case
+
+    vals = keyed_schema(load_case(CASES / "CASE-021-01"))["properties"]["values"]["properties"]
+    pats = {v["items"]["properties"]["value"].get("pattern") for v in vals.values()}
+    num = next(p for p in pats if p and "\\." in p)
+    assert re.fullmatch(num, "31.6") and not re.fullmatch(num, "-31.6")
