@@ -7,6 +7,8 @@ derived field absent, which the evaluator reads as insufficient evidence.
 
 from __future__ import annotations
 
+import re
+
 from collections.abc import Callable
 from datetime import date
 from decimal import ROUND_HALF_UP, Decimal
@@ -248,11 +250,54 @@ def wound_course(store: Store, unit, ctx) -> None:
     )
 
 
+def _side(o: Obs) -> str | None:
+    q = o.quote.lower()
+    r, lft = bool(re.search(r"\bright\b", q)), bool(re.search(r"\bleft\b", q))
+    return "right" if r and not lft else "left" if lft and not r else None
+
+
+def _one(cands: list[Obs], v: Obs) -> Obs | None:
+    """The single candidate, or the single one on the value's side; never a guess."""
+    if len(cands) == 1:
+        return cands[0]
+    side = _side(v)
+    same = [c for c in cands if side and _side(c) == side]
+    return same[0] if len(same) == 1 else None
+
+
+def _pair_tests(types: dict[str, Obs], values: dict[str, Obs], dates: dict[str, Obs]) -> None:
+    """D-067: a test value whose record label matches no test type pairs with the type (and date)
+    from the same document, as D-064 does for wound length and width. Same date when both have
+    one; when a report has several tests, the right/left side in the quotes must match."""
+    used = {r for r in values if r in types}
+    for rec, v in list(values.items()):
+        if rec in types:
+            continue
+        cands = [
+            t
+            for r, t in types.items()
+            if r not in used and r not in values and t.doc_id == v.doc_id
+            and (t.on is None or v.on is None or t.on == v.on)
+        ]
+        t = _one(cands, v)
+        if t is None:
+            continue
+        used.add(t.record)
+        types[rec] = t
+        if rec not in dates:
+            ds = [d for r, d in dates.items() if r not in values and d.doc_id == v.doc_id]
+            if len({d.value for d in ds}) == 1:
+                dates[rec] = ds[0]
+            elif (d := _one(ds, v)) is not None:
+                dates[rec] = d
+
+
 def perfusion(store: Store, unit, ctx) -> None:
     """counted_tests, best counted ABI / toe pressure / TcPO2 and ulcer type (7.11 to 7.13)."""
     types = {o.record: o for o in _get(store, "perfusion_test_type", unit)}
     values = {o.record: o for o in _get(store, "perfusion_test_value", unit)}
     dates = {o.record: o for o in _get(store, "perfusion_test_date", unit)}
+    _pair_tests(types, values, dates)
     revasc = [
         o.value
         for o in _get(store, "revascularization_date", unit)

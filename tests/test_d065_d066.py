@@ -108,3 +108,50 @@ def test_an_event_date_quote_must_name_the_event():  # D-066
     assert ("prior_arthroscopy_date", None) not in v.obs
     assert any(r.reason == "the quote does not name the event" for r in v.rejected)
     assert ev.get("047-EX02", None).status == "not_found"
+
+
+def _relabel_perfusion(out):
+    for v in out["values"]:
+        if v["field"].startswith("perfusion_test_"):
+            v["record"] = f"{v['doc_id']}-abi-right-{v['field']}"
+
+
+def test_perfusion_type_and_value_pair_by_document_when_labels_differ():  # D-067
+    _, base = _run("CASE-034-01")
+    _, ev = _run("CASE-034-01", _relabel_perfusion)
+    for node in ("034-C12", "034-C13"):
+        assert ev.get(node, "U1").status == base.get(node, "U1").status, node
+
+
+def test_two_sides_in_one_report_pair_only_by_matching_side():  # D-067
+    def add_left(out):
+        _relabel_perfusion(out)
+        t = next(v for v in out["values"] if v["field"] == "perfusion_test_type")
+        out["values"].append({**t, "record": "left-type", "quote": "Left ABI: 0.95"})
+
+    v, ev = _run("CASE-034-01", add_left)  # "Left ABI" is not in D03: rejected, still pairs
+    assert ev.get("034-C12", "U1").status == "met"
+
+    from priorauth.derive import _pair_tests
+    from priorauth.extractor import Obs
+
+    def o(field, rec, quote, value="abi"):
+        return Obs(
+            field=field,
+            unit_id="U1",
+            value=value,
+            unit=None,
+            on=None,
+            record=rec,
+            doc_id="D03",
+            quote=quote,
+        )
+
+    types = {"a": o("t", "a", "Right ABI"), "b": o("t", "b", "Left ABI")}
+    values = {"v": o("v", "v", "Left ABI: 0.80", 0.8)}
+    _pair_tests(types, values, {})
+    assert types["v"] is types["b"]
+    types = {"a": o("t", "a", "ABI"), "b": o("t", "b", "ABI")}
+    values = {"v": o("v", "v", "ABI 0.80", 0.8)}
+    _pair_tests(types, values, {})
+    assert "v" not in types  # ambiguous: never guessed
