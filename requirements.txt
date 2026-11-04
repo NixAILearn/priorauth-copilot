@@ -1,0 +1,7 @@
+# Runtime dependencies for the hosted demo on Streamlit Community Cloud (D-078).
+# Keep in step with [project].dependencies in pyproject.toml. Local development uses
+# `pip install -e ".[dev]"` instead.
+anthropic>=2.3
+httpx2>=2.13
+pydantic>=2.7
+streamlit>=1.38

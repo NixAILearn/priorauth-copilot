@@ -107,6 +107,10 @@ make check   # lint, tests, code scan, case check
 make app     # the reviewer app on the committed v0.1 results, no model or key needed
 ```
 
+### Hosted demo
+
+The app is set up for Streamlit Community Cloud: entrypoint `app/streamlit_app.py`, Python 3.12, dependencies from `requirements.txt`, and no secrets, so it shows the committed results and never calls a model ([D-078](docs/decision-log.md)).
+
 ### The reviewer app
 
 Five screens ([`docs/app-design.md`](docs/app-design.md)): inbox, case review, medical director queue, provider gap check and eval dashboard. The app shows a committed **snapshot** of recommendations, so it needs no model or key ([D-068](docs/decision-log.md)). It opens on the newest scorecard run in `app/snapshots/` and can switch to the ground-truth replay (`oracle.jsonl`), which is labeled as not model output. To add a run, export its audit log:
