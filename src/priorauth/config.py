@@ -111,6 +111,9 @@ def load_config(env: Mapping[str, str] | None = None) -> ModelConfig:
         base_url=env.get("PRIORAUTH_BASE_URL") or d["base_url"],  # type: ignore[arg-type]
         api_key=api_key,
         context_tokens=context,
-        max_output_tokens=int(env.get("PRIORAUTH_MAX_OUTPUT_TOKENS") or 16_000),
+        # A full case is about 2-5k output tokens; a local model that loops should fail fast.
+        max_output_tokens=int(
+            env.get("PRIORAUTH_MAX_OUTPUT_TOKENS") or (8_000 if backend == "lmstudio" else 16_000)
+        ),
         timeout_s=float(env.get("PRIORAUTH_TIMEOUT_S") or (3600 if backend == "lmstudio" else 600)),
     )

@@ -2,10 +2,20 @@
 
 import json
 
+import pytest
 from oracle import CASES, oracle_output
 
 from priorauth.backends import FakeClient, ModelError
-from priorauth.extractor import OUTPUT_SCHEMA, kind_of, policy_block, user_message
+from priorauth.extractor import (
+    CAPS,
+    LENGTHS,
+    OUTPUT_SCHEMA,
+    case_schema,
+    kind_of,
+    policy_block,
+    schema_for,
+    user_message,
+)
 from priorauth.intake import load_case
 from priorauth.pipeline import review_case
 from priorauth.schemas import Route
@@ -118,3 +128,53 @@ def test_schema_is_strict():
             walk(s["items"])
 
     walk(OUTPUT_SCHEMA)
+
+
+# --- Case-narrowed schema for local models (D-058) --------------------------------------------
+
+CASE_IDS = sorted(p.name for p in CASES.glob("CASE-*"))
+
+
+@pytest.mark.parametrize("case_id", CASE_IDS)
+def test_case_schema_accepts_the_ground_truth(case_id):
+    """The enums never exclude a correct answer: the oracle's output fits every case."""
+    jsonschema = pytest.importorskip("jsonschema")
+    case = load_case(CASES / case_id)
+    out = oracle_output(case_id)
+    jsonschema.validate(out, case_schema(case, lengths=False))
+    for v in out["values"]:  # length limits: everything but the oracle's long sentence quotes
+        assert len(v["record"]) <= LENGTHS["record"] and len(v["value"]) <= LENGTHS["value"]
+    assert len(out["values"]) <= CAPS["values"] and len(out["facts"]) <= CAPS["facts"]
+
+
+def test_case_schema_rejects_an_invented_doc_id():
+    jsonschema = pytest.importorskip("jsonschema")
+    case = load_case(CASES / "CASE-021-01")
+    out = oracle_output("CASE-021-01")
+    out["values"][0]["doc_id"] = "REQUEST_DOB_1955-03-09_REQUEST_DOB_1955-03-09"
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(out, case_schema(case))
+
+
+def test_case_schema_is_strict_and_bounded():
+    case = load_case(CASES / "CASE-034-03")
+
+    def walk(s):
+        if s.get("type") == "object":
+            assert s["additionalProperties"] is False
+            assert set(s["required"]) == set(s["properties"])
+            for v in s["properties"].values():
+                walk(v)
+        if s.get("type") == "array":
+            assert "maxItems" in s
+            walk(s["items"])
+        if s.get("type") in ("string", ["string", "null"]):
+            assert "enum" in s or "maxLength" in s
+
+    walk(case_schema(case))
+
+
+def test_only_local_and_openrouter_get_the_narrowed_schema():
+    case = load_case(CASES / "CASE-021-01")
+    assert schema_for(FakeClient(["{}"], backend="lmstudio"), case) != OUTPUT_SCHEMA
+    assert schema_for(FakeClient(["{}"], backend="anthropic"), case) == OUTPUT_SCHEMA

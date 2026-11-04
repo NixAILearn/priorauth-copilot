@@ -134,6 +134,97 @@ OUTPUT_SCHEMA: dict = _obj(
 )
 
 
+# Bounds for the constrained schema (D-058). The largest committed case needs 34 values, 36
+# fact assessments and quotes well under 400 characters, so these leave room to spare.
+CAPS = {"values": 80, "facts": 120, "flag_rules": 20, "citations": 6, "injections": 10}
+LENGTHS = {"quote": 600, "value": 120, "record": 100, "rationale": 400, "unit": 30, "date": 10}
+
+
+def _enum(values: list[str], nullable: bool = False) -> dict:
+    vals: list[str | None] = sorted(set(values))
+    if nullable:
+        return {"type": ["string", "null"], "enum": [*vals, None]}
+    return {"type": "string", "enum": vals}
+
+
+def case_schema(case: CaseInput, lengths: bool = True) -> dict:
+    """OUTPUT_SCHEMA narrowed to this case: IDs become enums and arrays get a size limit.
+
+    IDs are the strings a small local model is most likely to loop on (an invented doc_id ran
+    to the output cap on Gemma, D-058). With an enum the decoder cannot write any ID that does
+    not exist, which also means every citation names a real document. `lengths` adds string
+    and array limits; constrained decoders (llama.cpp, LM Studio) enforce them.
+    """
+    docs = list(case.documents)
+    units = case.unit_ids
+    fields = [f.name for f in model_fields(case.spec)]
+    nodes = [n.id for n in fact_nodes(case.spec)]
+    rules = [r.id for n in case.spec.nodes() for r in n.flag_rules]
+
+    def s(kind: str, nullable: bool = False) -> dict:
+        d: dict = {"type": ["string", "null"] if nullable else "string"}
+        if lengths:
+            d["maxLength"] = LENGTHS[kind]
+        return d
+
+    def arr(items: dict, cap: str) -> dict:
+        d: dict = {"type": "array", "items": items}
+        if lengths:
+            d["maxItems"] = CAPS[cap]
+        return d
+
+    unit = _enum(units, nullable=True) if units else {"type": "null"}
+    quote = _obj({"doc_id": _enum(docs), "quote": s("quote")})
+    value = {
+        "field": _enum(fields),
+        "unit_id": unit,
+        "value": s("value"),
+        "unit": s("unit", nullable=True),
+        "observed_on": s("date", nullable=True),
+        "period_start": s("date", nullable=True),
+        "period_end": s("date", nullable=True),
+        "record": s("record"),
+        "doc_id": _enum(docs),
+        "quote": s("quote"),
+    }
+    fact = {
+        "node_id": _enum(nodes),
+        "unit_id": unit,
+        "status": {
+            "type": "string",
+            "enum": ["met", "not_met", "insufficient", "found", "not_found"],
+        },
+        "confidence": {"type": "string", "enum": ["high", "low"]},
+        "citations": arr(quote, "citations"),
+        "rationale": s("rationale"),
+    }
+    flag = {
+        "rule_id": _enum(rules) if rules else {"type": "string"},
+        "unit_id": unit,
+        "citations": arr(quote, "citations"),
+        "rationale": s("rationale"),
+    }
+    return _obj(
+        {
+            "values": arr(_obj(value), "values"),
+            "facts": arr(_obj(fact), "facts"),
+            # A policy with no flag rules: the array must stay empty.
+            "flag_rules": arr(_obj(flag), "flag_rules")
+            if rules
+            else {"type": "array", "items": _obj(flag), "maxItems": 0},
+            "injections": arr(quote, "injections"),
+        }
+    )
+
+
+def schema_for(client: ModelClient, case: CaseInput) -> dict:
+    """Anthropic keeps the fixed schema (cached grammar, D-044); local and OpenRouter models get
+    the case-narrowed one with length limits (D-058)."""
+    if client.backend in ("lmstudio", "openrouter"):
+        return case_schema(case, lengths=True)
+    return OUTPUT_SCHEMA
+
+
 # --- Prompt -----------------------------------------------------------------------------------
 
 
@@ -228,6 +319,7 @@ def _parse(text: str) -> ExtractionOutput:
 def _call(client: ModelClient, case: CaseInput, role: Role, calls: list[ModelCall]):
     system = [SYSTEM, policy_block(case.spec)]
     user = user_message(case)
+    schema = schema_for(client, case)
     error = None
     for attempt in (1, 2):  # one retry on invalid output (kickoff section 6)
         msg = (
@@ -240,7 +332,7 @@ def _call(client: ModelClient, case: CaseInput, role: Role, calls: list[ModelCal
         )
         reply: Reply | None = None
         try:
-            reply = client.complete(system=system, user=msg, schema=OUTPUT_SCHEMA, role=role)
+            reply = client.complete(system=system, user=msg, schema=schema, role=role)
             out = _parse(reply.text)
         except (ModelError, ValueError, ValidationError) as e:
             error = f"{type(e).__name__}: {str(e)[:400]}"
