@@ -168,7 +168,7 @@ def test_cli_exit_code_on_gate_failure(monkeypatch, smoke):
 
 
 def test_cli_all_model_errors_is_unscoreable(monkeypatch):
-    def broken(case_ids, make, workers=1):
+    def broken(case_ids, make, workers=1, checkpoint=None, resume=None):
         return [
             run_one(c, lambda _c: FakeClient([ModelError("x")], hard_model=None)) for c in case_ids
         ]
