@@ -217,11 +217,77 @@ def case_schema(case: CaseInput, lengths: bool = True) -> dict:
     )
 
 
+PER_FIELD_CAP = 6  # most observations of one field in a committed case (measurement_date)
+KEYED_BACKENDS = ("lmstudio", "openrouter")
+KEYED_NOTE = (
+    "Answer format for this case: `values` has one key per field and `facts` one key per fact "
+    "node. Under each field list each distinct observation once, newest first, at most "
+    f"{PER_FIELD_CAP} (per target ulcer); an empty list means the documents do not give it. "
+    "Never repeat an entry or write the same value in another format."
+)
+
+
+def keyed_schema(case: CaseInput) -> dict:
+    """The case schema with values grouped by field and facts keyed by node (D-059).
+
+    A small model looped by appending near-duplicate entries to the flat `values` array. Here
+    every key is fixed and required, a field's list is capped at a few entries, and a fact node
+    reached once per request is a single object, so there is no open-ended list left to grow.
+    """
+    flat = case_schema(case, lengths=True)
+    v_item = dict(flat["properties"]["values"]["items"])
+    v_props = {k: v for k, v in v_item["properties"].items() if k != "field"}
+    f_item = flat["properties"]["facts"]["items"]
+    f_props = {k: v for k, v in f_item["properties"].items() if k != "node_id"}
+    units = case.unit_ids
+
+    def capped(item: dict, n: int) -> dict:
+        return {"type": "array", "items": item, "maxItems": n}
+
+    values = {
+        f.name: capped(
+            _obj(v_props), PER_FIELD_CAP * (max(1, len(units)) if f.per != "request" else 1)
+        )
+        for f in model_fields(case.spec)
+    }
+    facts: dict[str, dict] = {}
+    for n in fact_nodes(case.spec):
+        if n.per == "request" or not units:
+            facts[n.id] = _obj({k: v for k, v in f_props.items() if k != "unit_id"})
+        else:
+            facts[n.id] = capped(_obj(f_props), len(units))
+    return _obj(
+        {
+            "values": _obj(values),
+            "facts": _obj(facts),
+            "flag_rules": flat["properties"]["flag_rules"],
+            "injections": flat["properties"]["injections"],
+        }
+    )
+
+
+def unkey(data: dict) -> dict:
+    """A keyed answer back into the flat ExtractionOutput shape."""
+    values = [
+        {"field": name, **v} for name, items in (data.get("values") or {}).items() for v in items
+    ]
+    facts = []
+    for node_id, x in (data.get("facts") or {}).items():
+        for a in x if isinstance(x, list) else [{**x, "unit_id": None}]:
+            facts.append({"node_id": node_id, **a})
+    return {
+        "values": values,
+        "facts": facts,
+        "flag_rules": data.get("flag_rules", []),
+        "injections": data.get("injections", []),
+    }
+
+
 def schema_for(client: ModelClient, case: CaseInput) -> dict:
     """Anthropic keeps the fixed schema (cached grammar, D-044); local and OpenRouter models get
-    the case-narrowed one with length limits (D-058)."""
-    if client.backend in ("lmstudio", "openrouter"):
-        return case_schema(case, lengths=True)
+    the keyed, case-narrowed one (D-058, D-059)."""
+    if client.backend in KEYED_BACKENDS:
+        return keyed_schema(case)
     return OUTPUT_SCHEMA
 
 
@@ -309,17 +375,21 @@ class RawExtraction:
     used_role: Role = "extract"
 
 
-def _parse(text: str) -> ExtractionOutput:
+def _parse(text: str, keyed: bool = False) -> ExtractionOutput:
     text = text.strip()
     if text.startswith("```"):  # some local models wrap JSON in a fence despite the schema
         text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text)
-    return ExtractionOutput.model_validate(json.loads(text))
+    data = json.loads(text)
+    return ExtractionOutput.model_validate(unkey(data) if keyed else data)
 
 
 def _call(client: ModelClient, case: CaseInput, role: Role, calls: list[ModelCall]):
     system = [SYSTEM, policy_block(case.spec)]
     user = user_message(case)
     schema = schema_for(client, case)
+    keyed = client.backend in KEYED_BACKENDS
+    if keyed:
+        user = f"{user}\n\n{KEYED_NOTE}"
     error = None
     for attempt in (1, 2):  # one retry on invalid output (kickoff section 6)
         msg = (
@@ -333,7 +403,7 @@ def _call(client: ModelClient, case: CaseInput, role: Role, calls: list[ModelCal
         reply: Reply | None = None
         try:
             reply = client.complete(system=system, user=msg, schema=schema, role=role)
-            out = _parse(reply.text)
+            out = _parse(reply.text, keyed)
         except (ModelError, ValueError, ValidationError) as e:
             error = f"{type(e).__name__}: {str(e)[:400]}"
             calls.append(_record(client, role, attempt, reply, error))

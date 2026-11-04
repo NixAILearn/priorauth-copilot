@@ -8,12 +8,17 @@ from oracle import CASES, oracle_output
 from priorauth.backends import FakeClient, ModelError
 from priorauth.extractor import (
     CAPS,
+    KEYED_NOTE,
     LENGTHS,
     OUTPUT_SCHEMA,
     case_schema,
+    fact_nodes,
+    keyed_schema,
     kind_of,
+    model_fields,
     policy_block,
     schema_for,
+    unkey,
     user_message,
 )
 from priorauth.intake import load_case
@@ -172,6 +177,51 @@ def test_case_schema_is_strict_and_bounded():
             assert "enum" in s or "maxLength" in s
 
     walk(case_schema(case))
+
+
+def _keyed(flat: dict, case) -> dict:
+    """Group a flat oracle answer the way the keyed schema asks for it."""
+    values = {f.name: [] for f in model_fields(case.spec)}
+    for v in flat["values"]:
+        values[v["field"]].append({k: x for k, x in v.items() if k != "field"})
+    facts = {}
+    for n in fact_nodes(case.spec):
+        rows = [
+            {k: x for k, x in a.items() if k != "node_id"}
+            for a in flat["facts"]
+            if a["node_id"] == n.id
+        ]
+        if n.per == "request" or not case.unit_ids:
+            facts[n.id] = {k: x for k, x in rows[0].items() if k != "unit_id"}
+        else:
+            facts[n.id] = rows
+    return {**flat, "values": values, "facts": facts}
+
+
+@pytest.mark.parametrize("case_id", CASE_IDS)
+def test_keyed_schema_round_trips_the_ground_truth(case_id):
+    """D-059: the keyed answer fits the schema and unkeys to the same evidence."""
+    jsonschema = pytest.importorskip("jsonschema")
+    case = load_case(CASES / case_id)
+    flat = oracle_output(case_id)
+    keyed = _keyed(flat, case)
+    schema = keyed_schema(case)
+    for fs in schema["properties"]["values"]["properties"].values():  # oracle quotes run long
+        fs["items"]["properties"]["quote"].pop("maxLength", None)
+    jsonschema.validate(keyed, schema)
+    back = unkey(keyed)
+    key = lambda xs: sorted(json.dumps(x, sort_keys=True) for x in xs)  # noqa: E731
+    assert key(back["values"]) == key(flat["values"])
+    assert key(back["facts"]) == key(flat["facts"])
+
+
+def test_keyed_backend_gets_the_note_and_parses():
+    case = load_case(CASES / CLEAN)
+    keyed = json.dumps(_keyed(oracle_output(CLEAN), case))
+    client = FakeClient([keyed], backend="lmstudio", hard_model=None)
+    rec = review_case(CASES / CLEAN, client)
+    assert rec.route == Route.APPROVE_READY
+    assert KEYED_NOTE in client.calls[0]["user"]
 
 
 def test_only_local_and_openrouter_get_the_narrowed_schema():
