@@ -244,10 +244,22 @@ def keyed_schema(case: CaseInput) -> dict:
     def capped(item: dict, n: int) -> dict:
         return {"type": "array", "items": item, "maxItems": n}
 
+    def typed(f: FieldDef) -> dict:
+        """The value string constrained by the field's type, where the decoder can enforce it."""
+        if f.type == "enum" and f.values:
+            vs = {"type": "string", "enum": list(f.values)}
+        elif f.type == "boolean":
+            vs = {"type": "string", "enum": ["true", "false"]}
+        elif f.type == "number":
+            vs = {"type": "string", "pattern": r"^-?[0-9]+(\.[0-9]+)?$", "maxLength": 12}
+        elif f.type == "date":
+            vs = {"type": "string", "pattern": r"^[0-9]{4}-[0-9]{2}(-[0-9]{2})?$", "maxLength": 10}
+        else:
+            vs = v_props["value"]
+        return _obj({**v_props, "value": vs})
+
     values = {
-        f.name: capped(
-            _obj(v_props), PER_FIELD_CAP * (max(1, len(units)) if f.per != "request" else 1)
-        )
+        f.name: capped(typed(f), PER_FIELD_CAP * (max(1, len(units)) if f.per != "request" else 1))
         for f in model_fields(case.spec)
     }
     facts: dict[str, dict] = {}
@@ -511,8 +523,14 @@ def parse_date(text: str | None) -> date | None:
 def parse_value(fd: FieldDef, raw: str) -> float | str | bool | date | None:
     raw = raw.strip()
     if fd.type == "number":
-        m = re.fullmatch(r"[-+]?\d+(?:\.\d+)?", raw.replace(",", ""))
-        return float(m.group(0)) if m else None
+        text = raw.replace(",", "")
+        m = re.fullmatch(r"[-+]?\d+(?:\.\d+)?", text)
+        if m:
+            return float(m.group(0))
+        # "BMI 31.6 kg/m2." or "22%": take the number only when exactly one is written (D-061).
+        # The quote check still requires that number in the verified quote.
+        nums = re.findall(r"(?<![A-Za-z\d.])[-+]?\d+(?:\.\d+)?", text)  # not the 2 in kg/m2
+        return float(nums[0]) if len(nums) == 1 else None
     if fd.type == "date":
         return parse_date(raw)
     if fd.type == "boolean":
