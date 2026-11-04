@@ -25,6 +25,7 @@ htmlcov/
 *.sqlite
 *.sqlite3
 evals/runs/
+app/.state/
 
 # Synthea tool and its scratch output; curated bundles go in data/synthea/
 synthea/

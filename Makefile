@@ -1,4 +1,4 @@
-.PHONY: lint test scan cases-check check eval eval-smoke eval-oracle
+.PHONY: lint test scan cases-check check eval eval-smoke eval-oracle app snapshot-oracle
 
 lint:
 	ruff check .
@@ -30,3 +30,11 @@ eval-smoke:
 # Harness check: the ground truth replayed through the real pipeline, no key needed.
 eval-oracle:
 	python -m evals.run_eval --set all --backend oracle
+
+# Reviewer app (week 5, docs/app-design.md). Opens on the newest scorecard snapshot (D-068).
+app:
+	streamlit run app/streamlit_app.py
+
+# Rebuild the ground-truth replay snapshot the app falls back to.
+snapshot-oracle:
+	python -m priorauth snapshot oracle
