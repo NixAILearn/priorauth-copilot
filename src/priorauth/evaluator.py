@@ -250,7 +250,8 @@ class _Run:
                 gaps = uncovered_notes(self, node, unit, cites)
                 if gaps:  # D-065: one visit's quote cannot show "every note"
                     status = gap
-                    note = f"no verified quote from {', '.join(gaps)}; model said met. {a.rationale}"
+                    missing = ", ".join(gaps)
+                    note = f"no verified quote from {missing}; model said met. {a.rationale}"
             if a.confidence == "low":
                 self.low_confidence(node, unit, "the model marked this low confidence", cites)
             self.finding(node, unit, status, "model", cites=cites, note=note)
@@ -403,7 +404,9 @@ def doc_meta(text: str) -> tuple[str | None, date | None]:
 def uncovered_notes(run: _Run, node: Node, unit, cites: list[Evidence]) -> list[str]:
     """Notes of the kind the node needs, in the standard-care period, with no verified quote.
     Without a verified baseline and current date, every such note up to the request counts."""
-    base = [o.value for o in run.store.get(("baseline_date", unit), []) if isinstance(o.value, date)]
+    base = [
+        o.value for o in run.store.get(("baseline_date", unit), []) if isinstance(o.value, date)
+    ]
     cur = [o.value for o in run.store.get(("current_measurement_date", unit), [])]
     lo = max(base) if base else date.min  # type: ignore[type-var]
     hi = cur[0] if cur and isinstance(cur[0], date) else run.rd
