@@ -617,7 +617,11 @@ def main(argv: list[str] | None = None) -> int:
         print(report)
     else:
         args.out.mkdir(parents=True, exist_ok=True)
-        stem = f"{started:%Y-%m-%d}-{set_name}-{info.backend}"
+        base = f"{started:%Y-%m-%d}-{set_name}-{info.backend}"
+        stem, n = base, 1
+        while (args.out / f"{stem}.md").exists() and info.backend != "oracle":
+            n += 1  # a second model run on the same day keeps the first report
+            stem = f"{base}-{n}"
         md, js = args.out / f"{stem}.md", args.out / f"{stem}.json"
         md.write_text(report, encoding="utf-8")
         js.write_text(
