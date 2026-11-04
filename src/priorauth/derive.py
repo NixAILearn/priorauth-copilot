@@ -8,7 +8,6 @@ derived field absent, which the evaluator reads as insufficient evidence.
 from __future__ import annotations
 
 import re
-
 from collections.abc import Callable
 from datetime import date
 from decimal import ROUND_HALF_UP, Decimal
@@ -276,7 +275,9 @@ def _pair_tests(types: dict[str, Obs], values: dict[str, Obs], dates: dict[str, 
         cands = [
             t
             for r, t in types.items()
-            if r not in used and r not in values and t.doc_id == v.doc_id
+            if r not in used
+            and r not in values
+            and t.doc_id == v.doc_id
             and (t.on is None or v.on is None or t.on == v.on)
         ]
         t = _one(cands, v)
