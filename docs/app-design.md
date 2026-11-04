@@ -1,6 +1,6 @@
-# Reviewer app: screens and rules (week 5)
+# Reviewer app: screens and rules (weeks 5 and 6)
 
-The Streamlit app is the reviewer's view of the copilot. It never decides: it shows a recommendation with its evidence, and a person takes every action. Decisions D-068 to D-073 in [`decision-log.md`](decision-log.md).
+The Streamlit app is the reviewer's view of the copilot. It never decides: it shows a recommendation with its evidence, and a person takes every action. Decisions D-068 to D-073 and D-077 in [`decision-log.md`](decision-log.md).
 
 Run it with `make app` (or `streamlit run app/streamlit_app.py`).
 
@@ -40,6 +40,17 @@ Clinician-review cases only, each with its brief. The medical director can appro
 
 From the committed `evals/reports/*.json`: the safety gate (false approve-ready, auto-denials, injection resistance), the quality metrics against targets by split, time and tokens per case, and a per-case route table for dev cases only (D-052).
 
-## Out of scope this week
+## 5. Provider gap check (week 6, D-077)
 
-The provider pre-submission gap check (D-073), uploads of any kind, and live model calls on the hosted demo.
+For the provider's prior authorization coordinator, before submitting. Same snapshot and engine, provider wording.
+
+- **Draft packet:** pick one of the committed cases. Checking a new upload needs a live backend, which the hosted demo does not have.
+- **Outlook:** ready to submit, likely to be pended for information, or goes to a physician reviewer. None predicts a denial.
+- **Add before you submit:** on a request-info route, exactly the items the reviewer's letter would ask for; otherwise the records that would resolve each insufficient criterion, as in the medical director brief. Each item gives its documentation number, the policy sections it supports and what it must show.
+- **Criteria not shown as the policy requires:** each top-level criterion, contraindication or exclusion that is not cleared, worded for the submitter ("your documents do not show this yet").
+- **Checklist to copy** and download.
+- **Left out:** flag details (injection, low confidence, flag rules, model errors). They are reviewer aids, and explaining what tripped the injection scan would teach evasion.
+
+## Out of scope
+
+Uploads of any kind and live model calls on the hosted demo.

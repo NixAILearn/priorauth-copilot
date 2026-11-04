@@ -402,9 +402,9 @@ def render_report(
         ]
     elif info.backend == "lmstudio":
         out += [
-            "> **Scorecard v0.1 on a local model (D-057).** Gemma on LM Studio, run on Nick's "
-            "Mac. Rules, quote checks and routing are code and identical on every backend; a "
-            "stronger model can only change how much evidence is found.",
+            f"> **Scorecard on a local model (D-057).** `{info.extract_model}` on LM Studio, run "
+            "on Nick's Mac. Rules, quote checks and routing are code and identical on every "
+            "backend; a stronger model can only change how much evidence is found.",
             "",
         ]
     elif not info.official:

@@ -1,4 +1,4 @@
-"""PriorAuth Copilot reviewer app (week 5, docs/app-design.md). Run: make app."""
+"""PriorAuth Copilot reviewer app (weeks 5 and 6, docs/app-design.md). Run: make app."""
 
 import streamlit as st
 
@@ -9,6 +9,7 @@ pages = st.navigation(
         st.Page("views/inbox.py", title="Inbox", icon="📥", default=True),
         st.Page("views/case.py", title="Case review", icon="🔎"),
         st.Page("views/director.py", title="Medical director", icon="🩺"),
+        st.Page("views/provider.py", title="Provider gap check", icon="📋"),
         st.Page("views/evals.py", title="Eval dashboard", icon="📊"),
     ]
 )

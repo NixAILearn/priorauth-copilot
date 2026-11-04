@@ -10,7 +10,8 @@ pytest.importorskip("streamlit")
 from streamlit.testing.v1 import AppTest  # noqa: E402
 
 APP = str(Path(__file__).resolve().parents[1] / "app" / "streamlit_app.py")
-PAGES = ["views/inbox.py", "views/case.py", "views/director.py", "views/evals.py"]
+PAGES = ["views/inbox.py", "views/case.py", "views/director.py", "views/evals.py",
+         "views/provider.py"]
 
 
 @pytest.fixture(autouse=True)
