@@ -228,3 +228,24 @@ def test_only_local_and_openrouter_get_the_narrowed_schema():
     case = load_case(CASES / "CASE-021-01")
     assert schema_for(FakeClient(["{}"], backend="lmstudio"), case) != OUTPUT_SCHEMA
     assert schema_for(FakeClient(["{}"], backend="anthropic"), case) == OUTPUT_SCHEMA
+
+
+def _with_claim(citations):
+    out = oracle_output(CLEAN)
+    out["flag_rules"].append(
+        {"rule_id": "021-C4b-F1", "unit_id": None, "citations": citations, "rationale": "x"}
+    )
+    return json.dumps(out)
+
+
+def test_a_flag_claim_with_no_quote_is_not_raised():  # D-060
+    rec = review_case(CASES / CLEAN, FakeClient([_with_claim([])], hard_model=None))
+    assert rec.route == Route.APPROVE_READY
+    assert rec.flags == []
+
+
+def test_a_flag_claim_with_a_failed_quote_still_blocks():  # D-046 kept
+    bad = [{"doc_id": "D04", "quote": "near-complete concentric collapse of the velum"}]
+    rec = review_case(CASES / CLEAN, FakeClient([_with_claim(bad)], hard_model=None))
+    assert rec.route == Route.CLINICIAN_REVIEW
+    assert [f.kind for f in rec.flags] == ["low_confidence"]

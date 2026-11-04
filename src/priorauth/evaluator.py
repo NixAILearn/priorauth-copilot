@@ -297,10 +297,12 @@ def evaluate(case: CaseInput, verified: Verified) -> Evaluation:
                 detail=f"{rule.id}: {rule.when}",
                 citations=cites,
             )
-        else:
+        elif cites:
+            # Quoted but the quote fails the check: still blocks, as a reviewer flag (D-046).
             run.low_confidence(
                 node, claim.unit_id, f"flag rule {rule.id} claimed without a verified quote", cites
             )
+        # No quote at all: no evidence was offered, so the claim is not raised (D-060).
     if verified.injections:
         run.flag(
             kind="injection",
