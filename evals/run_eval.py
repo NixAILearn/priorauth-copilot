@@ -156,8 +156,11 @@ def run_cases(case_ids: list[str], make: ClientFactory, workers: int = 1) -> lis
         with lock:
             done += 1
             got = r.route or f"ERROR {r.error}"
+            why = ""
+            if r.rec and r.route != r.expected:  # first reasons, so a pattern shows mid-run
+                why = f" expected {r.expected}; " + " | ".join(x[:90] for x in r.rec.reasons[:3])
             print(
-                f"[{done}/{len(case_ids)}] {c}: {got} ({r.seconds:.0f} s)",
+                f"[{done}/{len(case_ids)}] {c}: {got} ({r.seconds:.0f} s){why}",
                 file=sys.stderr,
                 flush=True,
             )
@@ -637,6 +640,7 @@ def main(argv: list[str] | None = None) -> int:
                             "expected_route": r.expected,
                             "route": r.route,
                             "flags": sorted({f.kind for f in r.rec.flags}) if r.rec else [],
+                            "reasons": r.rec.reasons if r.rec else [],
                             "missing": [[m.doc_item, m.unit_id] for m in r.rec.missing]
                             if r.rec
                             else [],
