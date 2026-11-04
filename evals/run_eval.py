@@ -120,11 +120,25 @@ def model_factory(backend: str) -> tuple[ClientFactory, RunInfo]:
     )
 
 
-def run_one(case_id: str, make: ClientFactory) -> CaseResult:
+def run_one(case_id: str, make: ClientFactory, saved: dict | None = None) -> CaseResult:
+    """Run one case, or rebuild it from a checkpoint line (`saved`) without calling a model."""
     case_dir = CASES / case_id
     label = json.loads((case_dir / "label.json").read_text(encoding="utf-8"))
     patient = json.loads((CASE_SPECS / f"{case_id}.json").read_text(encoding="utf-8"))["patient"]
     case = load_case(case_dir)
+    if saved is not None:
+        rec = Recommendation.model_validate(saved["rec"]) if saved["rec"] else None
+        return CaseResult(
+            case_id=case_id,
+            label=label,
+            spec=case.spec,
+            documents=case.documents,
+            patient=patient,
+            request_date=case.request_date,
+            rec=rec,
+            seconds=saved["seconds"],
+            error=saved["error"],
+        )
     start = time.perf_counter()
     rec: Recommendation | None = None
     error = None
@@ -145,16 +159,49 @@ def run_one(case_id: str, make: ClientFactory) -> CaseResult:
     )
 
 
-def run_cases(case_ids: list[str], make: ClientFactory, workers: int = 1) -> list[CaseResult]:
-    """Runs every case; prints one progress line per finished case to stderr (slow backends)."""
+def load_checkpoint(path: Path | None) -> dict[str, dict]:
+    """Finished cases from an earlier, interrupted run (one JSON line per case)."""
+    if path is None or not path.exists():
+        return {}
+    out = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            row = json.loads(line)
+            out[row["case_id"]] = row
+    return out
+
+
+def run_cases(
+    case_ids: list[str],
+    make: ClientFactory,
+    workers: int = 1,
+    checkpoint: Path | None = None,
+    resume: dict[str, dict] | None = None,
+) -> list[CaseResult]:
+    """Runs every case; prints one progress line per finished case to stderr (slow backends).
+
+    With `checkpoint`, each finished case is appended to that file as it completes, so an
+    interrupted run can continue with `--resume` (cases in `resume` are not run again).
+    """
     done = 0
     lock = threading.Lock()
+    resume = resume or {}
 
     def one(c: str) -> CaseResult:
         nonlocal done
-        r = run_one(c, make)
+        r = run_one(c, make, resume.get(c))
         with lock:
             done += 1
+            if checkpoint is not None and c not in resume:
+                checkpoint.parent.mkdir(parents=True, exist_ok=True)
+                with checkpoint.open("a", encoding="utf-8") as f:
+                    row = {
+                        "case_id": c,
+                        "rec": r.rec.model_dump(mode="json") if r.rec else None,
+                        "seconds": r.seconds,
+                        "error": r.error,
+                    }
+                    f.write(json.dumps(row) + "\n")
             got = r.route or f"ERROR {r.error}"
             why = ""
             if r.rec and r.route != r.expected:  # first reasons, so a pattern shows mid-run
@@ -581,6 +628,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--workers", type=int, default=1, help="cases run in parallel")
     p.add_argument("--no-write", action="store_true", help="print the report, write no files")
     p.add_argument("--out", type=Path, default=REPORTS, help="report directory")
+    p.add_argument(
+        "--resume",
+        action="store_true",
+        help="continue an interrupted run from its checkpoint in evals/runs/",
+    )
     args = p.parse_args(argv)
 
     try:
@@ -592,7 +644,15 @@ def main(argv: list[str] | None = None) -> int:
     case_ids = sorted(args.cases) if args.cases else select_cases(args.set)
     set_name = "custom" if args.cases else args.set
     started = datetime.now(UTC)
-    results = run_cases(case_ids, make, args.workers)
+    checkpoint = None
+    if info.backend != "oracle":  # model runs save each case as it finishes
+        checkpoint = RUNS / f"checkpoint-{set_name}-{info.backend}.jsonl"
+        if not args.resume and checkpoint.exists():
+            checkpoint.unlink()  # a fresh run starts a fresh checkpoint
+    resume = load_checkpoint(checkpoint) if args.resume else {}
+    if resume:
+        print(f"resuming: {len(resume)} case(s) already done", file=sys.stderr)
+    results = run_cases(case_ids, make, args.workers, checkpoint, resume)
 
     by_split: dict[str, Scores] = {}
     for split in ("dev", "test"):

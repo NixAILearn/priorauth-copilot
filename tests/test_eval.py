@@ -191,3 +191,20 @@ def test_cli_writes_dated_report(tmp_path):
     data = json.loads(js[0].read_text())
     assert data["overall"]["gate_passed"] is True
     assert data["cases"][0]["route"] == "approve_ready"
+
+
+def test_checkpoint_and_resume(tmp_path, oracle):
+    ck = tmp_path / "ck.jsonl"
+    first = run_eval.run_cases(["CASE-021-01", "CASE-047-12"], oracle, checkpoint=ck)
+    assert len(ck.read_text().splitlines()) == 2
+
+    def no_model(_c):
+        raise AssertionError("a resumed case must not call the model")
+
+    saved = run_eval.load_checkpoint(ck)
+    again = run_eval.run_cases(
+        ["CASE-021-01", "CASE-047-12"], no_model, checkpoint=ck, resume=saved
+    )
+    assert [r.route for r in again] == [r.route for r in first]
+    assert len(ck.read_text().splitlines()) == 2  # resumed cases are not appended twice
+    assert score(again).criterion_agreement == 1.0
