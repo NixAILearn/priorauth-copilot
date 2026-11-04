@@ -66,7 +66,21 @@ CREATE TABLE IF NOT EXISTS reviewer_actions (
     reason TEXT NOT NULL CHECK (length(trim(reason)) > 0),
     created_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS finding_reviews (
+    run_id INTEGER NOT NULL REFERENCES runs(run_id),
+    reviewer TEXT NOT NULL,
+    kind TEXT NOT NULL CHECK (kind IN ('reviewed', 'override')),
+    item_id TEXT NOT NULL,
+    unit_id TEXT,
+    from_status TEXT NOT NULL,
+    to_status TEXT NOT NULL,
+    reason TEXT NOT NULL CHECK (length(trim(reason)) > 0),
+    created_at TEXT NOT NULL,
+    CHECK (kind = 'override' OR from_status = to_status)
+);
 """
+
+ACTIONS = ("approve", "request_info", "refer_md", "left_copilot")  # D-070: no deny action
 
 
 class AuditLog:
@@ -149,12 +163,65 @@ class AuditLog:
     def reviewer_action(
         self, run_id: int, reviewer: str, action: str, reason: str, node_id: str | None = None
     ) -> None:
-        """A person's decision or override. The reason is required (kickoff section 8)."""
+        """A person's final action on a case. The reason is required (kickoff section 8)."""
+        if action not in ACTIONS:
+            raise ValueError(f"unknown action {action!r}; the copilot records only {ACTIONS}")
+        if not reason.strip():
+            raise ValueError("a reviewer action needs a reason")
         with self.db:
             self.db.execute(
                 "INSERT INTO reviewer_actions VALUES (?, ?, ?, ?, ?, ?)",
                 (run_id, reviewer, action, node_id, reason, datetime.now(UTC).isoformat()),
             )
+
+    def finding_review(
+        self,
+        run_id: int,
+        reviewer: str,
+        item_id: str,
+        unit_id: str | None,
+        from_status: str,
+        to_status: str,
+        reason: str,
+    ) -> None:
+        """Mark a finding or flag reviewed, or override its status (D-070). Never re-routes.
+
+        `item_id` is a node ID, or `flag:<n>` for the n-th flag of the run.
+        """
+        if not reason.strip():
+            raise ValueError("an override needs a reason")
+        kind = "reviewed" if from_status == to_status else "override"
+        with self.db:
+            self.db.execute(
+                "INSERT INTO finding_reviews VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    run_id,
+                    reviewer,
+                    kind,
+                    item_id,
+                    unit_id,
+                    from_status,
+                    to_status,
+                    reason,
+                    datetime.now(UTC).isoformat(),
+                ),
+            )
+
+    def finding_reviews(self, run_id: int) -> list[sqlite3.Row]:
+        self.db.row_factory = sqlite3.Row
+        return list(
+            self.db.execute(
+                "SELECT * FROM finding_reviews WHERE run_id = ? ORDER BY rowid", (run_id,)
+            )
+        )
+
+    def actions(self, run_id: int) -> list[sqlite3.Row]:
+        self.db.row_factory = sqlite3.Row
+        return list(
+            self.db.execute(
+                "SELECT * FROM reviewer_actions WHERE run_id = ? ORDER BY rowid", (run_id,)
+            )
+        )
 
     def runs(self) -> list[sqlite3.Row]:
         self.db.row_factory = sqlite3.Row

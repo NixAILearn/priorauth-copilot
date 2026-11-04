@@ -4,7 +4,7 @@
 
 An AI utilization-review copilot. It reads a prior authorization request and its clinical documents, checks them against Northwind Health Plan's written medical policy, and gives a human nurse reviewer a cited, criterion-by-criterion recommendation. It never denies: the only outcomes are **approve-ready**, **request info** and **clinician review**.
 
-**Status:** week 4. Policies, specs, 60 labeled cases, the review pipeline and the eval runner are in. The v0.1 scorecard ran on a local model, Qwen 2.5 14B Instruct (LM Studio, D-057).
+**Status:** week 5. Policies, specs, 60 labeled cases, the review pipeline, the eval runner and the Streamlit reviewer app are in. The v0.1 scorecard ran on a local model, Qwen 2.5 14B Instruct (LM Studio, D-057).
 
 ## Why
 
@@ -71,6 +71,23 @@ The model backend is chosen by environment variable (D-044). The v0.1 scorecard 
 PRIORAUTH_BACKEND=lmstudio python -m priorauth review data/cases/CASE-021-01
 python -m priorauth review data/cases/CASE-034-02 --audit runs.db --json
 ```
+
+### Open the reviewer app
+
+```bash
+make app        # streamlit run app/streamlit_app.py
+```
+
+Four screens (see [`docs/app-design.md`](docs/app-design.md)): an inbox with the SLA clock, the case review with highlighted evidence, overrides and letter drafts, the medical director queue with case briefs, and the eval dashboard. There is no deny control anywhere.
+
+The app shows a committed **snapshot** of recommendations, so it needs no model or key (D-068). It opens on the newest scorecard run in `app/snapshots/` and falls back to the ground-truth replay (`oracle.jsonl`), which is labeled as not model output. To add a run, export its audit log:
+
+```bash
+python -m priorauth snapshot export evals/runs/<run>.sqlite --name 2026-11-04-qwen-v0.1
+make snapshot-oracle   # rebuild the replay after a pipeline change (a test checks it is current)
+```
+
+With `PRIORAUTH_BACKEND` set, the case screen can also re-run one case live. Reviewer actions are kept in a git-ignored SQLite under `app/.state/`.
 
 ### Run the evals
 
