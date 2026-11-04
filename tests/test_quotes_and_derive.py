@@ -159,3 +159,47 @@ def test_kl_grade_only_from_a_standing_report():
     store[("xray_weight_bearing", None)] = [o("xray_weight_bearing", "stated", d, doc="D02")]
     kl_grade_highest(store, None, CTX)
     assert store[("kl_grade_highest", None)][0].value == 2.0
+
+
+def test_quote_may_differ_only_in_first_letter_case():  # D-061
+    from priorauth.quotes import quote_in
+
+    docs = {"D01": "Scoring followed AASM rules; hypopneas scored using the 4% rule."}
+    assert quote_in(docs, "D01", "Hypopneas scored using the 4% rule.")
+    assert not quote_in(docs, "D01", "Hypopneas Scored using the 4% rule.")
+    assert not quote_in(docs, "D01", "HYPOPNEAS scored using the 4% rule.")
+
+
+def test_number_field_takes_a_single_number_from_prose():  # D-061
+    from priorauth.extractor import parse_value
+    from priorauth.spec import FieldDef
+
+    fd = FieldDef(
+        name="bmi_recorded", type="number", unit="kg/m2", evaluator="model", description="x"
+    )
+    assert parse_value(fd, "31.6") == 31.6
+    assert parse_value(fd, "BMI 31.6 kg/m2.") == 31.6
+    assert parse_value(fd, "22%") == 22
+    assert parse_value(fd, "5'10\"") is None  # two numbers: refused, never guessed
+    assert parse_value(fd, "not reported") is None
+
+
+def test_table_bars_and_colons_are_one_separator():  # D-062
+    docs = {"D01": "| Location | right plantar first metatarsal head |\n| Size | 2.1 x 1.4 cm |"}
+    assert quote_in(docs, "D01", "Location: right plantar first metatarsal head")
+    assert quote_in(docs, "D01", "Size | 2.1 x 1.4 cm")
+    assert not quote_in(docs, "D01", "Location: left plantar first metatarsal head")
+    assert not quote_in(docs, "D01", "Location right plantar first metatarsal head")  # no separator
+
+
+def test_keyed_number_pattern_has_no_sign():  # D-062: no policy number is negative
+    import re
+
+    from evals.run_eval import CASES
+    from priorauth.extractor import keyed_schema
+    from priorauth.intake import load_case
+
+    vals = keyed_schema(load_case(CASES / "CASE-021-01"))["properties"]["values"]["properties"]
+    pats = {v["items"]["properties"]["value"].get("pattern") for v in vals.values()}
+    num = next(p for p in pats if p and "\\." in p)
+    assert re.fullmatch(num, "31.6") and not re.fullmatch(num, "-31.6")

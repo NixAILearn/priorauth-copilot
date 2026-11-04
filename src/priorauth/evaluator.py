@@ -10,12 +10,14 @@
 from __future__ import annotations
 
 import operator
+import re
 from dataclasses import dataclass, field
 from datetime import date
 
 from priorauth.derive import Store, derive_all, in_window
 from priorauth.extractor import Obs, Verified, kind_of
-from priorauth.intake import CaseInput
+from priorauth.intake import REQUEST_DOC, CaseInput
+from priorauth.quotes import norm
 from priorauth.schemas import Evidence, Finding, Flag, Route, Status
 from priorauth.spec import CriteriaSpec, Node
 
@@ -220,6 +222,12 @@ class _Run:
         return out
 
     def fact(self, node: Node, unit, yes: Status, no: Status, gap: Status) -> Status:
+        code = CODE_FACTS.get(node.id)
+        decided = code(self, node, unit) if code else None
+        if decided is not None:
+            status, cites, note = decided
+            self.finding(node, unit, status, "code", cites=cites, note=note)
+            return status
         allowed = FLAGGED_STATUSES if yes == "found" else CRITERION_STATUSES
         got = self.v.facts.get((node.id, unit))
         if got is None or got[0].status not in allowed:
@@ -238,6 +246,12 @@ class _Run:
                 if blocking:  # an unverified warning never becomes a clean pass (D-046)
                     self.low_confidence(node, unit, f"unverified {a.status} claim", cites)
                 status = gap
+            if status == "met" and node.id in EVERY_NOTE:
+                gaps = uncovered_notes(self, node, unit, cites)
+                if gaps:  # D-065: one visit's quote cannot show "every note"
+                    status = gap
+                    missing = ", ".join(gaps)
+                    note = f"no verified quote from {missing}; model said met. {a.rationale}"
             if a.confidence == "low":
                 self.low_confidence(node, unit, "the model marked this low confidence", cites)
             self.finding(node, unit, status, "model", cites=cites, note=note)
@@ -279,6 +293,132 @@ def group_status(kind: str, kids: list[Status], flagged: bool) -> Status:
     return "insufficient" if "insufficient" in kids else "not_met"
 
 
+# --- Checks code makes from verified values instead of the model's judgment (D-063) -----------
+# Each returns None when the verified values cannot settle it; the model's answer then stands.
+
+
+def _on(run: _Run, name: str, unit, when: date) -> set[str]:
+    return {str(o.value) for o in run.store.get((name, unit), []) if o.on == when}
+
+
+def method_changed(run: _Run, unit) -> tuple[bool, list[Evidence]] | None:
+    """034-C7-F1: the measurement method at baseline versus at the current measurement."""
+    base = [o for o in run.store.get(("baseline_date", unit), []) if isinstance(o.value, date)]
+    cur = run.store.get(("current_measurement_date", unit), [])
+    if not base or not cur:
+        return None
+    b = max(base, key=lambda o: o.value).value  # type: ignore[arg-type,return-value]
+    c = cur[0].value
+    mb, mc = _on(run, "measurement_method", unit, b), _on(run, "measurement_method", unit, c)  # type: ignore[arg-type]
+    if not mb or not mc or "not_stated" in mb | mc:
+        return None
+    cites = [
+        e
+        for o in run.store.get(("measurement_method", unit), [])
+        if o.on in (b, c)
+        for e in o.evidence()
+    ]
+    return mb != mc, cites
+
+
+def ahi_rule_only_3pct_or_arousal(run: _Run, unit) -> tuple[bool, list[Evidence]] | None:
+    """021-C3-F2 (D-066): the scoring rule of the latest verified study's AHI."""
+    obs = [o for o in run.store.get(("ahi_scoring_rule", unit), []) if o.value != "not_stated"]
+    if not obs:
+        return None
+    last = max((o.on for o in obs if o.on), default=None)
+    latest = [o for o in obs if o.on == last] if last else obs
+    rules = {str(o.value) for o in latest}
+    cites = [e for o in latest for e in o.evidence()]
+    if "4_percent" in rules:
+        return False, cites
+    if rules <= {"3_percent", "arousal_based"}:
+        return True, cites
+    return None
+
+
+CODE_FLAG_RULES = {"034-C7-F1": method_changed, "021-C3-F2": ahi_rule_only_3pct_or_arousal}
+
+_OPPOSITE = {"right": "left", "left": "right"}
+
+
+def knee_side(run: _Run, node: Node, unit) -> tuple[Status, list[Evidence], str] | None:
+    """047-C2: every verified document side is the requested side, both, or not stated."""
+    req = {
+        str(o.value)
+        for o in run.store.get(("requested_knee_side", unit), [])
+        if o.value in _OPPOSITE
+    }
+    sides = run.store.get(("evidence_knee_side", unit), [])
+    if len(req) != 1 or not sides:
+        return None
+    want = req.pop()
+    wrong = [o for o in sides if o.value == _OPPOSITE[want]]
+    if wrong:
+        cites = [e for o in wrong for e in o.evidence()]
+        return "not_met", cites, f"a document names the {_OPPOSITE[want]} knee"
+    if not any(o.value in (want, "both") for o in sides):
+        return None
+    cites = [e for o in sides for e in o.evidence()]
+    return "met", cites, f"every verified document side is {want}, both or not stated"
+
+
+CODE_FACTS = {"047-C2": knee_side}
+
+
+def same_site_as_request(run: _Run, unit, cites: list[Evidence]) -> bool:
+    """034-C4-F1 (D-064): True when the claim's own wound-note quotes show the request's side
+    and site, so the claimed mismatch contradicts its evidence. Code can only drop such a claim,
+    never raise one: it cannot see notes the model did not quote."""
+    side = {str(o.value) for o in run.store.get(("ulcer_laterality", unit), [])}
+    site = {str(o.value).strip().lower() for o in run.store.get(("ulcer_site", unit), [])}
+    notes = [c for c in cites if c.verified and c.doc_id != REQUEST_DOC]
+    if len(side) != 1 or len(site) != 1 or not notes or side & {"not_stated"}:
+        return False
+    want, where = side.pop(), site.pop()
+    other = _OPPOSITE[want]
+    for c in notes:
+        q = norm(c.quote).lower()
+        if not re.search(rf"\b{want}\b", q) or re.search(rf"\b{other}\b", q) or where not in q:
+            return False
+    return True
+
+
+CLAIM_CHECKS = {"034-C4-F1": same_site_as_request}
+
+# --- "Every note" facts (D-065): met only when each note of the period has a verified quote ---
+
+EVERY_NOTE = {"034-C14b": "wound_care_note"}
+_HEAD = re.compile(r"\A\s*---(.*?)---", re.S)
+
+
+def doc_meta(text: str) -> tuple[str | None, date | None]:
+    m = _HEAD.match(text)
+    if not m:
+        return None, None
+    t = re.search(r"\btype:\s*(\S+)", m[1])
+    d = re.search(r"\bdate:\s*(\d{4})-(\d{2})-(\d{2})", m[1])
+    return (t[1] if t else None), (date(int(d[1]), int(d[2]), int(d[3])) if d else None)
+
+
+def uncovered_notes(run: _Run, node: Node, unit, cites: list[Evidence]) -> list[str]:
+    """Notes of the kind the node needs, in the standard-care period, with no verified quote.
+    Without a verified baseline and current date, every such note up to the request counts."""
+    base = [
+        o.value for o in run.store.get(("baseline_date", unit), []) if isinstance(o.value, date)
+    ]
+    cur = [o.value for o in run.store.get(("current_measurement_date", unit), [])]
+    lo = max(base) if base else date.min  # type: ignore[type-var]
+    hi = cur[0] if cur and isinstance(cur[0], date) else run.rd
+    cited = {c.doc_id for c in cites if c.verified}
+    out = []
+    for doc_id, text in run.case.documents.items():
+        kind, on = doc_meta(text)
+        if kind == EVERY_NOTE[node.id] and on and lo <= on <= hi and doc_id not in cited:
+            out.append(doc_id)
+    return sorted(out)
+
+
 def evaluate(case: CaseInput, verified: Verified) -> Evaluation:
     run = _Run(case, verified)
     for top in (*case.spec.criteria, *case.spec.contraindications, *case.spec.exclusions):
@@ -286,8 +426,32 @@ def evaluate(case: CaseInput, verified: Verified) -> Evaluation:
             run.evaluate(top, unit)
 
     rules = {r.id: (n, r) for n in case.spec.nodes() for r in n.flag_rules}
+    settled: set[tuple[str, str | None]] = set()
+    for rule_id, check in CODE_FLAG_RULES.items():
+        if rule_id not in rules:
+            continue
+        node, rule = rules[rule_id]
+        for unit in [None] if node.per == "request" else case.unit_ids:
+            got = check(run, unit)
+            if got is None:
+                continue
+            settled.add((rule_id, unit))
+            if got[0]:
+                run.flag(
+                    kind="flag_rule",
+                    route=Route(rule.route),
+                    rule_id=rule.id,
+                    unit_id=unit,
+                    detail=f"{rule.id}: {rule.when}",
+                    citations=got[1],
+                )
     for claim, cites in verified.flag_claims:
         node, rule = rules[claim.rule_id]
+        if (claim.rule_id, claim.unit_id) in settled:
+            continue  # code decided this rule from verified values
+        drop = CLAIM_CHECKS.get(claim.rule_id)
+        if drop and drop(run, claim.unit_id, cites):
+            continue  # the claim's own verified quotes contradict it (D-064)
         if any(c.verified for c in cites):
             run.flag(
                 kind="flag_rule",
@@ -297,10 +461,12 @@ def evaluate(case: CaseInput, verified: Verified) -> Evaluation:
                 detail=f"{rule.id}: {rule.when}",
                 citations=cites,
             )
-        else:
+        elif cites:
+            # Quoted but the quote fails the check: still blocks, as a reviewer flag (D-046).
             run.low_confidence(
                 node, claim.unit_id, f"flag rule {rule.id} claimed without a verified quote", cites
             )
+        # No quote at all: no evidence was offered, so the claim is not raised (D-060).
     if verified.injections:
         run.flag(
             kind="injection",

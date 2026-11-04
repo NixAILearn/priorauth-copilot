@@ -4,7 +4,7 @@
 
 An AI utilization-review copilot. It reads a prior authorization request and its clinical documents, checks them against Northwind Health Plan's written medical policy, and gives a human nurse reviewer a cited, criterion-by-criterion recommendation. It never denies: the only outcomes are **approve-ready**, **request info** and **clinician review**.
 
-**Status:** week 3. Policies, specs, 60 labeled cases and the review pipeline are in; the eval runner and scorecard come in week 4.
+**Status:** week 4. Policies, specs, 60 labeled cases, the review pipeline and the eval runner are in. The v0.1 scorecard ran on a local model, Qwen 2.5 14B Instruct (LM Studio, D-057).
 
 ## Why
 
@@ -24,7 +24,22 @@ An AI utilization-review copilot. It reads a prior authorization request and its
 
 ## Results
 
-*Coming soon: table from the latest report in `evals/reports/`.* Targets are in [`docs/metrics.md`](docs/metrics.md).
+**Scorecard v0.1** ([`evals/reports/2026-11-04-all-lmstudio.md`](evals/reports/2026-11-04-all-lmstudio.md)): all 60 cases on Qwen 2.5 14B Instruct 1M (GGUF Q4_K_M, 32k context) in LM Studio, code at D-064. Targets are in [`docs/metrics.md`](docs/metrics.md).
+
+**Safety gate: holds.** 0 false approve-ready (0 of 39; 95% upper bound about 8%), 0 auto-denials, injection resistance 3 of 3, 0 errors.
+
+| Metric | Dev (40) | Test (20) | All | Target |
+|---|---|---|---|---|
+| Criterion agreement | 78.0% | 64.8% | 73.5% | ≥ 90% |
+| Routing accuracy | 35.0% | 45.0% | 38.3% | ≥ 90% |
+| Missing-doc recall | 18.2% | 20.0% | 18.8% | ≥ 95% |
+| Missing-doc precision | 12.5% | 12.5% | 12.5% | ≥ 90% |
+| Citation precision, verbatim | 95.5% | 93.0% | 94.6% | ≥ 95% |
+| Approve-ready yield | 13.3% | 0.0% | 9.5% | ≥ 80% |
+
+Quality is far below target. The misses go the safe way, to request info or clinician review, because a 14B local model often fails to return evidence the code can verify. Two criteria were marked met where the label says otherwise (one dev, one test); neither led to a wrong approval, and both are under review. An earlier 40-case partial run (before D-060 to D-064) also held the gate at 0, with 25 of 40 routes wrong.
+
+The harness check ([`evals/reports/2026-11-03-all-oracle.md`](evals/reports/2026-11-03-all-oracle.md)) replays the ground truth through the real pipeline: all 60 cases route as labeled, the safety gate holds, and every scored metric is 100%. That proves the rules, routing and scorer, not a model.
 
 ## Guardrails
 
@@ -44,7 +59,7 @@ make check   # lint, tests, code scan
 
 ### Review a case
 
-The model backend is chosen by environment variable (D-044). Only `anthropic` runs count toward the scorecard; the others are for cheap or free development runs. Quote checks, derived values, thresholds and routing are code and behave the same on every backend.
+The model backend is chosen by environment variable (D-044). The v0.1 scorecard runs on `lmstudio` (D-057); `anthropic` also counts once a key exists; `openrouter` is for cheap development runs only. Quote checks, derived values, thresholds and routing are code and behave the same on every backend.
 
 | Backend | Set | Models |
 | --- | --- | --- |
@@ -56,6 +71,17 @@ The model backend is chosen by environment variable (D-044). Only `anthropic` ru
 PRIORAUTH_BACKEND=lmstudio python -m priorauth review data/cases/CASE-021-01
 python -m priorauth review data/cases/CASE-034-02 --audit runs.db --json
 ```
+
+### Run the evals
+
+```bash
+make eval-smoke                      # 10-case smoke set, safety gate only (what CI runs)
+make eval-oracle                     # all 60 cases on the ground-truth replay, no key needed
+make eval                            # scorecard: all 60 on $PRIORAUTH_BACKEND (default anthropic)
+make eval BACKEND=lmstudio WORKERS=1 # v0.1 scorecard on a local model (D-057)
+```
+
+Each run writes a dated Markdown and JSON report to `evals/reports/` and exits 1 if the safety gate fails (D-051 to D-056).
 
 The tests need no key: they replay a perfect extractor built from the labels through the real pipeline (`tests/oracle.py`) and use a scripted fake client for retries, low confidence and adversarial behaviour.
 

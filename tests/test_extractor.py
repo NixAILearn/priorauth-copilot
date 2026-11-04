@@ -2,10 +2,25 @@
 
 import json
 
+import pytest
 from oracle import CASES, oracle_output
 
 from priorauth.backends import FakeClient, ModelError
-from priorauth.extractor import OUTPUT_SCHEMA, kind_of, policy_block, user_message
+from priorauth.extractor import (
+    CAPS,
+    KEYED_NOTE,
+    LENGTHS,
+    OUTPUT_SCHEMA,
+    case_schema,
+    fact_nodes,
+    keyed_schema,
+    kind_of,
+    model_fields,
+    policy_block,
+    schema_for,
+    unkey,
+    user_message,
+)
 from priorauth.intake import load_case
 from priorauth.pipeline import review_case
 from priorauth.schemas import Route
@@ -118,3 +133,123 @@ def test_schema_is_strict():
             walk(s["items"])
 
     walk(OUTPUT_SCHEMA)
+
+
+# --- Case-narrowed schema for local models (D-058) --------------------------------------------
+
+CASE_IDS = sorted(p.name for p in CASES.glob("CASE-*"))
+
+
+@pytest.mark.parametrize("case_id", CASE_IDS)
+def test_case_schema_accepts_the_ground_truth(case_id):
+    """The enums never exclude a correct answer: the oracle's output fits every case."""
+    jsonschema = pytest.importorskip("jsonschema")
+    case = load_case(CASES / case_id)
+    out = oracle_output(case_id)
+    jsonschema.validate(out, case_schema(case, lengths=False))
+    for v in out["values"]:  # length limits: everything but the oracle's long sentence quotes
+        assert len(v["record"]) <= LENGTHS["record"] and len(v["value"]) <= LENGTHS["value"]
+    assert len(out["values"]) <= CAPS["values"] and len(out["facts"]) <= CAPS["facts"]
+
+
+def test_case_schema_rejects_an_invented_doc_id():
+    jsonschema = pytest.importorskip("jsonschema")
+    case = load_case(CASES / "CASE-021-01")
+    out = oracle_output("CASE-021-01")
+    out["values"][0]["doc_id"] = "REQUEST_DOB_1955-03-09_REQUEST_DOB_1955-03-09"
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(out, case_schema(case))
+
+
+def test_case_schema_is_strict_and_bounded():
+    case = load_case(CASES / "CASE-034-03")
+
+    def walk(s):
+        if s.get("type") == "object":
+            assert s["additionalProperties"] is False
+            assert set(s["required"]) == set(s["properties"])
+            for v in s["properties"].values():
+                walk(v)
+        if s.get("type") == "array":
+            assert "maxItems" in s
+            walk(s["items"])
+        if s.get("type") in ("string", ["string", "null"]):
+            assert "enum" in s or "maxLength" in s
+
+    walk(case_schema(case))
+
+
+def _keyed(flat: dict, case) -> dict:
+    """Group a flat oracle answer the way the keyed schema asks for it."""
+    fields = {f.name: f for f in model_fields(case.spec)}
+    values = {name: [] for name in fields}
+    for v in flat["values"]:
+        row = {k: x for k, x in v.items() if k != "field"}
+        if fields[v["field"]].type == "date":
+            row["date_quote"] = None  # D-063: required key, null when the quote shows the date
+        values[v["field"]].append(row)
+    facts = {}
+    for n in fact_nodes(case.spec):
+        rows = [
+            {k: x for k, x in a.items() if k != "node_id"}
+            for a in flat["facts"]
+            if a["node_id"] == n.id
+        ]
+        if n.per == "request" or not case.unit_ids:
+            facts[n.id] = {k: x for k, x in rows[0].items() if k != "unit_id"}
+        else:
+            facts[n.id] = rows
+    return {**flat, "values": values, "facts": facts}
+
+
+@pytest.mark.parametrize("case_id", CASE_IDS)
+def test_keyed_schema_round_trips_the_ground_truth(case_id):
+    """D-059: the keyed answer fits the schema and unkeys to the same evidence."""
+    jsonschema = pytest.importorskip("jsonschema")
+    case = load_case(CASES / case_id)
+    flat = oracle_output(case_id)
+    keyed = _keyed(flat, case)
+    schema = keyed_schema(case)
+    for fs in schema["properties"]["values"]["properties"].values():  # oracle quotes run long
+        fs["items"]["properties"]["quote"].pop("maxLength", None)
+    jsonschema.validate(keyed, schema)
+    back = unkey(keyed)
+    key = lambda xs: sorted(json.dumps(x, sort_keys=True) for x in xs)  # noqa: E731
+    assert key(back["values"]) == key(flat["values"])
+    assert key(back["facts"]) == key(flat["facts"])
+
+
+def test_keyed_backend_gets_the_note_and_parses():
+    case = load_case(CASES / CLEAN)
+    keyed = json.dumps(_keyed(oracle_output(CLEAN), case))
+    client = FakeClient([keyed], backend="lmstudio", hard_model=None)
+    rec = review_case(CASES / CLEAN, client)
+    assert rec.route == Route.APPROVE_READY
+    assert KEYED_NOTE in client.calls[0]["user"]
+
+
+def test_only_local_and_openrouter_get_the_narrowed_schema():
+    case = load_case(CASES / "CASE-021-01")
+    assert schema_for(FakeClient(["{}"], backend="lmstudio"), case) != OUTPUT_SCHEMA
+    assert schema_for(FakeClient(["{}"], backend="anthropic"), case) == OUTPUT_SCHEMA
+
+
+def _with_claim(citations):
+    out = oracle_output(CLEAN)
+    out["flag_rules"].append(
+        {"rule_id": "021-C4b-F1", "unit_id": None, "citations": citations, "rationale": "x"}
+    )
+    return json.dumps(out)
+
+
+def test_a_flag_claim_with_no_quote_is_not_raised():  # D-060
+    rec = review_case(CASES / CLEAN, FakeClient([_with_claim([])], hard_model=None))
+    assert rec.route == Route.APPROVE_READY
+    assert rec.flags == []
+
+
+def test_a_flag_claim_with_a_failed_quote_still_blocks():  # D-046 kept
+    bad = [{"doc_id": "D04", "quote": "near-complete concentric collapse of the velum"}]
+    rec = review_case(CASES / CLEAN, FakeClient([_with_claim(bad)], hard_model=None))
+    assert rec.route == Route.CLINICIAN_REVIEW
+    assert [f.kind for f in rec.flags] == ["low_confidence"]

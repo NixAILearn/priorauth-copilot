@@ -60,8 +60,11 @@ def test_ignores_safe_tokens(text: str) -> None:
 def test_json_skips_safe_codings_and_postal_codes() -> None:
     bundle = {
         "address": [{"postalCode": "0" + "1970"}],
-        "code": {"coding": [{"system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                             "code": "1" + "9840"}]},
+        "code": {
+            "coding": [
+                {"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "1" + "9840"}
+            ]
+        },
         "valueQuantity": {"value": int(FIVE)},
     }
     assert list(sc.scan_json(bundle)) == []

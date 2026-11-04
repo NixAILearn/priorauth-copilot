@@ -9,8 +9,17 @@ from pathlib import Path
 
 TABLE = Path(__file__).resolve().parent.parent / "codes" / "nhp_procedures.csv"
 COLUMNS = [
-    "code", "short_name", "description", "policy_id", "scope", "setting",
-    "unit_basis", "laterality_required", "pa_required", "effective_date", "end_date",
+    "code",
+    "short_name",
+    "description",
+    "policy_id",
+    "scope",
+    "setting",
+    "unit_basis",
+    "laterality_required",
+    "pa_required",
+    "effective_date",
+    "end_date",
 ]
 
 

@@ -36,4 +36,7 @@ jobs:
       - name: Generated cases still match their specs (D-036, D-039)
         run: python -m generator check
 
-      # Week 4: add `make eval` on the 10-case smoke set (safety gate only, D-006).
+      # Safety gate only, on the oracle backend: no key, no cost (D-006, D-056). Exit 1 if a
+      # false approve-ready, a denial value or a missed injection appears.
+      - name: Smoke eval, safety gate (10 cases)
+        run: make eval-smoke

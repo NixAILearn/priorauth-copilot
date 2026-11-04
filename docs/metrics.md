@@ -1,6 +1,6 @@
 # PriorAuth Copilot: Metrics (v0.1)
 
-**Owner:** Nick · **Status:** Draft for review · **Updated:** 2026-11-01 · Companion to [`docs/PRD.md`](PRD.md)
+**Owner:** Nick · **Status:** Draft for review · **Updated:** 2026-11-03 · Companion to [`docs/PRD.md`](PRD.md)
 
 The order of this doc is the order of priority. The **safety gate** blocks every release; quality targets are only read once the gate holds; the north star is only read alongside both. A copilot that approves a case that fails policy is worse than no copilot.
 
@@ -53,9 +53,9 @@ North star: approve-ready decisions per reviewer-hour
 | Approve-ready yield | Cases labeled approve-ready that the copilot routes approve-ready | Cases labeled approve-ready | Code |
 | Criterion agreement | (case, top-level criterion) pairs whose status matches the label exactly; per target ulcer on NHP-MP-034 (D-027) | All labeled (case, top-level criterion) pairs | Code; also publish the 3×3 confusion matrix (met / not met / insufficient) and, separately, contraindication and exclusion detection (found / not found, with recall on found items) (D-028) |
 | Routing accuracy | Cases whose routing matches the label | All cases | Code |
-| Missing-doc recall | Labeled missing items named in the RFI letter or case brief | All labeled missing items | Code: match on criterion ID in the letter's structured output, not on free text |
+| Missing-doc recall | Labeled missing items named in the RFI letter or case brief | All labeled missing items | Code: match on (documentation item, target ulcer) in the letter's structured output, not on free text; denominator is cases labeled request info (D-053) |
 | Missing-doc precision | Items named as missing that are labeled missing | All items the copilot names as missing | Code; asking for documents already in the chart burdens the provider |
-| Citation precision | Citations that (a) exist verbatim in the cited document and (b) support the finding | All citations emitted | (a) code, after whitespace and quote-mark normalization only; (b) LLM judge with rubric, Nick spot-checks 10 judged items per run |
+| Citation precision | Citations that (a) exist verbatim in the cited document and (b) support the finding | All citations emitted | (a) code, after whitespace and quote-mark normalization only (plus first-letter case, D-061, and table bar or colon as one separator, D-062); (b) LLM judge with rubric, Nick spot-checks 10 judged items per run. v0.1 scores (a) only (D-054) |
 | Letter quality | Mean rubric score: specific reason, missing items listed, plain language, correct policy cited, no invented facts | Letters drafted | LLM judge + Nick spot-check |
 | Pipeline time per case | Wall-clock from intake to recommendation | n/a (median and p90) | Logged timestamps |
 | Reviewer minutes per case | Minutes to review 5 cases manually vs. with copilot | n/a | Nick times their own reviews; present as an illustration, not a benchmark |
@@ -91,5 +91,5 @@ The full suite re-runs on every prompt or model change. Dated reports are commit
 ## 6. Next steps
 
 1. Nick reviews the four ambiguity readings in section 4 (all decisions D-001 to D-007 are accepted).
-2. Encode the definitions above as the scoring functions in `evals/run_eval.py` when the eval runner is built (week 4).
+2. ~~Encode the definitions above as the scoring functions in `evals/run_eval.py` when the eval runner is built (week 4).~~ Done: `evals/scoring.py`, run by `evals/run_eval.py` (D-051 to D-056). Still to build: the LLM judge for citation part (b) and letter quality, the injection suite, and a price table for cost per case.
 3. ~~Make sure the case-spec schema (week 2) carries a criterion ID for every missing item~~ Done: every insufficient finding names its criterion ID and documentation item (`src/priorauth/case_spec.py`).

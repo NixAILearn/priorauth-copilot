@@ -21,6 +21,7 @@ from priorauth.intake import REQUEST_DOC, ROOT, CaseInput
 from priorauth.quotes import date_in, number_in, quote_in
 from priorauth.schemas import (
     Evidence,
+    ExtractedValue,
     ExtractionOutput,
     FactAssessment,
     FlagClaim,
@@ -29,7 +30,7 @@ from priorauth.schemas import (
 )
 from priorauth.spec import CriteriaSpec, FieldDef, Node
 
-PROMPT_VERSION = "extract-v0.1"
+PROMPT_VERSION = "extract-v0.2"  # D-063 keyed note: quote, date and status rules
 
 SYSTEM = """You are an evidence extractor for utilization review at Northwind Health Plan, a \
 fictional Medicare Advantage plan. Every patient and document is synthetic.
@@ -134,6 +135,201 @@ OUTPUT_SCHEMA: dict = _obj(
 )
 
 
+# Bounds for the constrained schema (D-058). The largest committed case needs 34 values, 36
+# fact assessments and quotes well under 400 characters, so these leave room to spare.
+CAPS = {"values": 80, "facts": 120, "flag_rules": 20, "citations": 6, "injections": 10}
+LENGTHS = {"quote": 600, "value": 120, "record": 100, "rationale": 400, "unit": 30, "date": 10}
+
+
+def _enum(values: list[str], nullable: bool = False) -> dict:
+    vals: list[str | None] = sorted(set(values))
+    if nullable:
+        return {"type": ["string", "null"], "enum": [*vals, None]}
+    return {"type": "string", "enum": vals}
+
+
+def case_schema(case: CaseInput, lengths: bool = True) -> dict:
+    """OUTPUT_SCHEMA narrowed to this case: IDs become enums and arrays get a size limit.
+
+    IDs are the strings a small local model is most likely to loop on (an invented doc_id ran
+    to the output cap on Gemma, D-058). With an enum the decoder cannot write any ID that does
+    not exist, which also means every citation names a real document. `lengths` adds string
+    and array limits; constrained decoders (llama.cpp, LM Studio) enforce them.
+    """
+    docs = list(case.documents)
+    units = case.unit_ids
+    fields = [f.name for f in model_fields(case.spec)]
+    nodes = [n.id for n in fact_nodes(case.spec)]
+    rules = [r.id for n in case.spec.nodes() for r in n.flag_rules]
+
+    def s(kind: str, nullable: bool = False) -> dict:
+        d: dict = {"type": ["string", "null"] if nullable else "string"}
+        if lengths:
+            d["maxLength"] = LENGTHS[kind]
+        return d
+
+    def arr(items: dict, cap: str) -> dict:
+        d: dict = {"type": "array", "items": items}
+        if lengths:
+            d["maxItems"] = CAPS[cap]
+        return d
+
+    unit = _enum(units, nullable=True) if units else {"type": "null"}
+    quote = _obj({"doc_id": _enum(docs), "quote": s("quote")})
+    value = {
+        "field": _enum(fields),
+        "unit_id": unit,
+        "value": s("value"),
+        "unit": s("unit", nullable=True),
+        "observed_on": s("date", nullable=True),
+        "period_start": s("date", nullable=True),
+        "period_end": s("date", nullable=True),
+        "record": s("record"),
+        "doc_id": _enum(docs),
+        "quote": s("quote"),
+    }
+    fact = {
+        "node_id": _enum(nodes),
+        "unit_id": unit,
+        "status": {
+            "type": "string",
+            "enum": ["met", "not_met", "insufficient", "found", "not_found"],
+        },
+        "confidence": {"type": "string", "enum": ["high", "low"]},
+        "citations": arr(quote, "citations"),
+        "rationale": s("rationale"),
+    }
+    flag = {
+        "rule_id": _enum(rules) if rules else {"type": "string"},
+        "unit_id": unit,
+        "citations": arr(quote, "citations"),
+        "rationale": s("rationale"),
+    }
+    return _obj(
+        {
+            "values": arr(_obj(value), "values"),
+            "facts": arr(_obj(fact), "facts"),
+            # A policy with no flag rules: the array must stay empty.
+            "flag_rules": arr(_obj(flag), "flag_rules")
+            if rules
+            else {"type": "array", "items": _obj(flag), "maxItems": 0},
+            "injections": arr(quote, "injections"),
+        }
+    )
+
+
+# A date field whose quote names the event but not the date may take it from this field (D-064).
+DATE_FROM = {"baseline_date": "measurement_date"}
+
+# An event date must come with its event: the value's own quote names it (D-066). A header
+# line in date_quote can give the date but never the event.
+EVENT_WORDS = {"prior_arthroscopy_date": ("arthroscop",)}
+
+PER_FIELD_CAP = 8  # committed cases need at most 6 (measurement_date); room for more (D-063)
+KEYED_BACKENDS = ("lmstudio", "openrouter")
+KEYED_NOTE = (
+    "Answer format for this case: `values` has one key per field and `facts` one key per fact "
+    "node. Under each field list each distinct observation once, newest first, at most "
+    f"{PER_FIELD_CAP} (per target ulcer); an empty list means the documents do not give it. "
+    "Never repeat an entry or write the same value in another format.\n"
+    "Quotes: copy one continuous passage from one document, character for character. Never add "
+    "a heading, a '|' or a ':' that is not in the text, and never join text from two places. "
+    "doc_id is the document the passage is in.\n"
+    "Dates: when a date field's quote does not itself show the date (for example the date is on "
+    "a header line such as 'Collected: ...' or 'Date of visit: ...'), put that header line, "
+    "copied exactly from the same document, in date_quote; otherwise date_quote is null.\n"
+    "Statuses: criteria use met / not_met / insufficient; contraindications and exclusions use "
+    "found / not_found only."
+)
+
+
+def keyed_schema(case: CaseInput) -> dict:
+    """The case schema with values grouped by field and facts keyed by node (D-059).
+
+    A small model looped by appending near-duplicate entries to the flat `values` array. Here
+    every key is fixed and required, a field's list is capped at a few entries, and a fact node
+    reached once per request is a single object, so there is no open-ended list left to grow.
+    """
+    flat = case_schema(case, lengths=True)
+    v_item = dict(flat["properties"]["values"]["items"])
+    v_props = {k: v for k, v in v_item["properties"].items() if k != "field"}
+    f_item = flat["properties"]["facts"]["items"]
+    f_props = {k: v for k, v in f_item["properties"].items() if k != "node_id"}
+    units = case.unit_ids
+
+    def capped(item: dict, n: int) -> dict:
+        return {"type": "array", "items": item, "maxItems": n}
+
+    def typed(f: FieldDef) -> dict:
+        """The value string constrained by the field's type, where the decoder can enforce it."""
+        if f.type == "enum" and f.values:
+            vs = {"type": "string", "enum": list(f.values)}
+        elif f.type == "boolean":
+            vs = {"type": "string", "enum": ["true", "false"]}
+        elif f.type == "number":
+            vs = {"type": "string", "pattern": r"^[0-9]+(\.[0-9]+)?$", "maxLength": 12}
+        elif f.type == "date":
+            vs = {"type": "string", "pattern": r"^[0-9]{4}-[0-9]{2}(-[0-9]{2})?$", "maxLength": 10}
+            dq = {"type": ["string", "null"], "maxLength": LENGTHS["quote"]}
+            return _obj({**v_props, "value": vs, "date_quote": dq})
+        else:
+            vs = v_props["value"]
+        return _obj({**v_props, "value": vs})
+
+    values = {
+        f.name: capped(typed(f), PER_FIELD_CAP * (max(1, len(units)) if f.per != "request" else 1))
+        for f in model_fields(case.spec)
+    }
+    kinds = kind_of(case.spec)
+    statuses = {
+        "criterion": ["met", "not_met", "insufficient"],
+        "contraindication": ["found", "not_found"],
+        "exclusion": ["found", "not_found"],
+    }
+    facts: dict[str, dict] = {}
+    for n in fact_nodes(case.spec):
+        props = {**f_props, "status": {"type": "string", "enum": statuses[kinds[n.id]]}}
+        if n.per == "request" or not units:
+            facts[n.id] = _obj({k: v for k, v in props.items() if k != "unit_id"})
+        else:
+            facts[n.id] = capped(_obj(props), len(units))
+    return _obj(
+        {
+            "values": _obj(values),
+            "facts": _obj(facts),
+            "flag_rules": flat["properties"]["flag_rules"],
+            "injections": flat["properties"]["injections"],
+        }
+    )
+
+
+def unkey(data: dict) -> dict:
+    """A keyed answer back into the flat ExtractionOutput shape."""
+    values = [
+        {"field": name, **{k: x for k, x in v.items() if not (k == "date_quote" and x is None)}}
+        for name, items in (data.get("values") or {}).items()
+        for v in items
+    ]
+    facts = []
+    for node_id, x in (data.get("facts") or {}).items():
+        for a in x if isinstance(x, list) else [{**x, "unit_id": None}]:
+            facts.append({"node_id": node_id, **a})
+    return {
+        "values": values,
+        "facts": facts,
+        "flag_rules": data.get("flag_rules", []),
+        "injections": data.get("injections", []),
+    }
+
+
+def schema_for(client: ModelClient, case: CaseInput) -> dict:
+    """Anthropic keeps the fixed schema (cached grammar, D-044); local and OpenRouter models get
+    the keyed, case-narrowed one (D-058, D-059)."""
+    if client.backend in KEYED_BACKENDS:
+        return keyed_schema(case)
+    return OUTPUT_SCHEMA
+
+
 # --- Prompt -----------------------------------------------------------------------------------
 
 
@@ -218,16 +414,21 @@ class RawExtraction:
     used_role: Role = "extract"
 
 
-def _parse(text: str) -> ExtractionOutput:
+def _parse(text: str, keyed: bool = False) -> ExtractionOutput:
     text = text.strip()
     if text.startswith("```"):  # some local models wrap JSON in a fence despite the schema
         text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text)
-    return ExtractionOutput.model_validate(json.loads(text))
+    data = json.loads(text)
+    return ExtractionOutput.model_validate(unkey(data) if keyed else data)
 
 
 def _call(client: ModelClient, case: CaseInput, role: Role, calls: list[ModelCall]):
     system = [SYSTEM, policy_block(case.spec)]
     user = user_message(case)
+    schema = schema_for(client, case)
+    keyed = client.backend in KEYED_BACKENDS
+    if keyed:
+        user = f"{user}\n\n{KEYED_NOTE}"
     error = None
     for attempt in (1, 2):  # one retry on invalid output (kickoff section 6)
         msg = (
@@ -240,8 +441,8 @@ def _call(client: ModelClient, case: CaseInput, role: Role, calls: list[ModelCal
         )
         reply: Reply | None = None
         try:
-            reply = client.complete(system=system, user=msg, schema=OUTPUT_SCHEMA, role=role)
-            out = _parse(reply.text)
+            reply = client.complete(system=system, user=msg, schema=schema, role=role)
+            out = _parse(reply.text, keyed)
         except (ModelError, ValueError, ValidationError) as e:
             error = f"{type(e).__name__}: {str(e)[:400]}"
             calls.append(_record(client, role, attempt, reply, error))
@@ -302,6 +503,7 @@ class Obs:
     start: date | None = None
     end: date | None = None
     sources: tuple[Obs, ...] = ()
+    date_quote: str | None = None  # the header line that shows the date, same document (D-063)
 
     def evidence(self) -> list[Evidence]:
         if self.sources:
@@ -309,7 +511,10 @@ class Obs:
             for s in self.sources:
                 out += [e for e in s.evidence() if e not in out]
             return out
-        return [Evidence(doc_id=self.doc_id, quote=self.quote, verified=True)]
+        ev = [Evidence(doc_id=self.doc_id, quote=self.quote, verified=True)]
+        if self.date_quote:
+            ev.append(Evidence(doc_id=self.doc_id, quote=self.date_quote, verified=True))
+        return ev
 
 
 @dataclass
@@ -349,8 +554,14 @@ def parse_date(text: str | None) -> date | None:
 def parse_value(fd: FieldDef, raw: str) -> float | str | bool | date | None:
     raw = raw.strip()
     if fd.type == "number":
-        m = re.fullmatch(r"[-+]?\d+(?:\.\d+)?", raw.replace(",", ""))
-        return float(m.group(0)) if m else None
+        text = raw.replace(",", "")
+        m = re.fullmatch(r"[-+]?\d+(?:\.\d+)?", text)
+        if m:
+            return float(m.group(0))
+        # "BMI 31.6 kg/m2." or "22%": take the number only when exactly one is written (D-061).
+        # The quote check still requires that number in the verified quote.
+        nums = re.findall(r"(?<![A-Za-z\d.])[-+]?\d+(?:\.\d+)?", text)  # not the 2 in kg/m2
+        return float(nums[0]) if len(nums) == 1 else None
     if fd.type == "date":
         return parse_date(raw)
     if fd.type == "boolean":
@@ -374,6 +585,7 @@ def verify(case: CaseInput, out: ExtractionOutput | None) -> Verified:
     v = Verified(obs={}, facts={}, flag_claims=[], injections=[], rejected=[])
     if out is None:
         return v
+    undated: list[tuple[ExtractedValue, date, str | None]] = []
 
     def unit_for(per: str, unit_id: str | None) -> tuple[bool, str | None]:
         if per == "request":
@@ -387,16 +599,28 @@ def verify(case: CaseInput, out: ExtractionOutput | None) -> Verified:
         ok_unit, unit = unit_for(fd.per, x.unit_id)
         val = parse_value(fd, x.value)
         reason = None
+        date_quote = None
         if not ok_unit:
             reason = f"unknown target ulcer {x.unit_id}"
         elif val is None:
             reason = f"value {x.value!r} does not fit {fd.type} field"
         elif not quote_in(docs, x.doc_id, x.quote):
             reason = "quote not found verbatim in the document"
+        elif x.field in EVENT_WORDS and not any(w in x.quote.lower() for w in EVENT_WORDS[x.field]):
+            reason = "the quote does not name the event"
         elif isinstance(val, float) and not number_in(x.quote, val):
             reason = "the number is not in its quote"
         elif isinstance(val, date) and not date_in(x.quote, val):
-            reason = "the date is not in its quote"
+            # D-063: the date may sit on a header line of the same document instead. Both quotes
+            # must be exact, and the date must be in the second one.
+            dq = x.date_quote
+            if dq and quote_in(docs, x.doc_id, dq) and date_in(dq, val):
+                date_quote = dq
+            elif x.field in DATE_FROM and quote_in(docs, x.doc_id, x.quote):
+                undated.append((x, val, unit))  # D-064: settled after the loop
+                continue
+            else:
+                reason = "the date is not in its quote"
         if reason:
             v.rejected.append(Rejected("value", x.field, x.unit_id, reason))
             continue
@@ -414,6 +638,32 @@ def verify(case: CaseInput, out: ExtractionOutput | None) -> Verified:
             quote=x.quote,
             start=parse_date(x.period_start),
             end=parse_date(x.period_end),
+            date_quote=date_quote,
+        )
+        v.obs.setdefault((o.field, o.unit_id), []).append(o)
+
+    # D-064: a baseline sentence with no date in it takes its date from the same document's
+    # verified measurement date, only when that document has exactly one and it is the claimed
+    # date. Two verified quotes from one document, the same trust as date_quote (D-063).
+    for x, val, unit in undated:
+        src = [
+            o
+            for o in v.obs.get((DATE_FROM[x.field], unit), [])
+            if o.doc_id == x.doc_id and isinstance(o.value, date)
+        ]
+        if {o.value for o in src} != {val}:
+            v.rejected.append(Rejected("value", x.field, x.unit_id, "the date is not in its quote"))
+            continue
+        o = Obs(
+            field=x.field,
+            unit_id=unit,
+            value=val,
+            unit=x.unit,
+            on=val,
+            record=x.record or f"{x.doc_id}@{val}",
+            doc_id=x.doc_id,
+            quote=x.quote,
+            date_quote=src[0].date_quote or src[0].quote,
         )
         v.obs.setdefault((o.field, o.unit_id), []).append(o)
 

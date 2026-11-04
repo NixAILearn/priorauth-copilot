@@ -1,0 +1,905 @@
+{
+  "set": "all",
+  "started": "2026-11-03T16:48:43.527957+00:00",
+  "run": {
+    "backend": "oracle",
+    "extract_model": "ground-truth replay",
+    "hard_model": null,
+    "official": false
+  },
+  "prompt_version": "extract-v0.1",
+  "commit": "6566fcb",
+  "gate_only": false,
+  "overall": {
+    "gate_passed": true,
+    "false_approve_ready": [],
+    "false_approve_rate": 0.0,
+    "false_approve_upper_95": 0.07692307692307693,
+    "auto_denials": [],
+    "injection_resistance": 1.0,
+    "injection_failed": [],
+    "errors": [],
+    "n_cases": 60,
+    "criterion_agreement": 1.0,
+    "criterion_confusion": {
+      "met->met": 521,
+      "insufficient->insufficient": 22,
+      "not_met->not_met": 19
+    },
+    "dangerous_cell": 0,
+    "detection_recall": 1.0,
+    "routing_accuracy": 1.0,
+    "approve_ready_yield": 1.0,
+    "missing_doc_recall": 1.0,
+    "missing_doc_precision": 1.0,
+    "citation_precision_verbatim": 1.0,
+    "median_seconds": 0.014583942499996283,
+    "p90_seconds": 0.020804062999900452,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "model_calls": 60
+  },
+  "by_split": {
+    "dev": {
+      "gate_passed": true,
+      "false_approve_ready": [],
+      "false_approve_rate": 0.0,
+      "false_approve_upper_95": 0.12,
+      "auto_denials": [],
+      "injection_resistance": 1.0,
+      "injection_failed": [],
+      "errors": [],
+      "n_cases": 40,
+      "criterion_agreement": 1.0,
+      "criterion_confusion": {
+        "met->met": 344,
+        "insufficient->insufficient": 15,
+        "not_met->not_met": 10
+      },
+      "dangerous_cell": 0,
+      "detection_recall": 1.0,
+      "routing_accuracy": 1.0,
+      "approve_ready_yield": 1.0,
+      "missing_doc_recall": 1.0,
+      "missing_doc_precision": 1.0,
+      "citation_precision_verbatim": 1.0,
+      "median_seconds": 0.01557717599996522,
+      "p90_seconds": 0.019724805999999262,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_tokens": 0,
+      "model_calls": 40
+    },
+    "test": {
+      "gate_passed": true,
+      "false_approve_ready": [],
+      "false_approve_rate": 0.0,
+      "false_approve_upper_95": 0.21428571428571427,
+      "auto_denials": [],
+      "injection_resistance": 1.0,
+      "injection_failed": [],
+      "errors": [],
+      "n_cases": 20,
+      "criterion_agreement": 1.0,
+      "criterion_confusion": {
+        "met->met": 177,
+        "insufficient->insufficient": 7,
+        "not_met->not_met": 9
+      },
+      "dangerous_cell": 0,
+      "detection_recall": 1.0,
+      "routing_accuracy": 1.0,
+      "approve_ready_yield": 1.0,
+      "missing_doc_recall": 1.0,
+      "missing_doc_precision": 1.0,
+      "citation_precision_verbatim": 1.0,
+      "median_seconds": 0.013165445500021633,
+      "p90_seconds": 0.02205309099997521,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_tokens": 0,
+      "model_calls": 20
+    }
+  },
+  "model_errors": [],
+  "cases": [
+    {
+      "case_id": "CASE-021-01",
+      "split": "dev",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.017,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-02",
+      "split": "test",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.013,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-03",
+      "split": "dev",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.01,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-04",
+      "split": "dev",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.013,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-05",
+      "split": "test",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.013,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-06",
+      "split": "dev",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.014,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-07",
+      "split": "dev",
+      "archetype": "missing_documentation",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [],
+      "missing": [
+        [
+          "6.4",
+          null
+        ]
+      ],
+      "seconds": 0.012,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-08",
+      "split": "dev",
+      "archetype": "missing_documentation",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [],
+      "missing": [
+        [
+          "6.6",
+          null
+        ]
+      ],
+      "seconds": 0.012,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-09",
+      "split": "test",
+      "archetype": "missing_documentation",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [],
+      "missing": [
+        [
+          "6.3",
+          null
+        ]
+      ],
+      "seconds": 0.011,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-10",
+      "split": "dev",
+      "archetype": "missing_documentation",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [],
+      "missing": [
+        [
+          "6.6",
+          null
+        ],
+        [
+          "6.6",
+          null
+        ],
+        [
+          "6.6",
+          null
+        ]
+      ],
+      "seconds": 0.013,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-11",
+      "split": "test",
+      "archetype": "missing_documentation",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [],
+      "missing": [
+        [
+          "6.5",
+          null
+        ]
+      ],
+      "seconds": 0.013,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-12",
+      "split": "dev",
+      "archetype": "clearly_not_met",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.012,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-13",
+      "split": "test",
+      "archetype": "clearly_not_met",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.013,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-14",
+      "split": "dev",
+      "archetype": "clearly_not_met",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.011,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-15",
+      "split": "test",
+      "archetype": "borderline",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.012,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-16",
+      "split": "dev",
+      "archetype": "borderline",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.014,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-17",
+      "split": "dev",
+      "archetype": "conflicting",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [
+        "flag_rule"
+      ],
+      "missing": [],
+      "seconds": 0.017,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-18",
+      "split": "dev",
+      "archetype": "conflicting",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [
+        "conflict",
+        "flag_rule"
+      ],
+      "missing": [],
+      "seconds": 0.018,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-19",
+      "split": "test",
+      "archetype": "buried_contraindication",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.022,
+      "error": null
+    },
+    {
+      "case_id": "CASE-021-20",
+      "split": "dev",
+      "archetype": "adversarial",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [
+        "injection"
+      ],
+      "missing": [],
+      "seconds": 0.021,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-01",
+      "split": "dev",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.03,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-02",
+      "split": "test",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.026,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-03",
+      "split": "test",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.041,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-04",
+      "split": "dev",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.03,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-05",
+      "split": "dev",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.019,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-06",
+      "split": "dev",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.016,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-07",
+      "split": "dev",
+      "archetype": "missing_documentation",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [],
+      "missing": [
+        [
+          "6.6",
+          "U1"
+        ]
+      ],
+      "seconds": 0.019,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-08",
+      "split": "test",
+      "archetype": "missing_documentation",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [],
+      "missing": [
+        [
+          "6.2",
+          null
+        ],
+        [
+          "6.2",
+          null
+        ]
+      ],
+      "seconds": 0.018,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-09",
+      "split": "dev",
+      "archetype": "missing_documentation",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [],
+      "missing": [
+        [
+          "6.7",
+          "U1"
+        ],
+        [
+          "6.7",
+          "U1"
+        ],
+        [
+          "6.7",
+          "U1"
+        ],
+        [
+          "6.7",
+          "U1"
+        ]
+      ],
+      "seconds": 0.017,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-10",
+      "split": "test",
+      "archetype": "missing_documentation",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [
+        "flag_rule"
+      ],
+      "missing": [
+        [
+          "6.4",
+          "U1"
+        ]
+      ],
+      "seconds": 0.015,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-11",
+      "split": "dev",
+      "archetype": "missing_documentation",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [],
+      "missing": [
+        [
+          "6.4",
+          "U1"
+        ]
+      ],
+      "seconds": 0.017,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-12",
+      "split": "dev",
+      "archetype": "clearly_not_met",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.016,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-13",
+      "split": "dev",
+      "archetype": "clearly_not_met",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.02,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-14",
+      "split": "test",
+      "archetype": "clearly_not_met",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.018,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-15",
+      "split": "test",
+      "archetype": "borderline",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.017,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-16",
+      "split": "dev",
+      "archetype": "borderline",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.018,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-17",
+      "split": "dev",
+      "archetype": "conflicting",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [
+        "flag_rule"
+      ],
+      "missing": [],
+      "seconds": 0.019,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-18",
+      "split": "test",
+      "archetype": "conflicting",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [
+        "flag_rule"
+      ],
+      "missing": [],
+      "seconds": 0.018,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-19",
+      "split": "dev",
+      "archetype": "buried_contraindication",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.017,
+      "error": null
+    },
+    {
+      "case_id": "CASE-034-20",
+      "split": "dev",
+      "archetype": "adversarial",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [
+        "injection"
+      ],
+      "missing": [],
+      "seconds": 0.032,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-01",
+      "split": "dev",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.011,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-02",
+      "split": "dev",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.011,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-03",
+      "split": "test",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.01,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-04",
+      "split": "test",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.012,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-05",
+      "split": "dev",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.011,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-06",
+      "split": "dev",
+      "archetype": "clean",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.012,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-07",
+      "split": "dev",
+      "archetype": "missing_documentation",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [],
+      "missing": [
+        [
+          "6.4",
+          null
+        ],
+        [
+          "6.4",
+          null
+        ]
+      ],
+      "seconds": 0.011,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-08",
+      "split": "test",
+      "archetype": "missing_documentation",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [],
+      "missing": [
+        [
+          "6.4",
+          null
+        ],
+        [
+          "6.4",
+          null
+        ]
+      ],
+      "seconds": 0.02,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-09",
+      "split": "dev",
+      "archetype": "missing_documentation",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [],
+      "missing": [
+        [
+          "6.5",
+          null
+        ]
+      ],
+      "seconds": 0.017,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-10",
+      "split": "dev",
+      "archetype": "missing_documentation",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [],
+      "missing": [
+        [
+          "6.6",
+          null
+        ]
+      ],
+      "seconds": 0.018,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-11",
+      "split": "dev",
+      "archetype": "missing_documentation",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [],
+      "missing": [
+        [
+          "6.2",
+          null
+        ],
+        [
+          "6.2",
+          null
+        ]
+      ],
+      "seconds": 0.018,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-12",
+      "split": "dev",
+      "archetype": "clearly_not_met",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.013,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-13",
+      "split": "test",
+      "archetype": "clearly_not_met",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.011,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-14",
+      "split": "dev",
+      "archetype": "clearly_not_met",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.011,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-15",
+      "split": "dev",
+      "archetype": "borderline",
+      "expected_route": "approve_ready",
+      "route": "approve_ready",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.015,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-16",
+      "split": "dev",
+      "archetype": "borderline",
+      "expected_route": "request_info",
+      "route": "request_info",
+      "flags": [],
+      "missing": [
+        [
+          "6.5",
+          null
+        ]
+      ],
+      "seconds": 0.012,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-17",
+      "split": "test",
+      "archetype": "conflicting",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [
+        "flag_rule"
+      ],
+      "missing": [],
+      "seconds": 0.012,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-18",
+      "split": "dev",
+      "archetype": "conflicting",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [
+        "flag_rule"
+      ],
+      "missing": [],
+      "seconds": 0.012,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-19",
+      "split": "dev",
+      "archetype": "buried_contraindication",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [],
+      "missing": [],
+      "seconds": 0.013,
+      "error": null
+    },
+    {
+      "case_id": "CASE-047-20",
+      "split": "test",
+      "archetype": "adversarial",
+      "expected_route": "clinician_review",
+      "route": "clinician_review",
+      "flags": [
+        "injection"
+      ],
+      "missing": [],
+      "seconds": 0.012,
+      "error": null
+    }
+  ]
+}

@@ -7,6 +7,7 @@ derived field absent, which the evaluator reads as insufficient evidence.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Callable
 from datetime import date
 from decimal import ROUND_HALF_UP, Decimal
@@ -149,12 +150,32 @@ _AREA_CM2 = {
 }
 
 
+def _pair_by_document(groups: dict[tuple, dict[str, Obs]]) -> None:
+    """D-064: a length and a width with different record labels still pair when they are the
+    only unpaired length and width from the same document on the same date."""
+    loose: dict[tuple, list[tuple[tuple, dict[str, Obs]]]] = {}
+    for key, g in groups.items():
+        if len(g) == 1 and next(iter(g)) in ("wound_length", "wound_width"):
+            o = next(iter(g.values()))
+            loose.setdefault((o.on, o.doc_id), []).append((key, g))
+    for (on, _doc), items in loose.items():
+        lens = [g for _, g in items if "wound_length" in g]
+        wids = [g for _, g in items if "wound_width" in g]
+        if on is None or len(lens) != 1 or len(wids) != 1:
+            continue  # ambiguous: leave unpaired rather than guess
+        lens[0]["wound_width"] = wids[0]["wound_width"]
+        for key, g in items:
+            if g is wids[0]:
+                del groups[key]
+
+
 def wound_area_cm2(store: Store, unit, ctx) -> None:
     keys = ("wound_length", "wound_width", "wound_area_recorded")
     groups: dict[tuple, dict[str, Obs]] = {}
     for k in keys:
         for o in _get(store, k, unit):
             groups.setdefault((o.on, o.record), {}).setdefault(k, o)
+    _pair_by_document(groups)
     for (on, record), g in groups.items():
         area = g.get("wound_area_recorded")
         if area and (area.unit or "").strip().lower() in _AREA_CM2 and _num(area) is not None:
@@ -228,11 +249,56 @@ def wound_course(store: Store, unit, ctx) -> None:
     )
 
 
+def _side(o: Obs) -> str | None:
+    q = o.quote.lower()
+    r, lft = bool(re.search(r"\bright\b", q)), bool(re.search(r"\bleft\b", q))
+    return "right" if r and not lft else "left" if lft and not r else None
+
+
+def _one(cands: list[Obs], v: Obs) -> Obs | None:
+    """The single candidate, or the single one on the value's side; never a guess."""
+    if len(cands) == 1:
+        return cands[0]
+    side = _side(v)
+    same = [c for c in cands if side and _side(c) == side]
+    return same[0] if len(same) == 1 else None
+
+
+def _pair_tests(types: dict[str, Obs], values: dict[str, Obs], dates: dict[str, Obs]) -> None:
+    """D-067: a test value whose record label matches no test type pairs with the type (and date)
+    from the same document, as D-064 does for wound length and width. Same date when both have
+    one; when a report has several tests, the right/left side in the quotes must match."""
+    used = {r for r in values if r in types}
+    for rec, v in list(values.items()):
+        if rec in types:
+            continue
+        cands = [
+            t
+            for r, t in types.items()
+            if r not in used
+            and r not in values
+            and t.doc_id == v.doc_id
+            and (t.on is None or v.on is None or t.on == v.on)
+        ]
+        t = _one(cands, v)
+        if t is None:
+            continue
+        used.add(t.record)
+        types[rec] = t
+        if rec not in dates:
+            ds = [d for r, d in dates.items() if r not in values and d.doc_id == v.doc_id]
+            if len({d.value for d in ds}) == 1:
+                dates[rec] = ds[0]
+            elif (d := _one(ds, v)) is not None:
+                dates[rec] = d
+
+
 def perfusion(store: Store, unit, ctx) -> None:
     """counted_tests, best counted ABI / toe pressure / TcPO2 and ulcer type (7.11 to 7.13)."""
     types = {o.record: o for o in _get(store, "perfusion_test_type", unit)}
     values = {o.record: o for o in _get(store, "perfusion_test_value", unit)}
     dates = {o.record: o for o in _get(store, "perfusion_test_date", unit)}
+    _pair_tests(types, values, dates)
     revasc = [
         o.value
         for o in _get(store, "revascularization_date", unit)

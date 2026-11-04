@@ -19,12 +19,23 @@ def norm(text: str) -> str:
     return re.sub(r"\s+", " ", text.translate(_QUOTES).replace("*", "")).strip()
 
 
+_SEP = re.compile(r"\s*[|:]\s*")
+
+
+def _cells(text: str) -> str:
+    """Table cell bars and colons read as one separator (D-062): "Location | x" == "Location: x"."""
+    return _SEP.sub(" | ", text).strip(" |")
+
+
 def quote_in(docs: dict[str, str], doc_id: str, quote: str) -> bool:
     """True when the quote is long enough and appears verbatim in that document."""
     q = norm(quote)
     if len(q) < MIN_QUOTE_CHARS or doc_id not in docs:
         return False
-    return q in norm(docs[doc_id])
+    q, doc = _cells(q), _cells(norm(docs[doc_id]))
+    # A quote lifted from mid-sentence often gains a capital first letter; only that first
+    # character is allowed to differ in case (D-061). Everything else stays exact.
+    return q in doc or (q[0].swapcase() + q[1:]) in doc
 
 
 _NUM = re.compile(r"(?<![\d.])\d+(?:\.\d+)?")

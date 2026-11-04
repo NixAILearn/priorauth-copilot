@@ -9,6 +9,8 @@ routing are code and run the same on every backend.
     PRIORAUTH_CONTEXT_TOKENS   context length the model was loaded with (lmstudio: 32k)
     PRIORAUTH_MAX_OUTPUT_TOKENS
     PRIORAUTH_BASE_URL         overrides the OpenAI-compatible endpoint
+    PRIORAUTH_TIMEOUT_S        per-call HTTP timeout (default 600; lmstudio 3600, a local model
+                               can take many minutes to write one case's JSON)
     ANTHROPIC_API_KEY          anthropic (the SDK also accepts an `ant auth login` profile)
     OPENROUTER_API_KEY         openrouter
 """
@@ -64,11 +66,13 @@ class ModelConfig:
     api_key: str | None
     context_tokens: int
     max_output_tokens: int
+    timeout_s: float = 600.0
 
     @property
     def official(self) -> bool:
-        """Only Anthropic runs count toward the week 4 scorecard (D-044)."""
-        return self.backend == "anthropic"
+        """Scorecard backends: local Gemma on LM Studio is the v0.1 headline (D-057); Anthropic
+        stays a scorecard backend for when a key exists. OpenRouter and fake runs never count."""
+        return self.backend in ("anthropic", "lmstudio")
 
 
 def load_config(env: Mapping[str, str] | None = None) -> ModelConfig:
@@ -107,5 +111,9 @@ def load_config(env: Mapping[str, str] | None = None) -> ModelConfig:
         base_url=env.get("PRIORAUTH_BASE_URL") or d["base_url"],  # type: ignore[arg-type]
         api_key=api_key,
         context_tokens=context,
-        max_output_tokens=int(env.get("PRIORAUTH_MAX_OUTPUT_TOKENS") or 16_000),
+        # A full case is about 2-5k output tokens; a local model that loops should fail fast.
+        max_output_tokens=int(
+            env.get("PRIORAUTH_MAX_OUTPUT_TOKENS") or (8_000 if backend == "lmstudio" else 16_000)
+        ),
+        timeout_s=float(env.get("PRIORAUTH_TIMEOUT_S") or (3600 if backend == "lmstudio" else 600)),
     )
