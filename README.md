@@ -115,7 +115,7 @@ Commercial prior authorization tools already do parts of this at scale. The tabl
 
 **What it shares with them.** The core pattern is the same one the AWS-style assistant describes: the model gathers evidence against written rules, and a nurse verifies a cited recommendation instead of reading the whole chart.
 
-**Where its design choices differ.** It has no deny path, by design: a nurse can approve, and only a physician makes an adverse determination, outside the copilot. Every finding must carry a verbatim quote that code confirms is in the document. Prompt injection is treated as a safety gate and measured. These choices line up with the direction of regulation: CMS guidance for Medicare Advantage (2024) says an algorithm alone cannot be the basis for denying care, and some states, such as California (SB 1120), require a physician to make any medical necessity denial.
+**Where its design choices differ.** It has no deny path, by design: a nurse can approve, and only a physician makes an adverse determination, outside the copilot. Every finding must carry a verbatim quote that code confirms is in the document. Prompt injection is treated as a safety gate and measured.
 
 **Where it is far behind.** This is a proof of concept, not a product, and it does not claim parity with any of these tools.
 
