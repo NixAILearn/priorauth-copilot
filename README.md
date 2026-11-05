@@ -37,7 +37,7 @@ Recorded from the real app on the v0.1 results (local Qwen 2.5 14B). The cases s
 | Provider PA coordinator | Gap check | Before submitting: which criteria the packet does not show yet and which records would show them |
 | Product and quality | Eval dashboard | Safety gate and quality metrics from every committed eval run |
 
-Three fictional Northwind policies are in scope: a hypoglossal nerve stimulator implant for sleep apnea (NHP-MP-021), skin substitute grafts for diabetic foot ulcers (NHP-MP-034), and arthroscopic debridement of the osteoarthritic knee (NHP-MP-047). Each was written in original words and compiled into a reviewed JSON criteria spec. Product docs: [PRD](docs/PRD.md), [metrics](docs/metrics.md), [decision log](docs/decision-log.md) (77 decisions, each with its reason), [app design](docs/app-design.md).
+Three fictional Northwind policies are in scope: a hypoglossal nerve stimulator implant for sleep apnea (NHP-MP-021), skin substitute grafts for diabetic foot ulcers (NHP-MP-034), and arthroscopic debridement of the osteoarthritic knee (NHP-MP-047). Each was written in original words and compiled into a reviewed JSON criteria spec. Product docs: [PRD](docs/PRD.md), [metrics](docs/metrics.md), [decision log](docs/decision-log.md) (79 decisions, each with its reason), [app design](docs/app-design.md).
 
 ## Architecture
 
@@ -99,6 +99,31 @@ The harness check ([report](evals/reports/2026-11-03-all-oracle.md)) replays the
 - **Text inside clinical documents is data, never instructions.** A pre-scan flags text aimed at an AI reviewer, and the app renders every document as escaped text.
 - **Every review, override and action is logged** with the reviewer, the reason and the time. Overrides never re-route a case on their own.
 - **CI** runs lint, 700+ tests, the safety gate on a 10-case smoke set, and a scan that fails the build on any CPT-, CDT- or UB-04-style code.
+
+## How it compares
+
+Commercial prior authorization tools already do parts of this at scale. The table places PriorAuth Copilot next to three of them. Vendor figures are as publicly reported by the vendors or in press coverage; this project has not verified them, and they are not measured the same way as the numbers here, so they are not directly comparable.
+
+| | Cohere Health | AWS Clinical Review Assistant (Amazon Bedrock) | Waystar | PriorAuth Copilot v0.1 |
+| --- | --- | --- | --- | --- |
+| Side | Health plan | Health plan | Provider | Health plan (UM nurse reviewer), plus a provider gap check |
+| Job | Match a request to evidence-based care pathways and approve it at intake | Read long authorization packets, apply plan rules, recommend an outcome with citations | Submit requests and draft appeal letters | Check each policy criterion and cite the evidence for it |
+| Outcomes | Approves or routes to a person | Recommends approve or deny for a nurse to verify | Not a decision tool | Approve-ready, request info or clinician review; **never denies** |
+| Citations | Not described in public materials | Line and page of the medical record | Not applicable | Document ID and verbatim quote, checked by code; no quote means insufficient evidence |
+| Scale | Reported 12M+ requests a year across several health plans | Reported packets of 500+ pages | Reported 1M+ providers | 60 synthetic cases, 3 fictional policies, short notes |
+| Reported results | Up to 88% of requests approved without human review | 85% shorter reviews, 95%+ accuracy | Up to 90% touchless authorizations | 0 false approve-ready (0 of 39); 73.5% criterion agreement against a ≥ 90% target |
+
+**What it shares with them.** The core pattern is the same one the AWS-style assistant describes: the model gathers evidence against written rules, and a nurse verifies a cited recommendation instead of reading the whole chart.
+
+**Where its design choices differ.** It has no deny path, by design: a nurse can approve, and only a physician makes an adverse determination, outside the copilot. Every finding must carry a verbatim quote that code confirms is in the document. Prompt injection is treated as a safety gate and measured. These choices line up with the direction of regulation: CMS guidance for Medicare Advantage (2024) says an algorithm alone cannot be the basis for denying care, and some states, such as California (SB 1120), require a physician to make any medical necessity denial.
+
+**Where it is far behind.** This is a proof of concept, not a product, and it does not claim parity with any of these tools.
+
+- **Accuracy.** Criterion agreement is 73.5% against a ≥ 90% target, and routing accuracy is 38.3%. This is a known gap, not a result: v0.1 ran on a local 14B open model, fixes from the misses (D-065 to D-067) are not yet re-scored, and a Claude run is next ([What's next](#whats-next)).
+- **Documents.** Short synthetic notes, not real packets of hundreds of pages.
+- **Coverage.** Three fictional policies, not a plan's full policy library or care pathways.
+- **Integration.** No EHR or FHIR intake, no CMS-0057-F prior authorization API, no claims or eligibility data.
+- **Validation.** No real patient data, no clinical validation with UM nurses and no timing study, so there is no time-saved claim.
 
 ## How to run
 
