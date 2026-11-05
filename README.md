@@ -6,6 +6,8 @@ An AI copilot for prior authorization review. It reads a request and its clinica
 
 **Status:** v0.1, built over six weeks as a product management portfolio project. The safety gate holds; the quality targets are not met yet ([results](#results)).
 
+**Try it:** [priorapp-copilot--clinical-review.streamlit.app](https://priorapp-copilot--clinical-review.streamlit.app/), no install, synthetic data only. If the app is asleep, it takes a moment to wake.
+
 ## Why
 
 Before a health plan pays for some services, it requires **prior authorization**: the provider sends clinical records, and a plan nurse checks them against the plan's medical policy. Physicians report about 40 of these requests a week, about 13 hours of physician and staff time, and 26% say prior authorization has led to a serious adverse event for a patient ([AMA 2025 survey](https://www.ama-assn.org/practice-management/prior-authorization/only-1-3-doctors-trusts-insurers-prior-authorization)). On the plan side, nurses spend that time matching dense policy text to long, unstructured charts.
@@ -109,7 +111,7 @@ make app     # the reviewer app on the committed v0.1 results, no model or key n
 
 ### Hosted demo
 
-The app is set up for Streamlit Community Cloud: entrypoint `app/streamlit_app.py`, Python 3.12, dependencies from `requirements.txt`, and no secrets, so it shows the committed results and never calls a model ([D-078](docs/decision-log.md)).
+Live at [priorapp-copilot--clinical-review.streamlit.app](https://priorapp-copilot--clinical-review.streamlit.app/). The app is set up for Streamlit Community Cloud: entrypoint `app/streamlit_app.py`, Python 3.12, dependencies from `requirements.txt`, and no secrets, so it shows the committed results and never calls a model ([D-078](docs/decision-log.md)).
 
 ### The reviewer app
 
